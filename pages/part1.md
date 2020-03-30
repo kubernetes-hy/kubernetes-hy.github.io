@@ -81,8 +81,6 @@ A *Pod* is an abstraction around one or more containers. Similarly as you've now
 
 TODO: Image of a pod
 
-As you created a deployment there should be a pod that you can view:
-
 #### What is a Deployment? ####
 
 A *Deployment* takes care of deployment. It's a way to tell Kubernetes what container you want, how they should be running and how many of them should be running.
@@ -195,8 +193,23 @@ Exercise 2:
 
 In your project create the folder for manifests and move your deployment into a declarative file. Make sure everything still works by restarting and following logs.
 
-## Networking ##
+## Networking Part 1 ##
 
 Restarting and following logs has been a treat. Next we'll open an endpoint to the application and access it via HTTP.
+
+Let's develop our application so that it has a HTTP server responding with two hashes: a hash that is stored until the process is exited and a hash that is request specific.
+
+I've prepared one [here](https://github.com/kubernetes-hy/material-example/tree/master/app2)
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app2/manifests/deployment.yaml
+```
+
+### Connecting from outside ###
+
+With docker we used the flag -p or in docker-compose ports declaration. Unfortunately Kubernetes isn't as simple.
+
+The next resource we'll learn is *Ingress*.
+
+#### What is an Ingress? ####
 
 TODO
