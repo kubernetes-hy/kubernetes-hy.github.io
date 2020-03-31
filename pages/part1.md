@@ -243,9 +243,27 @@ CONTAINER ID        IMAGE                COMMAND                  CREATED       
 6a3bef5af379        rancher/k3s:v1.0.1   "/bin/k3s server --h…"   3 days ago          Up 23 hours         0.0.0.0:6443->6443/tcp   k3d-k3s-default-server
 ```
 
-As you can see only port 6443 is open (this is used by kubectl). Let's open a few ports
+As you can see only port 6443 is open (this is used by kubectl). Let's delete our old cluster and create a new one with ports 8081 and 8082 open:
 
-TODO
+```
+$ k3d delete
+INFO[0000] Removing cluster [k3s-default]               
+INFO[0000] ...Removing 2 workers                        
+INFO[0022] ...Removing server                           
+INFO[0036] ...Removing docker image volume              
+INFO[0036] Removed cluster [k3s-default]
+
+$ k3d create --publish 8081:80 --publish 8082:30080@k3d-k3s-default-worker-0 --workers 2
+INFO[0000] Created cluster network with ID 903e292db40363804d315ff9543414e58cf1bbdb5985c5e61b9941ed4bc29679 
+INFO[0000] Created docker volume  k3d-k3s-default-images
+...
+
+$ export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app2/manifests/deployment.yaml
+deployment.apps/hashresponse-dep created
+```
+
+Now we've opened port 8081 to our master and 8082 to one of our workers port 30080. They will be used to showcase different methods of communicating with the servers.
 
 > Your OS may support using the host network so no ports need to be opened.
 
@@ -253,23 +271,37 @@ TODO
 
 As *Deployment* resources took care of deployments for us. *Service* resource will take care of serving the application to connections from outside of the cluster. 
 
-We need to do the following things:
+Create a file service.yaml into the manifests folder and we need the service to do the following things:
 
-* Declare that we want a Service
-* Declare which port to listen to
-* Declare the application where the request should be directed to
-* Declare the port where the request should be directed to
+1. Declare that we want a Service
+2. Declare which port to listen to
+3. Declare the application where the request should be directed to
+4. Declare the port where the request should be directed to
 
+This translates into a yaml file with contents
 
-TODO
-```
+```yml
 apiVersion: v1
 kind: Service
 metadata:
   name: hashresponse-svc
 spec:
+  type: NodePort
   selector:
+    app: hashresponse
+  ports:
+    - name: http
+      nodePort: 30080 # This is the port that is available outside. Value for nodePort can be between 30000-32767
+      protocol: TCP
+      port: 1234 # This is a port that is available to the cluster, in this case it can be ~ anything
+      targetPort: 3000 # This is the target port
 ```
+
+As we've published 8082 as 30080 we can access it now via http://localhost:8082.
+
+We've now defined a nodeport with `type: NodePort`. *NodePorts* simply ports that are opened by Kubernetes to **all of the nodes** and the service will handle requests in that port. NodePorts are not flexible and require you to assign a different port for every application. As such NodePorts are not used in production but are helpful to know about.
+
+What we'd want to use instead of NodePort would be a *LoadBalancer* type service but this "only" works with cloud providers as it configures a, possibly costly, load balancer for it. We'll get to know them in part 2.
 
 There's one additional resource that will help us with serving the application, *Ingress*.
 
