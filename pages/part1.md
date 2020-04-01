@@ -297,6 +297,11 @@ spec:
       targetPort: 3000 # This is the target port
 ```
 
+```bash
+$ kubectl apply -f manifests/service.yaml
+service/hashresponse-svc created
+```
+
 As we've published 8082 as 30080 we can access it now via http://localhost:8082.
 
 We've now defined a nodeport with `type: NodePort`. *NodePorts* simply ports that are opened by Kubernetes to **all of the nodes** and the service will handle requests in that port. NodePorts are not flexible and require you to assign a different port for every application. As such NodePorts are not used in production but are helpful to know about.
@@ -307,4 +312,82 @@ There's one additional resource that will help us with serving the application, 
 
 #### What is an Ingress? ####
 
-TODO
+Incoming Network Access resource *Ingress* is completely different type of resource from *Services*. If you've got your OSI model memorized, it works in the layer 7 while services work on layer 4. You could see these used together: first the aforementioned *LoadBalancer* and then Ingress to handle routing. In our case as we don't have a load balancer available we can use the Ingress as the first stop.
+
+This will require us to create two new resources. Ingress will route incoming traffic again to *Services*, but the old nodeport Service won't do. 
+
+```bash
+$ kubectl delete -f manifests/service.yaml
+service "hashresponse-svc" deleted
+```
+
+In this case we will need to declare
+
+For resource 1 the new *Service* we want a simpler version of the one above. A ClusterIP resource that will let TCP traffic from port XXXX to port 3000:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: hashresponse-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: hashresponse
+  ports:
+    - port: 2345
+      protocol: TCP
+      targetPort: 3000
+```
+
+For resource 2 the new *Ingress*.
+
+1. Declare that it should be an Ingress
+2. And route all traffic to our service
+
+```yml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hashresponse-ing
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: hashresponse-svc
+          servicePort: 2345
+```
+
+TODO annotation
+
+Then we can apply everything and view the result
+
+```bash
+$ kubectl apply -f manifests/service.yml
+service/hashresponse-svc created
+$ kubectl apply -f manifests/ingress.yml
+ingress.extensions/hashresponse-ing created
+
+$ kubectl get svc
+NAME               TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+kubernetes         ClusterIP   10.43.0.1      <none>        443/TCP    23h
+hashresponse-svc   ClusterIP   10.43.236.27   <none>        2345/TCP   4m23s
+
+$ kubectl get ing
+NAME               HOSTS   ADDRESS      PORTS   AGE
+hashresponse-ing   *       172.28.0.4   80      77s
+```
+
+We can see that the ingress is listening on port 80. As we already opened port there we can access the application on http://localhost:8081.
+
+
+Exercise 3:
+
+Developing an application and using ingress
+
+Exercise 4:
+
+Microservices get started!
+Developing a second application and routing with ingress
