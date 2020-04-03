@@ -6,6 +6,8 @@ permalink: /part1/
 order: 1
 ---
 
+In this part TODO
+
 ## What is Kubernetes? ##
 
 “Kubernetes (K8s) is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery.” - [kubernetes.io](https://kubernetes.io/)
@@ -117,9 +119,9 @@ Create an application that generates a random string on startup, stores this has
 2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43
 ```
 
-Deploy it into your kubernetes cluster and confirm that it's running with `kubectl logs`
+Deploy it into your kubernetes cluster and confirm that it's running with `kubectl logs ...`
 
-## Switch to YAML ##
+## Declarative configuration with YAML ##
 
 We created the deployment with 
 
@@ -360,8 +362,6 @@ spec:
           servicePort: 2345
 ```
 
-TODO annotation
-
 Then we can apply everything and view the result
 
 ```bash
@@ -391,3 +391,55 @@ Exercise 4:
 
 Microservices get started!
 Developing a second application and routing with ingress
+
+## Volumes Part 1 ##
+
+Storage in Kubernetes is **hard**. In part 1 we will look into a very basic method of using a storage and return to this topic later. Where almost everything else in Kubernetes is very much dynamic, moving between nodes and replicating with ease, storage does not have the same possibilities.
+
+There are multiple types of volumes and we'll get started with two of them.
+
+### Simple Volume ###
+
+Where in docker and docker-compose it would essentially mean that we had something persistent here that is not the case. There are multiple types of volumes *emptyDir* volumes are shared filesystems inside a pod, this means that their lifecycle is tied to a pod. When the pod is destroyed the data is lost.
+
+Before we can get started with this, we need an application that shares data with another application. In this case it will work as a method to share simple log files between each other. We'll need to develop the apps:
+
+App 1 will be the same as previously, but now generates the message also into a file named log_"timestamp".txt where "timestamp" will be accurate to one minute. So continously sending requests to the first app would generate a new file each minute with the request being a new line. My version available here: TODO
+
+App 2 will check all of the filenames in the folder and show the one with the most recent timestamp. In my case it will output it into stdout every 5 seconds. My version available here: TODO
+
+```yaml
+        volumeMounts:
+        - mountPath: /cache
+          name: cache-volume
+      volumes:
+        - name: cache-volume
+          emptyDir: {}
+```
+
+Note that all data is lost when the pod goes down.
+
+Exercise 5:
+
+### Persistent Volumes ###
+
+This type of storage is what you had in mind when we started talking about volumes. Unfortunately we're quite limited with the options here and will return to *PersistentVolumes* in Part 3 with GKE.
+
+The reason for the difficulty is because you should not store data with the application or create a dependency to the filesystem by the application. Kubernetes supports cloud providers very well and you can run your own storage system. During this course we are not going to run our own storage system as that would be a huge undertaking and most likely "in real life" you are going to use something hosted by a cloud provider. This topic would probably be a part of its own, but let's scratch the surface and try something you can use to run something at home.
+
+```
+
+```
+
+This binds the pod into that node, with the disk space used from that node. Do not use this in production.
+
+If you are interested in learning more about running your own storage you can check out
+
+[StorageOS](https://storageos.com/)
+
+Exercise 6:
+
+Since
+
+# The punchline, or rather, a summary #
+
