@@ -25,5 +25,4 @@ Ping / Pongs: 3
 
 ## Monitoring and updating ##
 
-
-# The punchline, or rather, a summary #
+# Summary #

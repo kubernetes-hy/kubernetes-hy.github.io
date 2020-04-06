@@ -6,7 +6,9 @@ permalink: /part1/
 order: 1
 ---
 
-In this part TODO
+TODO images
+
+In this part we'll go over a lot of things you need to get yourself started with using Kubernetes. This includes terminology, your first deploy, a little bit of networking and introduction to volumes.
 
 ## What is Kubernetes? ##
 
@@ -22,11 +24,11 @@ We can get started with a lightweight Kubernetes distribution. [K3s - 5 less tha
 
 #### What is a cluster? ####
 
-TODO
+A cluster is a group of machines, *nodes*, that work together - in this case they are part of Kubernetes cluster. Kubernetes cluster consists of at least two nodes, one worked and one master.
 
 #### Starting a cluster with k3d ####
 
-We'll use K3d to create a Kubernetes cluster inside docker containers.
+We'll use K3d to create a group of docker containers that run k3s. Thus creating our very own Kubernetes cluster.
 
 ```bash
 k3d create -w 2
@@ -535,5 +537,5 @@ Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Depl
 Ping / Pongs: 3
 ```
 
-# The punchline, or rather, a summary #
+# Summary #
 
