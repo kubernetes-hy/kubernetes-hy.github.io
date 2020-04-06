@@ -79,7 +79,7 @@ This action created a few things for us to look at: a *Deployment* and a *Pod*.
 
 #### What is a Pod? ####
 
-A *Pod* is an abstraction around one or more containers. Similarly as you've now used containers to define environments for a single process. Pods provide an context for 1..N containers so that they can share a storage and a network. They can be thought of as a container of containers. _Most_ of the same rules apply: it is deleted if the containers stop running and files will be lost with it.
+A *Pod* is an abstraction around one or more containers. Similarly as you've now used containers to define environments for a single process. Pods provide an context for 1..N containers so that they can share a storage and a network. They can be thought of as a container of containers. *Most* of the same rules apply: it is deleted if the containers stop running and files will be lost with it.
 
 TODO: Image of a pod
 
@@ -117,6 +117,7 @@ Create an application that generates a random string on startup, stores this has
 
 ```bash
 2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43
+2020-03-30T12:15:22.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43
 ```
 
 Deploy it into your kubernetes cluster and confirm that it's running with `kubectl logs ...`
@@ -267,6 +268,8 @@ deployment.apps/hashresponse-dep created
 
 Now we've opened port 8081 to our master and 8082 to one of our workers port 30080. They will be used to showcase different methods of communicating with the servers.
 
+> We will have limited amount of ports available in the future but that's ok for your own machine.
+
 > Your OS may support using the host network so no ports need to be opened.
 
 #### What is a Service? ####
@@ -382,15 +385,13 @@ hashresponse-ing   *       172.28.0.4   80      77s
 
 We can see that the ingress is listening on port 80. As we already opened port there we can access the application on http://localhost:8081.
 
-
 Exercise 3:
 
-Developing an application and using ingress
+In addition to outputting the timestamp and hash, save it to memory and display it when accessing the application via HTTP. Then use ingress to access it with a browser.
 
 Exercise 4:
 
-Microservices get started!
-Developing a second application and routing with ingress
+Develop a second application that simply responds with "pong 0" to a GET request and increases a counter (the 0) so that you can see how many requests have been sent. The counter should be in memory so it may reset at some point. Use ingress to route requests directed '/ping' to it.
 
 ## Volumes Part 1 ##
 
@@ -404,42 +405,135 @@ Where in docker and docker-compose it would essentially mean that we had somethi
 
 Before we can get started with this, we need an application that shares data with another application. In this case it will work as a method to share simple log files between each other. We'll need to develop the apps:
 
-App 1 will be the same as previously, but now generates the message also into a file named log_"timestamp".txt where "timestamp" will be accurate to one minute. So continously sending requests to the first app would generate a new file each minute with the request being a new line. My version available here: TODO
+App 1 will check if /usr/src/app/files/image.jpg exists and if not download a random image and save it as image.png. Any HTTP request will trigger a new image generation.
 
-App 2 will check all of the filenames in the folder and show the one with the most recent timestamp. In my case it will output it into stdout every 5 seconds. My version available here: TODO
+App 2 will check for /usr/src/app/files/image.jpg and show it if it is available.
+
+They share a deployment so that both of them are inside the same pod. My version available [here](https://github.com/kubernetes-hy/material-example/tree/master/app3). The example includes ingress and service to access the application.
 
 ```yaml
-        volumeMounts:
-        - mountPath: /cache
-          name: cache-volume
-      volumes:
-        - name: cache-volume
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: images-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: images
+  template:
+    metadata:
+      labels:
+        app: images
+    spec:
+      volumes: # Define volume
+        - name: shared-image
           emptyDir: {}
+      containers:
+        - name: image-finder
+          image: jakousa/dwk-app3-image-finder:a04092af0393067d08280db7a79057eaab67692b
+          volumeMounts: # Mount volume
+          - name: shared-image
+            mountPath: /usr/src/app/files
+        - name: image-response
+          image: jakousa/dwk-app3-image-response:31a78aec1090d7ea44446d2f9af621a2c59efe72
+          volumeMounts: # Mount volume
+          - name: shared-image
+            mountPath: /usr/src/app/files
 ```
+
+As the display is depenant on the volume we can confirm that it works by accessing the image-response and getting the image. The provided ingress used the previously opened port http://localhost:8081
 
 Note that all data is lost when the pod goes down.
 
 Exercise 5:
 
+Split the application of exercise 3 into two different services: 
+
+One generates a new timestamp every 5 seconds and saves it into a file. The other reads that file and outputs it with its hash.
+
 ### Persistent Volumes ###
 
-This type of storage is what you had in mind when we started talking about volumes. Unfortunately we're quite limited with the options here and will return to *PersistentVolumes* in Part 3 with GKE.
+This type of storage is what you probably had in mind when we started talking about volumes. Unfortunately we're quite limited with the options here and will return to *PersistentVolumes* in Part 3 with GKE.
 
 The reason for the difficulty is because you should not store data with the application or create a dependency to the filesystem by the application. Kubernetes supports cloud providers very well and you can run your own storage system. During this course we are not going to run our own storage system as that would be a huge undertaking and most likely "in real life" you are going to use something hosted by a cloud provider. This topic would probably be a part of its own, but let's scratch the surface and try something you can use to run something at home.
 
+A *local* volume is a *PersistentVolume* that binds a path from the node to use as a storage. This ties the volume to the node.
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: example-pv
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi # Could be e.q. 500Gi. Small amount is to preserve space when testing locally
+  volumeMode: Filesystem # This declares that it will be mounted into pods as a directory
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  local:
+    path: /tmp/kube
+  nodeAffinity: ## This is only required for local, it defines which nodes can access it
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k3d-k3s-default-worker-0
 ```
 
+> As this is bound into that node avoid using this in production.
+
+The type *local* we're using now can not be dynamically provisioned. A new *PersistentVolume* needs to be defined only rarely, for example to your personal cluster once a new physical disk is added. After that a *PersistentVolumeClaim* is used to claim a part of the storage for an application.
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: image-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
 ```
 
-This binds the pod into that node, with the disk space used from that node. Do not use this in production.
+Let's apply a modified deplyment that uses it:
 
-If you are interested in learning more about running your own storage you can check out
+```bash
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
+```
+
+With the previous service and ingress we can access it from http://localhost:8081. To confirm that the data is persistent we can run
+
+```bash
+$ kubectl delete -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
+deployment.apps "images-dep" deleted
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
+deployment.apps/images-dep created
+```
+
+And the same file is available again.
+
+If you are interested in learning more about running your own storage you can check out.
 
 [StorageOS](https://storageos.com/)
 
 Exercise 6:
 
-Since
+**Keep the PersistentVolume file in this exercise separated from the developed application. We won't use local persistent volume after this exercise.**
+
+Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment*. *PersistentVolume* is not application specific so you should keep that separated. In the end the two pods should share a persistent volume between the two applications from exercise 3 and exercise 4. Save the number of requests to ping into a file in the volume and output it with the timestamp and hash when sending a request to our first application. So the output should be:
+
+```
+2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.
+Ping / Pongs: 3
+```
 
 # The punchline, or rather, a summary #
 
