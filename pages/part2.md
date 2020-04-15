@@ -23,6 +23,8 @@ Ping / Pongs: 3
 
 ## CronJobs ##
 
+## StatefulSets ##
+
 ## Monitoring and updating ##
 
 # Summary #
