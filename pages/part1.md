@@ -6,6 +6,8 @@ permalink: /part1/
 order: 1
 ---
 
+TODO Label the applications we're developing so it's easier to follow the exercises
+
 TODO images
 
 In this part we'll go over a lot of things you need to get yourself started with using Kubernetes. This includes terminology, your first deploy, a little bit of networking and introduction to volumes.
@@ -407,7 +409,8 @@ In addition to outputting the timestamp and hash, save it to memory and display 
 <div class="exercise" markdown="1">
 Exercise 4:
 
-Develop a second application that simply responds with "pong 0" to a GET request and increases a counter (the 0) so that you can see how many requests have been sent. The counter should be in memory so it may reset at some point. Use ingress to route requests directed '/ping' to it.
+Develop a second application that simply responds with "pong 0" to a GET request and increases a counter (the 0) so that you can see how many requests have been sent. The counter should be in memory so it may reset at some point.
+Create a new deployment for it and use ingress to route requests directed '/ping' to it.
 </div>
 
 ## Volumes Part 1 ##
@@ -467,14 +470,15 @@ Note that all data is lost when the pod goes down.
 <div class="exercise" markdown="1">
 Exercise 5:
 
-Split the application of exercise 3 into two different services: 
+Split the application of exercise 3 into two different containers:
 
-One generates a new timestamp every 5 seconds and saves it into a file. The other reads that file and outputs it with its hash.
+One generates a new timestamp every 5 seconds and saves it into a file.
+The other reads that file and outputs it with its hash.
 </div>
 
 ### Persistent Volumes ###
 
-This type of storage is what you probably had in mind when we started talking about volumes. Unfortunately we're quite limited with the options here and will return to *PersistentVolumes* in Part 3 with GKE.
+This type of storage is what you probably had in mind when we started talking about volumes. Unfortunately we're quite limited with the options here and will return to *PersistentVolumes* briefly in Part 2 and again in Part 3 with GKE.
 
 The reason for the difficulty is because you should not store data with the application or create a dependency to the filesystem by the application. Kubernetes supports cloud providers very well and you can run your own storage system. During this course we are not going to run our own storage system as that would be a huge undertaking and most likely "in real life" you are going to use something hosted by a cloud provider. This topic would probably be a part of its own, but let's scratch the surface and try something you can use to run something at home.
 
@@ -538,7 +542,7 @@ $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-exam
   deployment.apps/images-dep created
 ```
 
-And the same file is available again.
+And the same file is available again. We'll learn more why you should avoid using persistent volumes with deployments like this in part 2.
 
 If you are interested in learning more about running your own storage you can check out.
 
