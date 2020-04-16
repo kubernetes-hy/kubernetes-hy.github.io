@@ -24,23 +24,24 @@ We can get started with a lightweight Kubernetes distribution. [K3s - 5 less tha
 
 #### What is a cluster? ####
 
-A cluster is a group of machines, *nodes*, that work together - in this case they are part of Kubernetes cluster. Kubernetes cluster consists of at least two nodes, one worked and one master.
+A cluster is a group of machines, *nodes*, that work together - in this case they are part of Kubernetes cluster. Kubernetes cluster consists of at least two nodes, one worker and one master.
 
 #### Starting a cluster with k3d ####
 
 We'll use K3d to create a group of docker containers that run k3s. Thus creating our very own Kubernetes cluster.
 
-```bash
-k3d create -w 2
+```console
+$ k3d create -w 2
 ```
 
 This created a kubernetes cluster with 2 worker nodes. As they're in docker you can confirm that they exist with `docker ps`.
 
-```bash
-CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS                    NAMES
-57f8952c0cb3        rancher/k3s:v1.0.1   "/bin/k3s agent"         7 seconds ago       Up 6 seconds                                 k3d-k3s-default-worker-1
-324954c08977        rancher/k3s:v1.0.1   "/bin/k3s agent"         9 seconds ago       Up 7 seconds                                 k3d-k3s-default-worker-0
-088cd949015e        rancher/k3s:v1.0.1   "/bin/k3s server --h…"   10 seconds ago      Up 8 seconds        0.0.0.0:6443->6443/tcp   k3d-k3s-default-server
+```console
+$ docker ps
+  CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS                    NAMES
+  57f8952c0cb3        rancher/k3s:v1.0.1   "/bin/k3s agent"         7 seconds ago       Up 6 seconds                                 k3d-k3s-default-worker-1
+  324954c08977        rancher/k3s:v1.0.1   "/bin/k3s agent"         9 seconds ago       Up 7 seconds                                 k3d-k3s-default-worker-0
+  088cd949015e        rancher/k3s:v1.0.1   "/bin/k3s server --h…"   10 seconds ago      Up 8 seconds        0.0.0.0:6443->6443/tcp   k3d-k3s-default-server
 ```
 
 Here we also see that port 6443 is opened to "k3d-k3s-default-server", our master node, and that's how we can access the contents of the cluster. K3d helpfully set up a *kubeconfig*, the location of which is output by `k3d get-kubeconfig --name='k3s-default'`. kubectl will read kubeconfig from the location in KUBECONFIG environment value so set it: `export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"`.
@@ -59,7 +60,7 @@ I've prepared one [here](https://github.com/kubernetes-hy/material-example/tree/
 
 To deploy we need the cluster to have an access to the image. K3d offers `import-images` command, but since that won't work when we go to non-k3d solutions we'll use the now very familiar registry *Docker Hub*.
 
-```bash
+```console
 $ docker tag _image_ _username_/_image_
 $ docker push _username_/_image_
 ```
@@ -72,9 +73,9 @@ Now we're finally ready to deploy our first app into Kubernetes!
 
 To deploy an application we'll need to create a *Deployment* with the image.
 
-```bash
+```console
 $ kubectl create deployment hashgenerator-dep --image=jakousa/dwk-app1
-deployment.apps/hashgenerator-dep created
+  deployment.apps/hashgenerator-dep created
 ```
 
 This action created a few things for us to look at: a *Deployment* and a *Pod*.
@@ -92,17 +93,17 @@ A *Deployment* takes care of deployment. It's a way to tell Kubernetes what cont
 The Deployment also created a *ReplicaSet*, which is a way to tell how many replicas of a Pod you want. It will delete or create Pods until the the number of Pods you wanted are running. ReplicaSets are managed by Deployments and you should not have to manually define or modify them.
 
 You can view the deployment:
-```bash
+```console
 $ kubectl get deployments
-NAME                READY   UP-TO-DATE   AVAILABLE   AGE
-hashgenerator-dep   1/1     1            1           54s
+  NAME                READY   UP-TO-DATE   AVAILABLE   AGE
+  hashgenerator-dep   1/1     1            1           54s
 ```
 
 And the pods:
-```bash
+```console
 $ kubectl get pods
-NAME                               READY   STATUS    RESTARTS   AGE
-hashgenerator-dep-6965c5c7-2pkxc   1/1     Running   0          2m1s
+  NAME                               READY   STATUS    RESTARTS   AGE
+  hashgenerator-dep-6965c5c7-2pkxc   1/1     Running   0          2m1s
 ```
 
 1/1 replicas are ready and it's status is Running! We will try multiple replicas later.
@@ -111,38 +112,44 @@ To see the output we can run `kubectl logs -f hashgenerator-dep-6965c5c7-2pkxc`
 
 A helpful list for other commands from docker-cli translated to kubectl is available here [https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/](https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/)
 
+<div class="exercise" markdown="1">
 Exercise 1:
 
-**Exercises can be done with any language and framework you want. We'll get to submitting the exercises when you have the application in a sufficient state.**
+**Exercises can be done with any language and framework you want. We'll get to submitting theexercises when you have the application in a sufficient state.**
 
-Create an application that generates a random string on startup, stores this hash into memory and outputs it every 5 seconds with a timestamp. e.g.
+Create an application that generates a random string on startup, stores this hash into memory andoutputs it every 5 seconds with a timestamp. e.g.
 
-```bash
+```plaintext
 2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43
 2020-03-30T12:15:22.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43
 ```
 
 Deploy it into your kubernetes cluster and confirm that it's running with `kubectl logs ...`
+</div>
 
 ## Declarative configuration with YAML ##
 
 We created the deployment with 
 
-`$ kubectl create deployment hashgenerator-dep --image=jakousa/dwk-app1`.
+```console
+$ kubectl create deployment hashgenerator-dep --image=jakousa/dwk-app1
+```
 
 If we wanted to scale it 4 times and update the image:
 
-`$ kubectl scale deployment/hashgenerator-dep --replicas=4`
+```console
+$ kubectl scale deployment/hashgenerator-dep --replicas=4`
 
-`$ kubectl set image deployment/hashgenerator-dep dwk-app1=jakousa/dwk-app1:78031863af07c4c4cc3c96d07af68e8ce6e3afba`
+$ kubectl set image deployment/hashgenerator-dep dwk-app1=jakousa/dwk-app1:78031863af07c4c4cc3c96d07af68e8ce6e3afba`
+```
 
 Things start to get really cumbersome. In the dark ages deployments were created similarly by running commands after each other in a "correct" order. We'll now use a declarative approach, where we define how things should be, rather than iterative is more sustainable in the long term.
 
 Before redoing the previous let's take the deployment down.
 
-```bash
+```console
 $ kubectl delete deployment hashgenerator-dep
-deployment.apps "hashgenerator-dep" deleted
+  deployment.apps "hashgenerator-dep" deleted
 ```
 
 and create a new folder named `manifests` to the project and a file called deployment.yaml with the following contents (you can check the example [here](https://github.com/kubernetes-hy/material-example/tree/master/app1)): 
@@ -169,7 +176,7 @@ spec:
 
 > I personally use vscode to create these yaml files. It has helpful autofill, definitions and syntax check for Kubernetes with the extension Kubernetes by Microsoft. Even now it helpfully warns us that we haven't defined resource limitations.
 
-This looks a lot like the docker-compose.ymls we have previously written. Let's ignore what we don't know for now (mainly labels) and focus on the things that we know:
+This looks a lot like the docker-compose.ymls we have previously written. Let's ignore what we don't know for now, which is mainly labels, and focus on the things that we know:
 
 * We're declaring what kind it is (kind: Deployment)
 * We're declaring it a name as metadata (name: hashgenerator-dep)
@@ -178,26 +185,30 @@ This looks a lot like the docker-compose.ymls we have previously written. Let's 
 
 Apply the deployment with `apply` command:
 
-```bash
+```console
 $ kubectl apply -f manifests/deployment.yaml
-deployment.apps/hashgenerator-dep created
+  deployment.apps/hashgenerator-dep created
 ```
 
 That's it, but for revisions sake lets delete it and create it again:
 
-```bash
+```console
 $ kubectl delete -f manifests/deployment.yaml
-deployment.apps "hashgenerator-dep" deleted
+  deployment.apps "hashgenerator-dep" deleted
 
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app1/manifests/deployment.yaml
-deployment.apps/hashgenerator-dep created
+  deployment.apps/hashgenerator-dep created
 ```
 
 Woah! The fact that you can apply manifest from the internet just like that will come in handy.
 
+<div class="exercise" markdown="1">
+
 Exercise 2:
 
 In your project create the folder for manifests and move your deployment into a declarative file. Make sure everything still works by restarting and following logs.
+
+</div>
 
 ## Networking Part 1 ##
 
@@ -209,24 +220,24 @@ Let's develop our application so that it has a HTTP server responding with two h
 
 I've prepared one [here](https://github.com/kubernetes-hy/material-example/tree/master/app2). By default it will listen on port 3000.
 
-```bash
+```console
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app2/manifests/deployment.yaml
-deployment.apps/hashresponse-dep created
+  deployment.apps/hashresponse-dep created
 ```
 
 ### Connecting from outside of the cluster ###
 
 We can confirm that the hashresponse-dep is working with `port-forward` command. Let's see the name of the pod first and then port forward there:
 
-```bash
-$ kubectl get po # Not a typo
-NAME                                READY   STATUS    RESTARTS   AGE
-hashgenerator-dep-5cbbf97d5-z2ct9   1/1     Running   0          20h
-hashresponse-dep-57bcc888d7-dj5vk   1/1     Running   0          19h
+```console
+$ kubectl get po
+  NAME                                READY   STATUS    RESTARTS   AGE
+  hashgenerator-dep-5cbbf97d5-z2ct9   1/1     Running   0          20h
+  hashresponse-dep-57bcc888d7-dj5vk   1/1     Running   0          19h
 
-$ kubectl port-forward hashresponse-dep-57bcc888d7-dj5vk 3003:3000 # Local:Pod
-Forwarding from 127.0.0.1:3003 -> 3000
-Forwarding from [::1]:3003 -> 3000
+$ kubectl port-forward hashresponse-dep-57bcc888d7-dj5vk 3003:3000
+  Forwarding from 127.0.0.1:3003 -> 3000
+  Forwarding from [::1]:3003 -> 3000
 ```
 
 Now we can view the response from http://localhost:3003 and confirm that it is working as expected.
@@ -240,32 +251,32 @@ Opening a route from outside of the cluster to the pod will not be enough as we 
 
 To illustrate:
 
-```
+```console
 $ docker ps
-CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS                    NAMES
-83dde7d5fcac        rancher/k3s:v1.0.1   "/bin/k3s agent"         3 days ago          Up 23 hours                                  k3d-k3s-default-worker-1
-00b2dff4b2a9        rancher/k3s:v1.0.1   "/bin/k3s agent"         3 days ago          Up 23 hours                                  k3d-k3s-default-worker-0
-6a3bef5af379        rancher/k3s:v1.0.1   "/bin/k3s server --h…"   3 days ago          Up 23 hours         0.0.0.0:6443->6443/tcp   k3d-k3s-default-server
+  CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS                    NAMES
+  83dde7d5fcac        rancher/k3s:v1.0.1   "/bin/k3s agent"         3 days ago          Up 23 hours                                  k3d-k3s-default-worker-1
+  00b2dff4b2a9        rancher/k3s:v1.0.1   "/bin/k3s agent"         3 days ago          Up 23 hours                                  k3d-k3s-default-worker-0
+  6a3bef5af379        rancher/k3s:v1.0.1   "/bin/k3s server --h…"   3 days ago          Up 23 hours         0.0.0.0:6443->6443/tcp   k3d-k3s-default-server
 ```
 
 As you can see only port 6443 is open (this is used by kubectl). Let's delete our old cluster and create a new one with ports 8081 and 8082 open:
 
-```
+```console
 $ k3d delete
-INFO[0000] Removing cluster [k3s-default]               
-INFO[0000] ...Removing 2 workers                        
-INFO[0022] ...Removing server                           
-INFO[0036] ...Removing docker image volume              
-INFO[0036] Removed cluster [k3s-default]
+  INFO[0000] Removing cluster [k3s-default]               
+  INFO[0000] ...Removing 2 workers                        
+  INFO[0022] ...Removing server                           
+  INFO[0036] ...Removing docker image volume              
+  INFO[0036] Removed cluster [k3s-default]
 
 $ k3d create --publish 8081:80 --publish 8082:30080@k3d-k3s-default-worker-0 --workers 2
-INFO[0000] Created cluster network with ID 903e292db40363804d315ff9543414e58cf1bbdb5985c5e61b9941ed4bc29679 
-INFO[0000] Created docker volume  k3d-k3s-default-images
-...
+  INFO[0000] Created cluster network with ID   903e292db40363804d315ff9543414e58cf1bbdb5985c5e61b9941ed4bc29679 
+  INFO[0000] Created docker volume  k3d-k3s-default-images
+  ...
 
 $ export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app2/manifests/deployment.yaml
-deployment.apps/hashresponse-dep created
+  deployment.apps/hashresponse-dep created
 ```
 
 Now we've opened port 8081 to our master and 8082 to one of our workers port 30080. They will be used to showcase different methods of communicating with the servers.
@@ -304,9 +315,9 @@ spec:
       targetPort: 3000 # This is the target port
 ```
 
-```bash
+```console
 $ kubectl apply -f manifests/service.yaml
-service/hashresponse-svc created
+  service/hashresponse-svc created
 ```
 
 As we've published 8082 as 30080 we can access it now via http://localhost:8082.
@@ -323,7 +334,7 @@ Incoming Network Access resource *Ingress* is completely different type of resou
 
 This will require us to create two new resources. Ingress will route incoming traffic again to *Services*, but the old nodeport Service won't do. 
 
-```bash
+```console
 $ kubectl delete -f manifests/service.yaml
 service "hashresponse-svc" deleted
 ```
@@ -369,31 +380,35 @@ spec:
 
 Then we can apply everything and view the result
 
-```bash
+```console
 $ kubectl apply -f manifests/service.yml
-service/hashresponse-svc created
+  service/hashresponse-svc created
 $ kubectl apply -f manifests/ingress.yml
-ingress.extensions/hashresponse-ing created
+  ingress.extensions/hashresponse-ing created
 
 $ kubectl get svc
-NAME               TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
-kubernetes         ClusterIP   10.43.0.1      <none>        443/TCP    23h
-hashresponse-svc   ClusterIP   10.43.236.27   <none>        2345/TCP   4m23s
+  NAME               TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+  kubernetes         ClusterIP   10.43.0.1      <none>        443/TCP    23h
+  hashresponse-svc   ClusterIP   10.43.236.27   <none>        2345/TCP   4m23s
 
 $ kubectl get ing
-NAME               HOSTS   ADDRESS      PORTS   AGE
-hashresponse-ing   *       172.28.0.4   80      77s
+  NAME               HOSTS   ADDRESS      PORTS   AGE
+  hashresponse-ing   *       172.28.0.4   80      77s
 ```
 
 We can see that the ingress is listening on port 80. As we already opened port there we can access the application on http://localhost:8081.
 
+<div class="exercise" markdown="1">
 Exercise 3:
 
 In addition to outputting the timestamp and hash, save it to memory and display it when accessing the application via HTTP. Then use ingress to access it with a browser.
+</div>
 
+<div class="exercise" markdown="1">
 Exercise 4:
 
 Develop a second application that simply responds with "pong 0" to a GET request and increases a counter (the 0) so that you can see how many requests have been sent. The counter should be in memory so it may reset at some point. Use ingress to route requests directed '/ping' to it.
+</div>
 
 ## Volumes Part 1 ##
 
@@ -448,11 +463,14 @@ As the display is depenant on the volume we can confirm that it works by accessi
 
 Note that all data is lost when the pod goes down.
 
+
+<div class="exercise" markdown="1">
 Exercise 5:
 
 Split the application of exercise 3 into two different services: 
 
 One generates a new timestamp every 5 seconds and saves it into a file. The other reads that file and outputs it with its hash.
+</div>
 
 ### Persistent Volumes ###
 
@@ -507,17 +525,17 @@ spec:
 
 Let's apply a modified deplyment that uses it:
 
-```bash
+```console
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
 ```
 
 With the previous service and ingress we can access it from http://localhost:8081. To confirm that the data is persistent we can run
 
-```bash
+```console
 $ kubectl delete -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
-deployment.apps "images-dep" deleted
+  deployment.apps "images-dep" deleted
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
-deployment.apps/images-dep created
+  deployment.apps/images-dep created
 ```
 
 And the same file is available again.
@@ -526,16 +544,18 @@ If you are interested in learning more about running your own storage you can ch
 
 [StorageOS](https://storageos.com/)
 
+<div class="exercise" markdown="1">
 Exercise 6:
 
 **Keep the PersistentVolume file in this exercise separated from the developed application. We won't use local persistent volume after this exercise.**
 
 Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment*. *PersistentVolume* is not application specific so you should keep that separated. In the end the two pods should share a persistent volume between the two applications from exercise 3 and exercise 4. Save the number of requests to ping into a file in the volume and output it with the timestamp and hash when sending a request to our first application. So the output should be:
 
-```
+```plaintext
 2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.
 Ping / Pongs: 3
 ```
+</div>
 
 # Summary #
 
