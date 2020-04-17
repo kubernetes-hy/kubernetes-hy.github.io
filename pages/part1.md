@@ -542,7 +542,7 @@ $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-exam
   deployment.apps/images-dep created
 ```
 
-And the same file is available again. We'll learn more why you should avoid using persistent volumes with deployments like this in part 2.
+And the same file is available again.
 
 If you are interested in learning more about running your own storage you can check out.
 
