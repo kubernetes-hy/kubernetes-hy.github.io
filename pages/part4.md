@@ -8,7 +8,9 @@ order: 4
 
 ## ##
 
-## Monitoring ##
+## Monitoring part 2 ##
+
+### Grafana ###
 
 ## Nats ##
 
