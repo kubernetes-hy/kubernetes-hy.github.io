@@ -74,6 +74,11 @@ todo: this
 ```
 
 TODO: exercise where confimap is read as a feature toggle
+<div class="exercise" markdown="1">
+Exercise 8:
+
+Feature toggle
+</div>
 
 ## StatefulSets ##
 
@@ -91,6 +96,8 @@ todo: this
 ```
 
 <div class="exercise" markdown="1">
+Exercise 9:
+
 Let's run a postgres database and save some information there.
 </div>
 
