@@ -369,7 +369,7 @@ For resource 2 the new *Ingress*.
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: hashresponse-ing
+  name: dwk-material-ingress
 spec:
   rules:
   - http:
@@ -386,7 +386,7 @@ Then we can apply everything and view the result
 $ kubectl apply -f manifests/service.yml
   service/hashresponse-svc created
 $ kubectl apply -f manifests/ingress.yml
-  ingress.extensions/hashresponse-ing created
+  ingress.extensions/dwk-material-ingress created
 
 $ kubectl get svc
   NAME               TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
@@ -394,8 +394,8 @@ $ kubectl get svc
   hashresponse-svc   ClusterIP   10.43.236.27   <none>        2345/TCP   4m23s
 
 $ kubectl get ing
-  NAME               HOSTS   ADDRESS      PORTS   AGE
-  hashresponse-ing   *       172.28.0.4   80      77s
+  NAME                    HOSTS   ADDRESS      PORTS   AGE
+  dwk-material-ingress    *       172.28.0.4   80      77s
 ```
 
 We can see that the ingress is listening on port 80. As we already opened port there we can access the application on http://localhost:8081.
