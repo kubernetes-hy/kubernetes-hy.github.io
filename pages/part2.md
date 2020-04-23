@@ -17,7 +17,7 @@ Kubernetes includes a DNS service so communication between pods and containers i
 <div class="exercise" markdown="1">
 Exercise 7:
 
-Connect the two applications from exercise 3 and exercise 4. Instead of sharing data via files use HTTP endpoints to respond with the number of pongs. Deprecate all of the volumes for the time being. The output will stay the same:
+Connect the main application and ping/pong application. Instead of sharing data via files use HTTP endpoints to respond with the number of pongs. Deprecate all of the volumes for the time being. The output will stay the same:
 
 ```
 2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.
@@ -88,24 +88,77 @@ Both can be used to introduce variables: Secrets for things like api keys and Co
 Let's use [pixabay](https://pixabay.com/) to display images on a simple web app. We will need to utilize authentication with api key.
 The api docs are good, we just need to log in to get ourselves a key here https://pixabay.com/api/docs/.
 
-Here's the app available
+Here's the app available. The application requires a API_KEY environment variable.
+
 ```console
-$ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app4/manifests/deployment.yaml 
-                -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app4/manifests/ingress.yaml 
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app4/manifests/deployment.yaml \
+                -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app4/manifests/ingress.yaml \
                 -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app4/manifests/service.yaml
 ```
 
-Let's use secret to pass the api key to the application. For this application we need to forcibly restart it after setting the secret.
+The requirement for an environment variable inside a secret is added to the deployment like so
 
 ```yml
-todo: this
+          envFrom:
+          - secretRef:
+              name: pixabay-apikey
 ```
 
+The application won't run at first and we can see the reason with `kubectl get po` and a more detailed with `kubectl describe pod imageapi-dep-...`.
+
+Let's use secret to pass the api key environment variable to the application. 
+
+Secrets use base64 encoding to avoid having to deal with special characters. We would like to use encryption to avoid printing our API_KEY for the world to see but for the sake of testing create and apply a new file secret.yml with the following:
+
+```yml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pixabay-apikey
+data:
+  API_KEY: aHR0cDovL3d3dy55b3V0dWJlLmNvbS93YXRjaD92PWRRdzR3OVdnWGNR # base64 encoded should look something like this, note that this won't work
+```
+
+As the containers are already instructed to use the environment from the secret using it happens automatically. We can now confirm that the app is working and then delete the old secret.
+
+For encrypted secrets let's use ("Sealed Secrets")[https://github.com/bitnami-labs/sealed-secrets]. It seems to be a solution until proven otherwise. We need to install it into our local machine as well as to our cluster. Install (instructions)[https://github.com/bitnami-labs/sealed-secrets/releases] are simple: apply the correct version to kube-system namespace.
+
+```console
+$ kubectl apply -f https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.12.1/controller.yaml
+```
+
+It may take a while to start but after that it's ready to convert your secret into a sealed secret and apply it. Before that confirm that we didn't forget to remove the old secret.
+
+```console
+$ kubectl get secrets
+  NAME                  TYPE                                  DATA   AGE
+  default-token-jfr7n   kubernetes.io/service-account-token   3      36m
+
+$ kubeseal -o yaml < secret.yaml > sealedsecret.yaml
+$ kubectl apply -f sealedsecret.yaml
+$ kubectl get secrets
+  NAME                  TYPE                                  DATA   AGE
+  default-token-jfr7n   kubernetes.io/service-account-token   3      37m
+  pixabay-apikey        Opaque                                1      2s
+```
+
+To confirm everything is working we can delete the pod and let it restart with the new environment variable `kubectl delete po imageapi-dep-...`. Using *SealedSecret* was our first time using a custom resource - you can design your own with the help of the Kubernetes (documentation)[https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/].
+
+ConfigMaps are similar but the data doesn't have to be encoded and is not encrypted.
+
 <div class="exercise" markdown="1">
-Exercise 9:
+Exercise 9: Documentation and ConfigMaps
+
+Use the official Kubernetes documentation for this exercise. (https://kubernetes.io/docs/concepts/configuration/configmap/)[https://kubernetes.io/docs/concepts/configuration/configmap/] and (https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/)[https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/] should contain everything you need.
 
 Create a ConfigMap for a "dotenv file". A file where you define environment variables that are loaded by the application.
-For this use an environment variable "MESSAGE" with value "Hello" 
+For this use an environment variable "MESSAGE" with value "Hello" to test and print the value. Implementation is up to you but the output should look like this:
+
+```plaintext
+Hello
+2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.
+Ping / Pongs: 3
+```
 </div>
 
 ## StatefulSets ##
@@ -116,17 +169,52 @@ In part 1 we learned how volumes are used with PersistentVolumes and PersistentV
 
 > Deployment creates pods using a Resource called "ReplicaSet". We're using ReplicaSets through Deployments.
 
-Let's run mongo database and save some information there.
+Let's run redis and save some information there. We're going to need a PersistentVolume as well as an application that utilizes the redis.
 
-TODO: mongo database and connection using Secret from previous section
+You can apply everything from `https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app5/manifests/everything.yaml`
+
 ```yml
-todo: this
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-ss
+spec:
+  serviceName: redis
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:5.0
+          ports:
+            - name: web
+              containerPort: 6379
+          volumeMounts:
+            - name: data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-storage
+        resources:
+          requests:
+            storage: 400Mi
 ```
+
+Looks a lot like *Deployment* but uses volumeClaimTemplate to claim a volume for each pod.
 
 <div class="exercise" markdown="1">
 Exercise 10:
 
-Let's run a postgres database and save some information there.
+Let's run a postgres database and save the ping/pong application counter into the database. It may disappear with the cluster but it should now survive even if all pods are taken down.
 </div>
 
 ## CronJobs ##

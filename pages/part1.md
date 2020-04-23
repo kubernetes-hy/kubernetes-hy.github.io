@@ -127,6 +127,8 @@ Create an application that generates a random string on startup, stores this has
 ```
 
 Deploy it into your kubernetes cluster and confirm that it's running with `kubectl logs ...`
+
+In the future exercises this application will be referred too as "Main application"
 </div>
 
 ## Declarative configuration with YAML ##
@@ -208,7 +210,7 @@ Woah! The fact that you can apply manifest from the internet just like that will
 
 Exercise 2:
 
-In your project create the folder for manifests and move your deployment into a declarative file. Make sure everything still works by restarting and following logs.
+In your main application project create the folder for manifests and move your deployment into a declarative file. Make sure everything still works by restarting and following logs.
 
 </div>
 
@@ -403,7 +405,7 @@ We can see that the ingress is listening on port 80. As we already opened port t
 <div class="exercise" markdown="1">
 Exercise 3:
 
-In addition to outputting the timestamp and hash, save it to memory and display it when accessing the application via HTTP. Then use ingress to access it with a browser.
+In addition to outputting the timestamp and hash, save it to memory and display it when accessing the main application via HTTP. Then use ingress to access it with a browser.
 </div>
 
 <div class="exercise" markdown="1">
@@ -411,6 +413,8 @@ Exercise 4:
 
 Develop a second application that simply responds with "pong 0" to a GET request and increases a counter (the 0) so that you can see how many requests have been sent. The counter should be in memory so it may reset at some point.
 Create a new deployment for it and use ingress to route requests directed '/ping' to it.
+
+In future exercises this second application will be referred to as "ping/pong application"
 </div>
 
 ## Volumes Part 1 ##
@@ -470,10 +474,10 @@ Note that all data is lost when the pod goes down.
 <div class="exercise" markdown="1">
 Exercise 5:
 
-Split the application of exercise 3 into two different containers:
+Split the main application into two different containers:
 
 One generates a new timestamp every 5 seconds and saves it into a file.
-The other reads that file and outputs it with its hash.
+The other reads that file and outputs it with its hash for the user to see.
 </div>
 
 ### Persistent Volumes ###
@@ -496,7 +500,6 @@ spec:
   volumeMode: Filesystem # This declares that it will be mounted into pods as a directory
   accessModes:
   - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
   local:
     path: /tmp/kube
   nodeAffinity: ## This is only required for local, it defines which nodes can access it
@@ -551,9 +554,7 @@ If you are interested in learning more about running your own storage you can ch
 <div class="exercise" markdown="1">
 Exercise 6:
 
-**Keep the PersistentVolume file in this exercise separated from the developed application. We won't use local persistent volume after this exercise.**
-
-Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment*. *PersistentVolume* is not application specific so you should keep that separated. In the end the two pods should share a persistent volume between the two applications from exercise 3 and exercise 4. Save the number of requests to ping into a file in the volume and output it with the timestamp and hash when sending a request to our first application. So the output should be:
+Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment*. *PersistentVolume* is not application specific so you should keep that separated. In the end the two pods should share a persistent volume between the two applications from exercise 3 and exercise 4. Save the number of requests to ping / pong application into a file in the volume and output it with the timestamp and hash when sending a request to our main application. So the browser should display the following when accessing main application:
 
 ```plaintext
 2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.
