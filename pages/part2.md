@@ -12,12 +12,18 @@ In this part TODO
 
 In part 1 we managed to setup networking configuration to enable routing traffic from outside of the cluster to a container inside a pod. In Part 2 we'll focus on communication between applications.
 
-Kubernetes includes a DNS service so communication between pods and containers in Kubernetes is as much of a challenge as it was with containers in docker-compose. Use the container name to refer to a container in a pod, this way containers can communicate with each other in a pod. Or use a *Service* to communicate between pods.
+Kubernetes includes a DNS service so communication between pods and containers in Kubernetes is as much of a challenge as it was with containers in docker-compose. Containers in a pod share the network. As such every other container inside a pod is accessible from `localhost`. For communication between Pods a *Service* is used.
+
+> Alternatively each Pod has an IP created by Kubernetes
 
 <div class="exercise" markdown="1">
 Exercise 7:
 
-Connect the main application and ping/pong application. Instead of sharing data via files use HTTP endpoints to respond with the number of pongs. Deprecate all of the volumes for the time being. The output will stay the same:
+Connect the main application and ping/pong application. Instead of sharing data via files use HTTP endpoints to respond with the number of pongs. Deprecate all of the volumes for the time being. 
+
+Create a *Service* and implement the communication.
+
+The output will stay the same:
 
 ```
 2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.
@@ -142,14 +148,14 @@ $ kubectl get secrets
   pixabay-apikey        Opaque                                1      2s
 ```
 
-To confirm everything is working we can delete the pod and let it restart with the new environment variable `kubectl delete po imageapi-dep-...`. Using *SealedSecret* was our first time using a custom resource - you can design your own with the help of the Kubernetes (documentation)[https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/].
+To confirm everything is working we can delete the pod and let it restart with the new environment variable `kubectl delete po imageapi-dep-...`. Using *SealedSecret* was our first time using a custom resource - you can design your own with the help of the Kubernetes [documentation](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/).
 
 ConfigMaps are similar but the data doesn't have to be encoded and is not encrypted.
 
 <div class="exercise" markdown="1">
 Exercise 9: Documentation and ConfigMaps
 
-Use the official Kubernetes documentation for this exercise. (https://kubernetes.io/docs/concepts/configuration/configmap/)[https://kubernetes.io/docs/concepts/configuration/configmap/] and (https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/)[https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/] should contain everything you need.
+Use the official Kubernetes documentation for this exercise. [https://kubernetes.io/docs/concepts/configuration/configmap/](https://kubernetes.io/docs/concepts/configuration/configmap/) and [https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) should contain everything you need.
 
 Create a ConfigMap for a "dotenv file". A file where you define environment variables that are loaded by the application.
 For this use an environment variable "MESSAGE" with value "Hello" to test and print the value. Implementation is up to you but the output should look like this:
@@ -169,27 +175,43 @@ In part 1 we learned how volumes are used with PersistentVolumes and PersistentV
 
 > Deployment creates pods using a Resource called "ReplicaSet". We're using ReplicaSets through Deployments.
 
-Let's run redis and save some information there. We're going to need a PersistentVolume as well as an application that utilizes the redis.
+Let's run redis and save some information there. We're going to need a PersistentVolume as well as an application that utilizes the redis. In part 1 we jumped through a few hurdles to get ourselves a storage but k3s includes a helpful storageclass that will streamline local testing.
 
-You can apply everything from `https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app5/manifests/everything.yaml`
+You can apply the statefulset from `https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app5/manifests/statefulset.yaml`
 
 ```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-svc
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: 6379
+    name: web
+  clusterIP: None
+  selector:
+    app: redis
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: redis-ss
 spec:
   serviceName: redis
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: redis
+      app: redisapp
   template:
     metadata:
       labels:
-        app: redis
+        app: redisapp
     spec:
       containers:
+        - name: redisfiller
+          image: jakousa/dwk-app5:54203329200143875187753026f4e93a1305ae26
         - name: redis
           image: redis:5.0
           ports:
@@ -203,32 +225,79 @@ spec:
         name: data
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: local-storage
+        storageClassName: local-path
         resources:
           requests:
-            storage: 400Mi
+            storage: 100Mi
 ```
 
-Looks a lot like *Deployment* but uses volumeClaimTemplate to claim a volume for each pod.
+The Service is responsible for the network identity The redisfiller app is for us to look at. You can open two terminals and run `$ kubectl logs -f redis-ss-X redisfiller` where X is 0 or 1.
+You can delete a pod and it will continue right where you left off. In addition you can delete the statefulset and the volume will stay and bind back when you apply the statefulset back.
+
+Looks a lot like *Deployment* but uses volumeClaimTemplate to claim a volume for each pod. We can try killing either of the pods and it continue where it left off.
 
 <div class="exercise" markdown="1">
 Exercise 10:
 
-Let's run a postgres database and save the ping/pong application counter into the database. It may disappear with the cluster but it should now survive even if all pods are taken down.
+Let's run a postgres database and save the ping/pong application counter into the database. The postgres database and ping/pong application should not be in the same pod. A single postgres database is enough and it may disappear with the cluster but it should survive even if all pods are taken down.
 </div>
+
+## Monitoring ##
+
+Our cluster and the apps in in have been pretty much a black box. We've thrown stuff in and then hoped that everything works all right. We're going to use [Prometheus](https://prometheus.io/) as well as [Grafana](https://grafana.com/) to do that.
+
+Before we can get started let's look into how Kubernetes applications are managed more easily. [Helm](https://helm.sh/) uses packaging format called charts to define the dependencies of an application. Among other things Helm Charts include information for the version of the chart, the requirements of the application such as the Kubernetes version as well as other charts that it may depend on.
+
+Installation instructions are [here](https://helm.sh/docs/intro/install/). After that we can add the official charts repository:
+
+```console
+$ helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+```
+
+And after that we can install [prometheus-operator](https://hub.helm.sh/charts/stable/prometheus-operator/5.0.6). By default this would put everything to the default namespace.
+
+```console
+$ kubectl create namespace prometheus
+$ helm install stable/prometheus-operator --generate-name --namespace prometheus
+```
+
+This added a lot of stuff to our cluster. You can remove almost everything with `helm delete [name]` with the name found via `helm list`. Custom resource defitinions are left and have to be manually removed if the need arises.
+
+Lets open a way into Grafana so we can see the data.
+
+```console
+$ kubectl get po -n prometheus
+  NAME                                                              READY   STATUS    RESTARTS   AGE
+  prometheus-operator-1587733290-kube-state-metrics-78dc98dc295tn   1/1     Running   0          53s
+  prometheus-operator-1587733290-prometheus-node-exporter-ztsz8     1/1     Running   0          53s
+  prometheus-operator-1587733290-prometheus-node-exporter-grpth     1/1     Running   0          53s
+  prometheus-operator-1587733290-prometheus-node-exporter-sdc8b     1/1     Running   0          53s
+  prometheus-operator-158773-operator-64dcc96864-c9svm              2/2     Running   0          53s
+  alertmanager-prometheus-operator-158773-alertmanager-0            2/2     Running   0          34s
+  prometheus-prometheus-operator-158773-prometheus-0                3/3     Running   1          23s
+  prometheus-operator-1587733290-grafana-668cf4f5bb-k8xk7           1/2     Running   0          53s
+
+$ kubectl port-forward prometheus-operator-1587733290-grafana-668cf4f5bb-k8xk7 3000 -n prometheus
+  Forwarding from 127.0.0.1:3000 -> 3000
+  Forwarding from [::1]:3000 -> 3000
+```
+
+Access [http://localhost:3000](http://localhost:3000) with browser and use the credentials admin / prom-operator. At the top left you can browse different dashboards.
+
+## Compute Resources ##
+
+## Updating ##
+
+## DaemonSets ##
 
 ## CronJobs ##
 
-Now that we have a database we might as well learn how to create backups of it. *CronJobs* run a container on schedule.
+*CronJobs* run a container on schedule. You may have used cron before, these are essentially the same.
 
-```yml
-todo: this
-```
+<div class="exercise" markdown="1"> 
+Exercise XX:
 
-## Monitoring and updating ##
-
-### DaemonSets ###
-
-## Compute Resources ##
+Now that we have a database we might as well create backups of it. Go to Kubernetes documentation and find instructions on how CronJobs work. 
+</div>
 
 # Summary #
