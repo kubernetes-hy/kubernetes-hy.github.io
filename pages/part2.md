@@ -244,7 +244,7 @@ Let's run a postgres database and save the ping/pong application counter into th
 
 ## Monitoring ##
 
-Our cluster and the apps in in have been pretty much a black box. We've thrown stuff in and then hoped that everything works all right. We're going to use [Prometheus](https://prometheus.io/) as well as [Grafana](https://grafana.com/) to do that.
+Our cluster and the apps in in have been pretty much a black box. We've thrown stuff in and then hoped that everything works all right. We're going to use [Prometheus](https://prometheus.io/) to monitor the cluster and [Grafana](https://grafana.com/) to view the data.
 
 Before we can get started let's look into how Kubernetes applications are managed more easily. [Helm](https://helm.sh/) uses packaging format called charts to define the dependencies of an application. Among other things Helm Charts include information for the version of the chart, the requirements of the application such as the Kubernetes version as well as other charts that it may depend on.
 
@@ -283,6 +283,44 @@ $ kubectl port-forward prometheus-operator-1587733290-grafana-668cf4f5bb-k8xk7 3
 ```
 
 Access [http://localhost:3000](http://localhost:3000) with browser and use the credentials admin / prom-operator. At the top left you can browse different dashboards.
+
+The dashboards are nice but we'd like to know more about the apps we're running as well. Let's add [Loki](https://grafana.com/oss/loki/) so that we can see logs. To confirm everything works for us let's create a simple application that'll output something to stdout.
+
+Let's run the redisapp from previously `https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app5/manifests/statefulset.yaml`. We can keep it running as it'll generate a good amount of log output for us.
+
+The [Loki Chart](https://github.com/grafana/loki/tree/master/production/helm) includes almost everything:
+
+```console
+$ helm repo add loki https://grafana.github.io/loki/charts
+$ helm repo update
+$ kubectl create namespace loki-stack
+  namespace/loki-stack created
+
+$ helm upgrade --install loki --namespace=loki-stack loki/loki-stack
+
+$ kubectl get all -n loki-stack
+  NAME                      READY   STATUS    RESTARTS   AGE
+  pod/loki-promtail-n2fgs   1/1     Running   0          18m
+  pod/loki-promtail-h6xq2   1/1     Running   0          18m
+  pod/loki-promtail-8l84g   1/1     Running   0          18m
+  pod/loki-0                1/1     Running   0          18m
+  
+  NAME                    TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+  service/loki            ClusterIP   10.43.170.68   <none>        3100/TCP   18m
+  service/loki-headless   ClusterIP   None           <none>        3100/TCP   18m
+  
+  NAME                           DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+  daemonset.apps/loki-promtail   3         3         3       3            3           <none>          18m
+  
+  NAME                    READY   AGE
+  statefulset.apps/loki   1/1     18m
+```
+
+Here we see that Loki is running in port 3100. Open Grafana and go to settings and "Add data source". Choose Loki and then insert the correct URL. From the output above we can guess that the port should be 3100, namespace is loki-stack and the service is loki. So the answer would be: http://loki.loki-stack:3100. No other fields need to be changed.
+
+Now we can use the Explore tab (compass) to explore the data.
+
+![]({{ "/images/part2/loki_app_redisapp.png" | absolute_url }})
 
 ## Compute Resources ##
 
