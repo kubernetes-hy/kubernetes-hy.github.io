@@ -18,6 +18,29 @@ The calculator here [https://cloud.google.com/products/calculator](https://cloud
 
 During the part 3 we will be using GKE either by using the student credits or the free credits offered by google. You are responsible for making sure that the credits last for the whole part and if all of them are consumed I can not help you.
 
+After redeeming the credits we can create a project with the billing account. The google cloud UI can be confusing. On the [resources page](https://console.cloud.google.com/cloud-resource-manager) we can create a new project and let's name it "dwk-gke" for the purposes of this course. After creating this project make sure that the project is linked to the correct billing account from the top left dropdown and billing and then "Account Management". It should look like this (account is "DevOps with Kubernetes" and project "dwk-gke"):
+
+![]({{ "/images/part3/gke_billing.png" | absolute_url }})
+
+Install the Google Cloud SDK. Instructions [here](https://cloud.google.com/sdk/install). After that login and set the previously created project to be used.
+
+```console
+$ gcloud -v
+  Google Cloud SDK 290.0.1
+  bq 2.0.56
+  core 2020.04.24
+  gsutil 4.49
+
+$ gcloud auth login
+  ...
+  You are now logged in
+
+$ gcloud config set project dwk-gke
+  Updated property [core/project].
+```
+
+
+
 ## Volumes Part 2 ##
 
 ## Deployment Pipeline ##
