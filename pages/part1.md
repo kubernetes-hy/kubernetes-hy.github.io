@@ -554,7 +554,7 @@ If you are interested in learning more about running your own storage you can ch
 <div class="exercise" markdown="1">
 Exercise 6:
 
-Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment*. *PersistentVolume* is not application specific so you should keep that separated. In the end the two pods should share a persistent volume between the two applications from exercise 3 and exercise 4. Save the number of requests to ping / pong application into a file in the volume and output it with the timestamp and hash when sending a request to our main application. So the browser should display the following when accessing main application:
+Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment*. *PersistentVolume* is not application specific so you should keep that separated. In the end the two pods should share a persistent volume between the two applications. Save the number of requests to ping / pong application into a file in the volume and output it with the timestamp and hash when sending a request to our main application. So the browser should display the following when accessing main application:
 
 ```plaintext
 2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.
