@@ -39,7 +39,66 @@ $ gcloud config set project dwk-gke
   Updated property [core/project].
 ```
 
+We can now create a cluster. We can choose any zone we want from the list [here](https://cloud.google.com/about/locations/). I chose Finland:
 
+```console
+$ gcloud container clusters create dwk-cluster --zone=europe-north1-b
+  ...
+  Creating cluster dwk-cluster in europe-north1-b...
+  ...
+  NAME         LOCATION         MASTER_VERSION  MASTER_IP       MACHINE_TYPE   NODE_VERSION    NUM_NODES  STATUS
+  dwk-cluster  europe-north1-b  1.14.10-gke.27  35.228.239.103  n1-standard-1  1.14.10-gke.27  3          RUNNING
+```
+
+As we did with k3d we need to set kubeconfig so kubectl can access it:
+
+```console
+$ gcloud container clusters get-credentials dwk-cluster --zone=europe-north1-b
+  Fetching cluster endpoint and auth data.
+  kubeconfig entry generated for dwk-cluster.
+
+$ kubectl cluster info
+```
+
+Now that we have a cluster it's used almost exactly like the one we had locally. Let's apply this application that creates a random string and then serves an image based on that random string. This will create 6 replicas of the process "seedimage".
+
+```console
+$ kubectl apply -f 
+```
+
+Now as a warning the next step is going to add into the [cost of the cluster](https://cloud.google.com/compute/all-pricing#lb) as well. Let's add a *LoadBalancer* Service!
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: seedimage-svc
+spec:
+  type: LoadBalancer # This should be the only unfamiliar part
+  selector:
+    app: seedimage
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 3000
+```
+
+A load balancer service asks for google services to provision us a load balancer. We can wait until the service gets an external ip:
+
+```console
+$ kubectl get svc --watch
+  NAME            TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)        AGE
+  kubernetes      ClusterIP      10.31.240.1     <none>         443/TCP        144m
+  seedimage-svc   LoadBalancer   10.31.241.224   35.228.41.16   80:30215/TCP   94s
+```
+
+If we now access http://35.228.41.16 with our browser we'll see the application up and running. By refreshing the page we can also see that the load balancer sometimes offers us a different image.
+
+<div class="exercise" markdown="1"> 
+Exercise 11:
+
+Deploy the main application as well as the ping / pong application into GKE.
+</div>
 
 ## Volumes Part 2 ##
 
