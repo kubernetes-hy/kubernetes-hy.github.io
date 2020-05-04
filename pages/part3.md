@@ -94,14 +94,165 @@ $ kubectl get svc --watch
 
 If we now access http://35.228.41.16 with our browser we'll see the application up and running. By refreshing the page we can also see that the load balancer sometimes offers us a different image.
 
+<div style="border: lightblue 0.2em outset; padding: 0.5em 1em 0 1em;" markdown="1">
+To avoid using up the credits delete the cluster whenever you do not need it
+
+```console
+$ gcloud container clusters delete dwk-cluster --zone=europe-north1-b
+```
+
+And when resuming progress create the cluster back.
+```console
+$ gcloud container clusters create dwk-cluster --zone=europe-north1-b
+```
+
+You may lose some important running applications so if you decide to take a break during an example you may have to redo it, but everything else should be saved as a yaml file.
+</div>
+
+<br />
+
 <div class="exercise" markdown="1"> 
 Exercise 11:
 
 Deploy the main application as well as the ping / pong application into GKE.
 </div>
 
-## Volumes Part 2 ##
-
 ## Deployment Pipeline ##
 
+Let's setup a deployment pipeline using github actions.
+
+Create a file .github/workflows/main.yaml into the exercise project root. We'll want the workflow to do 3 things:
+
+* build the image
+* publish the image to a container registry
+* deploy the new image to our cluster
+
+Google offers us an action as well as an example workflow here <https://github.com/GoogleCloudPlatform/github-actions>. Instead of reinventing the wheel let's just take the [example workflow](https://github.com/GoogleCloudPlatform/github-actions/blob/dbbc2aaee4ded56fea9d438baacbdd875addfc3f/example-workflows/gke/.github/workflows/gke.yml) and see what's going on.
+
+```yml
+on:
+  push:
+    branches:
+    - master
+```
+
+Workflow is ran when there's a push to master
+
+```yml
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: cluster-1   # TODO: update to cluster name
+  GKE_ZONE: us-central1-c  # TODO: update to cluster zone
+  IMAGE: static-site
+```
+
+Change the TODOs, keep the secret as is but you can change the IMAGE to something more descriptive, it will be the image name.
+
+```yml
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+      uses: actions/checkout@v2
+```
+
+Some setup, should work as is.
+
+```yml
+    # Setup gcloud CLI
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '290.0.1'
+        service_account_key: ${{ secrets.GKE_SA_KEY }}
+        project_id: ${{ secrets.GKE_PROJECT }}
+
+    # Configure Docker to use the gcloud command-line tool as a credential
+    # helper for authentication
+    - run: |-
+        gcloud --quiet auth configure-docker
+    # Get the GKE credentials so we can deploy to the cluster
+    - run: |-
+        gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+```
+
+More setup: install gcloud and a mystery line. "gcloud --quiet auth configure-docker" will enable us to use google container registry <https://cloud.google.com/container-registry/>. Let's use it instead of Docker Hub just because we can. We can also run the commands here locally.
+
+```yml
+    # Build the Docker image
+    - name: Build
+      run: |-
+        docker build \
+          --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" \
+          .
+```
+
+Builds the image. We can drop the build args.
+
+* ~~build the image~~
+* publish the image to a container registry
+* deploy the new image to our cluster
+
+```yml
+    # Push the Docker image to Google Container Registry
+    - name: Publish
+      run: |-
+        docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
+```
+
+Publishes the image to a container registry.
+
+* ~~build the image~~
+* ~~publish the image to a container registry~~
+* deploy the new image to our cluster
+
+```yml
+    # Set up kustomize
+    - name: Set up Kustomize
+      run: |-
+        curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+        chmod u+x ./kustomize
+    # Deploy the Docker image to the GKE cluster
+    - name: Deploy
+      run: |-
+        ./kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
+        ./kustomize build . | kubectl apply -f -
+        kubectl rollout status deployment/$IMAGE
+        kubectl get services -o wide
+```
+
+What's going on here?
+
+As you already know we need to define the image which will be deployed inside the deplyment.yaml the tag will indicate which version we want to deploy. As we're updating that would require us to update the deployment.yaml to a version that was just now, in the previous step, published.
+
+Kustomize is a tool that helps with configuration customization and is baked into kubectl. In this case we'll use it to define which files are meaningful for Kubernetes as well as set the image and tag. This is done via a file called [kustomization.yml](https://github.com/GoogleCloudPlatform/github-actions/blob/dbbc2aaee4ded56fea9d438baacbdd875addfc3f/example-workflows/gke/kustomization.yml". In addition we should look into the [deployment.yml](https://github.com/GoogleCloudPlatform/github-actions/blob/dbbc2aaee4ded56fea9d438baacbdd875addfc3f/example-workflows/gke/deployment.yml) to have a clear picture of what's going on.
+
+The kustomization.yml contains instructions to use the deployment.yml as well as service.yml. In addition the deployment.yml includes line `image: gcr.io/PROJECT_ID/IMAGE:TAG` which is set to the actual value for deployment in the command.
+
+For us a new file `kustomization.yaml` in the root of the project will work. The contents will be almost indentical except have the path included `- manifests/deployment.yml` etc.
+
+This should already work as the -k flag will expect a kustomization file. `$ kubectl apply -k .` But for deployment lets use the same convention the example had and rename our image inside the deployment.yaml "gcr.io/PROJECT_ID/IMAGE:TAG".
+
+The last step is to add the secrets to github.
+
+With the workflow and kustomization we can start pushing changes to our project and they will automatically be deployed. Note that the registry is [not free](https://cloud.google.com/container-registry/pricing).
+
+
+<div class="exercise" markdown="1"> 
+Exercise 11:
+
+Setup automatic deployment for ... as well.
+</div>
+
+## Volumes again ##
+
+
+## Scaling
+
+
 ## Summary ##
+
