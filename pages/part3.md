@@ -250,6 +250,23 @@ Setup automatic deployment for ... as well.
 
 ## Volumes again ##
 
+Now we arrive at an intersection. We can either start using a Database as a Service (DBaaS) such as the Google Cloud SQL in our case or just use the PersistentVolumeClaims with our own Postgres images and let the Google Kubernetes Engine take care of storage via PersistentVolumes for us.
+
+Both solutions are widely used.
+
+<div class="exercise" markdown="1">
+Exercise 12:
+
+Do a pros/cons comparison of the solutions in terms of meaningful differences. This includes **at least** the required work and cost to initialize as well as maintain. Backup methods and their ease of usage should be considered as well.
+
+Set the list into the README of the project.
+</div>
+
+<div class="exercise" markdown="1">
+Exercise 13:
+
+Use Google Cloud SQL or postgres with PersistentVolumeClaims in your project. Give a reasoning to which you chose in the README. There are no non-valid reasons, an excellent would be "because it sounded easier".
+</div>
 
 ## Scaling
 
