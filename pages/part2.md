@@ -127,7 +127,7 @@ data:
 
 As the containers are already instructed to use the environment from the secret using it happens automatically. We can now confirm that the app is working and then delete the old secret.
 
-For encrypted secrets let's use ("Sealed Secrets")[https://github.com/bitnami-labs/sealed-secrets]. It seems to be a solution until proven otherwise. We need to install it into our local machine as well as to our cluster. Install (instructions)[https://github.com/bitnami-labs/sealed-secrets/releases] are simple: apply the correct version to kube-system namespace.
+For encrypted secrets let's use ["Sealed Secrets"](https://github.com/bitnami-labs/sealed-secrets). It seems to be a solution until proven otherwise. We need to install it into our local machine as well as to our cluster. Install [instructions](https://github.com/bitnami-labs/sealed-secrets/releases) are simple: apply the correct version to kube-system namespace.
 
 ```console
 $ kubectl apply -f https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.12.1/controller.yaml
