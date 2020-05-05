@@ -270,6 +270,114 @@ Use Google Cloud SQL or postgres with PersistentVolumeClaims in your project. Gi
 
 ## Scaling
 
+Scaling can be either horizontal scaling or vertical scaling. Vertical scaling is the act of increasing resources available to a pod. Horizontal scaling is what we most often mean when talking about scaling.
+
+### Scaling pods ###
+
+There are multiple reasons for wanting to scale an application. Most common reason is that the number of requests an application receives exceeds the number of requests that can be processed. Limitations are often either the amount of requests that a framework is intended to handle or the actual CPU or RAM.
+
+I've prepared an application that uses up CPU resources here: `jakousa/dwk-app7:478244ce87503c4abab757b1d13db5aff10963c9`. The application accepts a query parameter to increase the time until freeing cpu via "?fibos=25", you should use values between 15 and 30.
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpushredder-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cpushredder
+  template:
+    metadata:
+      labels:
+        app: cpushredder
+    spec:
+      containers:
+        - name: cpushredder
+          image: jakousa/dwk-app7:0653b8f5a41156a4e08185f7694120ee51ff2026
+          resources: 
+            limits:
+              cpu: "150m"
+              memory: "100Mi"
+```
+
+Note that finally we have set the resource limits for a Deployment as well
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: cpushredder-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: cpushredder
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 3001
+```
+
+Service looks completely familiar by now.
+
+```yml
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: cpushredder-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cpushredder-dep
+  minReplicas: 1
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 50
+```
+
+HorizontalPodAutoscaler automatically scales pods horizontally. The yaml here defines what is the target Deployment, how many minimum replicas and what is the maximum replica count. The target CPU Utilization is defined as well. If the CPU utilization exceeds the target then an additional replica is created until the max number of replicas.
+
+```console
+$ kubectl top pod -l app=cpushredder
+  NAME                               CPU(cores)   MEMORY(bytes)   
+  cpushredder-dep-85f5b578d7-nb5rs   1m           20Mi       
+
+$ kubectl get hpa
+  NAME              REFERENCE                    TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+  cpushredder-hpa   Deployment/cpushredder-dep   0%/50%    1         6         1          62s
+
+$ kubectl get svc
+  NAME              TYPE           CLUSTER-IP      EXTERNAL-IP      PORT(S)        AGE
+  cpushredder-svc   LoadBalancer   10.31.254.209   35.228.149.206   80:32577/TCP   94s
+```
+
+After a few requests to the external ip here the application will start using more cpu. Note that if you request above the limit the pod will be taken down.
+
+```
+$ kubectl logs -f cpushredder-dep-85f5b578d7-nb5rs
+  Started in port 3001
+  Received a request
+  started fibo with 25
+  Received a request
+  started fibo with 25
+  Received a request
+  started fibo with 25
+  Fibonacci 25: 121393
+  Closed
+  Fibonacci 25: 121393
+  Closed
+  Fibonacci 25: 121393
+  Closed
+```
+
+After a few requests we will see the *HorizontalPodAutoscaler* create a new replica as the CPU utilization rises. As the resources are fluctuating, sometimes very greatly due to increased resource usage on start or exit, the *HPA* will by default wait 5 minutes between downscaling attempts. If your application has multiple replicas even at 0%/50% just wait. If the wait time is set to a value that's too short for stable statistics of the resource usage the replica count may start "thrashing".
+
+### Scaling nodes ###
+
+Scaling nodes is a supported feature in GKE. Via the cluster autoscaling feature we can use minimum amount of nodes by requesting as many or as little as we have a need for.
+
+
 
 ## Summary ##
 
