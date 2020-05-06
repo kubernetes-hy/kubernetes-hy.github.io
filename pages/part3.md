@@ -6,6 +6,16 @@ permalink: /part3/
 order: 3
 ---
 
+In this part we'll start using GKE and see a few features that we didn't have available locally. By the end of this part you will be able to
+
+- Create your own cluster in GKE
+
+- Create an deployment pipeline, enabling continuous delivery from a git push to production
+
+- Have the pods in the cluster autoscale
+
+- Have the cluster itself autoscale
+
 ## Google Kubernetes Engine ##
 
 We have used Kubernetes distribution k3s using docker containers via k3d. In a production environment the task of maintaining a Kubernetes cluster is often left to third parties. A managed Kubernetes as a service is often the best choice as the additional work required in maintenance exceeds the benefits of a personal cluster. In some, somewhat rare, cases setting up and maintaining your own cluster is a reasonable option. A case for it would be that your company/organization already has the hardware and/or wants to stay independent from providers, one such example could be a University. 

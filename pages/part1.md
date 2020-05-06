@@ -6,11 +6,11 @@ permalink: /part1/
 order: 1
 ---
 
-TODO Label the applications we're developing so it's easier to follow the exercises
+In this part we'll go over a lot of things you need to get yourself started with using Kubernetes. This includes terminology, your first deploy, a little bit of networking and introduction to volumes. By the end of this part you will be able to
 
-TODO images
+- Create and run a Kubernetes cluster locally with k3d
 
-In this part we'll go over a lot of things you need to get yourself started with using Kubernetes. This includes terminology, your first deploy, a little bit of networking and introduction to volumes.
+- Deploy applications to Kubernetes
 
 ## What is Kubernetes? ##
 

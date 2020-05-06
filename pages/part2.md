@@ -6,7 +6,13 @@ permalink: /part2/
 order: 2
 ---
 
-In this part TODO
+In this part we'll learn more about management and maintenance as well as expand our knowledge on known features of Kubernetes. By the end of this part you will be able to
+
+- Label and namespace the resources inside a cluster.
+
+- Deploy stateful applications to Kubernetes
+
+- Monitor your application as well as the cluster with advanced tools
 
 ## Networking Part 2 ##
 
