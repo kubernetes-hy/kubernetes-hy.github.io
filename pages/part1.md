@@ -36,7 +36,7 @@ We'll use K3d to create a group of docker containers that run k3s. Thus creating
 $ k3d create -w 2
 ```
 
-This created a kubernetes cluster with 2 worker nodes. As they're in docker you can confirm that they exist with `docker ps`.
+This created a Kubernetes cluster with 2 worker nodes. As they're in docker you can confirm that they exist with `docker ps`.
 
 ```console
 $ docker ps
@@ -126,7 +126,7 @@ Create an application that generates a random string on startup, stores this has
 2020-03-30T12:15:22.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43
 ```
 
-Deploy it into your kubernetes cluster and confirm that it's running with `kubectl logs ...`
+Deploy it into your Kubernetes cluster and confirm that it's running with `kubectl logs ...`
 
 In the future exercises this application will be referred too as "Main application"
 </div>
