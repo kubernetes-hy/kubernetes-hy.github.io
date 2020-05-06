@@ -227,17 +227,17 @@ Publishes the image to a container registry.
 
 What's going on here?
 
-As you already know we need to define the image which will be deployed inside the deplyment.yaml the tag will indicate which version we want to deploy. As we're updating that would require us to update the deployment.yaml to a version that was just now, in the previous step, published.
+As you already know we need to define the image which will be deployed inside the deployment.yaml the tag will indicate which version we want to deploy. As we're updating that would require us to update the deployment.yaml to a version that was just now, in the previous step, published.
 
 Kustomize is a tool that helps with configuration customization and is baked into kubectl. In this case we'll use it to define which files are meaningful for Kubernetes as well as set the image and tag. This is done via a file called [kustomization.yml](https://github.com/GoogleCloudPlatform/github-actions/blob/dbbc2aaee4ded56fea9d438baacbdd875addfc3f/example-workflows/gke/kustomization.yml). In addition we should look into the [deployment.yml](https://github.com/GoogleCloudPlatform/github-actions/blob/dbbc2aaee4ded56fea9d438baacbdd875addfc3f/example-workflows/gke/deployment.yml) to have a clear picture of what's going on.
 
 The kustomization.yml contains instructions to use the deployment.yml as well as service.yml. In addition the deployment.yml includes line `image: gcr.io/PROJECT_ID/IMAGE:TAG` which is set to the actual value for deployment in the command.
 
-For us a new file `kustomization.yaml` in the root of the project will work. The contents will be almost indentical except have the path included `- manifests/deployment.yml` etc.
+For us a new file `kustomization.yaml` in the root of the project will work. The contents will be almost identical except have the path included `- manifests/deployment.yml` etc.
 
 This should already work as the -k flag will expect a kustomization file. `$ kubectl apply -k .` But for deployment lets use the same convention the example had and rename our image inside the deployment.yaml "gcr.io/PROJECT_ID/IMAGE:TAG".
 
-The last step is to add the secrets to github.
+The last step is to add our secrets to Github.
 
 With the workflow and kustomization we can start pushing changes to our project and they will automatically be deployed. Note that the registry is [not free](https://cloud.google.com/container-registry/pricing).
 

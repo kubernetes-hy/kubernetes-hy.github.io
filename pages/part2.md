@@ -49,7 +49,7 @@ To see everything you can use `--all-namespaces`.
 $ kubectl get all --all-namespaces
 ```
 
-Namespaces should be kept separate - you could run all of the examples and do the exercises of this course in a cluster that is shared with critical software. An administator should set a *ResourceQuota* for that namespace so that you can safely run anything there. We'll look into resource limits and requests later.
+Namespaces should be kept separate - you could run all of the examples and do the exercises of this course in a cluster that is shared with critical software. An administrator should set a *ResourceQuota* for that namespace so that you can safely run anything there. We'll look into resource limits and requests later.
 
 Labels are used to separate an application from others inside a namespace. They make it possible for having multiple applications as you've used in this course already.
 
@@ -75,7 +75,7 @@ spec:
           image: jakousa/dwk-app1:78031863af07c4c4cc3c96d07af68e8ce6e3afba
 ```
 
-The *selector* and *matchLabels* reveal that the instructions of the deployment are directed to pods with the following label. *matchLabels* is a key value pair but we could've used *matchExpressions* instead. While the template metadata includes label with key value pair app and hashgenerator. We can use the same label on multiple namespaces and the namespace would keep them from interfering with each other.
+The *selector* and *matchLabels* reveal that the instructions of the deployment are directed to pods with the following label. *matchLabels* is a key-value pair but we could've used *matchExpressions* instead. While the template metadata includes a label with key-value pair app and hashgenerator. We can use the same label on multiple namespaces and the namespace would keep them from interfering with each other.
 
 <div class="exercise" markdown="1">
 Exercise 8:
@@ -171,7 +171,7 @@ Ping / Pongs: 3
 
 In part 1 we learned how volumes are used with PersistentVolumes and PersistentVolumeClaims. We used *Deployment* with them and everything worked well enough for our testing purposes. The problem is that *Deployment* creates and scales pods that are *replicas* - they are a new copy of the same thing. With PersistentVolumeClaims, the method through which a pod reserves persistent storage, this creates a possibly non-desired effect as the claims are **not** pod specific. The claim is shared by all pods in that deployment.
 
-*StatefulSets* are like *Deployments* except it makes sure that if a pod dies the replacement is identical, with the same network identity and name. In addition if the pod is scaled the copies will have their own storage. StatefulSets are for stateful applications. You could use StatefulSets to scale video game servers that require state, such as a minecraft server. Or run a database. For data safety when deleted or scaled down StatefulSets will not delete the volumes they are associated with.
+*StatefulSets* are like *Deployments* except it makes sure that if a pod dies the replacement is identical, with the same network identity and name. In addition if the pod is scaled the copies will have their own storage. StatefulSets are for stateful applications. You could use StatefulSets to scale video game servers that require state, such as a Minecraft server. Or run a database. For data safety when deleted or scaled down StatefulSets will not delete the volumes they are associated with.
 
 > Deployment creates pods using a Resource called "ReplicaSet". We're using ReplicaSets through Deployments.
 
