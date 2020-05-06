@@ -265,18 +265,18 @@ Set the list into the README of the project.
 <div class="exercise" markdown="1">
 Exercise 13:
 
-Use Google Cloud SQL or postgres with PersistentVolumeClaims in your project. Give a reasoning to which you chose in the README. There are no non-valid reasons, an excellent would be "because it sounded easier".
+Use Google Cloud SQL or Postgres with PersistentVolumeClaims in your project. Give a reasoning to which you chose in the README. There are no non-valid reasons, an excellent would be "because it sounded easier".
 </div>
 
 ## Scaling
 
-Scaling can be either horizontal scaling or vertical scaling. Vertical scaling is the act of increasing resources available to a pod. Horizontal scaling is what we most often mean when talking about scaling.
+Scaling can be either horizontal scaling or vertical scaling. Vertical scaling is the act of increasing resources available to a pod or a node. Horizontal scaling is what we most often mean when talking about scaling, increasing the number of pods or nodes. We'll focus on horizontal scaling.
 
 ### Scaling pods ###
 
-There are multiple reasons for wanting to scale an application. Most common reason is that the number of requests an application receives exceeds the number of requests that can be processed. Limitations are often either the amount of requests that a framework is intended to handle or the actual CPU or RAM.
+There are multiple reasons for wanting to scale an application. The most common reason is that the number of requests an application receives exceeds the number of requests that can be processed. Limitations are often either the amount of requests that a framework is intended to handle or the actual CPU or RAM.
 
-I've prepared an application that uses up CPU resources here: `jakousa/dwk-app7:478244ce87503c4abab757b1d13db5aff10963c9`. The application accepts a query parameter to increase the time until freeing cpu via "?fibos=25", you should use values between 15 and 30.
+I've prepared an application that uses up CPU resources here: `jakousa/dwk-app7:478244ce87503c4abab757b1d13db5aff10963c9`. The application accepts a query parameter to increase the time until freeing CPU via "?fibos=25", you should use values between 15 and 30.
 
 ```yml
 apiVersion: apps/v1
@@ -352,9 +352,9 @@ $ kubectl get svc
   cpushredder-svc   LoadBalancer   10.31.254.209   35.228.149.206   80:32577/TCP   94s
 ```
 
-After a few requests to the external ip here the application will start using more cpu. Note that if you request above the limit the pod will be taken down.
+After a few requests to the external IP here the application will start using more CPU. Note that if you request above the limit the pod will be taken down.
 
-```
+```console
 $ kubectl logs -f cpushredder-dep-85f5b578d7-nb5rs
   Started in port 3001
   Received a request
@@ -375,9 +375,40 @@ After a few requests we will see the *HorizontalPodAutoscaler* create a new repl
 
 ### Scaling nodes ###
 
-Scaling nodes is a supported feature in GKE. Via the cluster autoscaling feature we can use minimum amount of nodes by requesting as many or as little as we have a need for.
+Scaling nodes is a supported feature in GKE. Via the cluster autoscaling feature we can use the right amount of nodes needed.
+
+```console
+$ gcloud container clusters update dwk-cluster --zone=europe-north1-b --enable-autoscaling --min-nodes=1 --max-nodes=5
+  Updated [https://container.googleapis.com/v1/projects/dwk-gke/zones/europe-north1-b/clusters/dwk-cluster].
+  To inspect the contents of your cluster, go to: https://console.cloud.google.com/kubernetes/workload_/gcloud/europe-north1-b/dwk-cluster?project=dwk-gke
+```
+
+For a more robust cluster see examples on creation here: <https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-autoscaler>
+
+![]({{ "/images/part3/gke_scaling.png" | absolute_url }})
+
+Cluster autoscaling may disrupt pods by moving them around as the number of nodes increases or decreases. To solve possible issues with this the resource [PodDisruptionBudget](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#how-disruption-budgets-work) with which the requirements for a pod can be defined via two of the fields: *minAvailable* and *maxUnavailable*.
+
+```yml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: example-app-pdb
+spec:
+  maxUnavailable: 50%
+  selector:
+    matchLabels:
+      app: example-app
+```
+
+This would ensure that no more than half of the pods can be unavailable at. The Kubernetes documentation states "The budget can only protect against voluntary evictions, not all causes of unavailability."
 
 
+<div class="exercise" markdown="1">
+Exercise 14:
+
+
+</div>
 
 ## Summary ##
 
