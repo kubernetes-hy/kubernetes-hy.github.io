@@ -322,20 +322,4 @@ Now we can use the Explore tab (compass) to explore the data.
 
 ![]({{ "/images/part2/loki_app_redisapp.png" | absolute_url }})
 
-## Compute Resources ##
-
-## Updating ##
-
-## DaemonSets ##
-
-## CronJobs ##
-
-*CronJobs* run a container on schedule. You may have used cron before, these are essentially the same.
-
-<div class="exercise" markdown="1"> 
-Exercise XX:
-
-Now that we have a database we might as well create backups of it. Go to Kubernetes documentation and find instructions on how CronJobs work. 
-</div>
-
 # Summary #
