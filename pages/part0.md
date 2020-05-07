@@ -32,9 +32,7 @@ This course size is 5 ECTS credits. The details for optional completion methods 
 
 This course has a Telegram group where we discuss everything about the course. Support is available almost 24/7, with discussion being in both English and Finnish.
 
-At the moment we're sharing telegram group with DevOps with Docker.
-
-Join our DevOps with Docker telegram group [here](https://t.me/joinchat/HIg2vhI6xgyrWhVvJ7eiiA).
+Join our DevOps with Kubernetes telegram group [here](https://t.me/joinchat/HIg2vlch4pqITxhshipuRQ).
 
 **All** inappropriate, degrading or discriminating comments on the channel are prohibited and will lead to action taken against the commenter.
 
