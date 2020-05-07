@@ -24,7 +24,7 @@ The course material is written for Mac, so some instructions may lack platform s
 
 ### Grading ###
 
-This course size is 4 ECTS credits. The details for optional completion methods are not available yet.
+This course size is 5 ECTS credits. The details for optional completion methods are not available yet.
 
 ## Getting started ##
 
