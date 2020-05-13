@@ -359,13 +359,14 @@ There's one additional resource that will help us with serving the application, 
 <div class="exercise" markdown="1">
 Project v0.4
 
+Use a Service to enable access to the project!
 </div>
 
 #### What is an Ingress? ####
 
 Incoming Network Access resource *Ingress* is completely different type of resource from *Services*. If you've got your OSI model memorized, it works in the layer 7 while services work on layer 4. You could see these used together: first the aforementioned *LoadBalancer* and then Ingress to handle routing. In our case as we don't have a load balancer available we can use the Ingress as the first stop.
 
-This will require us to create two new resources. Ingress will route incoming traffic again to *Services*, but the old nodeport Service won't do. 
+This will require us to create two new resources. Ingress will route incoming traffic again to *Services*, but the old *NodePort* Service won't do. 
 
 ```console
 $ kubectl delete -f manifests/service.yaml
@@ -440,8 +441,7 @@ In addition to outputting the timestamp and hash, save it to memory and display 
 <div class="exercise" markdown="1">
 Project v0.5
 
-
-
+Start using Ingress instead of NodePort to access the project.
 </div>
 
 
@@ -456,7 +456,7 @@ In future exercises this second application will be referred to as "ping/pong ap
 
 ## Volumes Part 1 ##
 
-Storage in Kubernetes is **hard**. In part 1 we will look into a very basic method of using a storage and return to this topic later. Where almost everything else in Kubernetes is very much dynamic, moving between nodes and replicating with ease, storage does not have the same possibilities.
+Storage in Kubernetes is **hard**. In part 1 we will look into a very basic method of using storage and return to this topic later. Where almost everything else in Kubernetes is very much dynamic, moving between nodes and replicating with ease, storage does not have the same possibilities.
 
 There are multiple types of volumes and we'll get started with two of them.
 
@@ -503,7 +503,7 @@ spec:
             mountPath: /usr/src/app/files
 ```
 
-As the display is depenant on the volume we can confirm that it works by accessing the image-response and getting the image. The provided ingress used the previously opened port http://localhost:8081
+As the display is dependant on the volume we can confirm that it works by accessing the image-response and getting the image. The provided ingress used the previously opened port http://localhost:8081
 
 Note that all data is lost when the pod goes down.
 
@@ -567,7 +567,7 @@ spec:
       storage: 1Gi
 ```
 
-Let's apply a modified deplyment that uses it:
+Let's apply a modified deployment that uses it:
 
 ```console
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
@@ -591,12 +591,35 @@ If you are interested in learning more about running your own storage you can ch
 <div class="exercise" markdown="1">
 Exercise 6:
 
-Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment*. *PersistentVolume* is not application specific so you should keep that separated. In the end the two pods should share a persistent volume between the two applications. Save the number of requests to ping / pong application into a file in the volume and output it with the timestamp and hash when sending a request to our main application. So the browser should display the following when accessing main application:
+Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment*. As *PersistentVolume* is often maintained by cluster administrators rather than developers and are not application specific you should keep the definition for that separated. 
+
+In the end the two pods should share a persistent volume between the two applications. Save the number of requests to ping / pong application into a file in the volume and output it with the timestamp and hash when sending a request to our main application. So the browser should display the following when accessing the main application:
 
 ```plaintext
 2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.
 Ping / Pongs: 3
 ```
+</div>
+
+<div class="exercise" markdown="1">
+Project v0.6
+
+Since the project looks really boring at the moment let's add some outside resources.
+
+A daily image where every day a new image is fetched on the first request.
+
+Get an image from Lorem Picsum like `https://picsum.photos/1200` and display it in the project. Make sure to cache the image into a volume so we don't spam the API for new images every time we access the application or the container crashes.
+</div>
+
+<div class="exercise" markdown="1">
+Project v0.7
+
+We'll need to do some coding to start seeing results in the next part.
+
+- Add an input field into the project and a send button. The input should not take todos that are over 140 characters long.
+
+- Add a list of the existing todos with some hard coded todos.
+
 </div>
 
 ## Summary ##

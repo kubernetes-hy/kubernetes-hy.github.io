@@ -37,6 +37,22 @@ Ping / Pongs: 3
 ```
 </div>
 
+<div class="exercise" markdown="1">
+Project v1.0
+
+Create a new container for the backend of the TODO application.
+
+You can use graphql or other solutions if you want.
+
+Use ingress routing to enable access to the backend.
+
+Create a POST /todos endpoint and a GET /todos endpoint where we can post a new todo and get all of the todos.
+
+The todos can be saved into memory, we'll add database later.
+
+Frontend already has an input field. Connect it into our backend so that inputting data and pressing send will add a new todo into the list.
+</div>
+
 ## Namespaces and labels ##
 
 As you can imagine there may be a lot of resources inside a cluster. In fact, at the moment of writing this Kubernetes supports over 100 000 pods in a single cluster.
@@ -87,6 +103,12 @@ The *selector* and *matchLabels* reveal that the instructions of the deployment 
 Exercise 8:
 
 Create a namespace for the applications in the exercises. Move the applications to that namespace and use that in the future for all of the exercises. You can follow the material in the default namespace.
+</div>
+
+<div class="exercise" markdown="1">
+Project v1.1
+
+Move the project into its own namespace as well.
 </div>
 
 ## Configuration with Secrets and ConfigMaps ##
@@ -248,6 +270,14 @@ Exercise 10:
 Let's run a postgres database and save the ping/pong application counter into the database. The postgres database and ping/pong application should not be in the same pod. A single postgres database is enough and it may disappear with the cluster but it should survive even if all pods are taken down.
 </div>
 
+<div class="exercise" markdown="1">
+Project v1.2
+
+Create a database and save the todos there.
+
+Use Secrets and/or ConfigMaps to have the backend access the database.
+</div>
+
 ## Monitoring ##
 
 Our cluster and the apps in in have been pretty much a black box. We've thrown stuff in and then hoped that everything works all right. We're going to use [Prometheus](https://prometheus.io/) to monitor the cluster and [Grafana](https://grafana.com/) to view the data.
@@ -327,6 +357,16 @@ Here we see that Loki is running in port 3100. Open Grafana and go to settings a
 Now we can use the Explore tab (compass) to explore the data.
 
 ![]({{ "/images/part2/loki_app_redisapp.png" | absolute_url }})
+
+<div class="exercise" markdown="1">
+Project v1.3
+
+The project could really use logging.
+
+Add request logging so that you can monitor every todo that is sent to the backend.
+
+Set the limit of 140 characters for todos into the backend as well. Use Postman or curl to test that too long todos are blocked by the backend and you can see the non-allowed messages in your grafana.
+</div>
 
 ## Summary ##
 
