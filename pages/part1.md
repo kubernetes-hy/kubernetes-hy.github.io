@@ -86,13 +86,13 @@ This action created a few things for us to look at: a *Deployment* and a *Pod*.
 
 A *Pod* is an abstraction around one or more containers. Similarly as you've now used containers to define environments for a single process. Pods provide an context for 1..N containers so that they can share a storage and a network. They can be thought of as a container of containers. *Most* of the same rules apply: it is deleted if the containers stop running and files will be lost with it.
 
-TODO: Image of a pod
+![]({{ "/images/part1/pods.png" | absolute_url }})
 
 #### What is a Deployment? ####
 
 A *Deployment* takes care of deployment. It's a way to tell Kubernetes what container you want, how they should be running and how many of them should be running.
 
-The Deployment also created a *ReplicaSet*, which is a way to tell how many replicas of a Pod you want. It will delete or create Pods until the the number of Pods you wanted are running. ReplicaSets are managed by Deployments and you should not have to manually define or modify them.
+The Deployment also created a *ReplicaSet*, which is a way to tell how many replicas of a Pod you want. It will delete or create Pods until the number of Pods you wanted are running. ReplicaSets are managed by Deployments and you should not have to manually define or modify them.
 
 You can view the deployment:
 ```console
@@ -599,7 +599,7 @@ Ping / Pongs: 3
 ```
 </div>
 
-# Summary #
+## Summary ##
 
 In this part we learned about k8s, k3s and k3d. We learned about resources that are used in Kubernetes to run software as well as manage storage for some use cases, for example, caching and sharing data between Pods.
 

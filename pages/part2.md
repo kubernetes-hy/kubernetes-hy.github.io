@@ -267,7 +267,7 @@ $ kubectl create namespace prometheus
 $ helm install stable/prometheus-operator --generate-name --namespace prometheus
 ```
 
-This added a lot of stuff to our cluster. You can remove almost everything with `helm delete [name]` with the name found via `helm list`. Custom resource defitinions are left and have to be manually removed if the need arises.
+This added a lot of stuff to our cluster. You can remove almost everything with `helm delete [name]` with the name found via `helm list`. Custom resource definitions are left and have to be manually removed if the need arises.
 
 Lets open a way into Grafana so we can see the data.
 
@@ -328,4 +328,6 @@ Now we can use the Explore tab (compass) to explore the data.
 
 ![]({{ "/images/part2/loki_app_redisapp.png" | absolute_url }})
 
-# Summary #
+## Summary ##
+
+We're now at the state where we have the knowledge to deploy most software we'd develop into a Kubernetes cluster. Googling and reading documentation will still be necessary, as always, but we can confidently move from our own local Kubernetes cluster and start using Google Kubernetes Engine. [Part 3](/part3)
