@@ -601,3 +601,13 @@ Ping / Pongs: 3
 
 # Summary #
 
+In this part we learned about k8s, k3s and k3d. We learned about resources that are used in Kubernetes to run software as well as manage storage for some use cases, for example, caching and sharing data between Pods.
+
+By now we know what the following are and how to use them:
+ - Pods
+ - Deployments
+ - Services
+ - Ingress
+ - Volume
+
+With them we're ready to deploy simple software to a Kubernetes cluster. In the next part we'll learn more about management as well as a number of cases where the tools we have acquired so far are not enough. [Part 2](/part2)
