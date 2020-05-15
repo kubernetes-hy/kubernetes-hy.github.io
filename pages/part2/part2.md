@@ -22,36 +22,9 @@ Kubernetes includes a DNS service so communication between pods and containers i
 
 > Alternatively each Pod has an IP created by Kubernetes
 
-<div class="exercise" markdown="1">
-Exercise 7:
+{% include_relative exercises/2_01.html %}
 
-Connect the main application and ping/pong application. Instead of sharing data via files use HTTP endpoints to respond with the number of pongs. Deprecate all of the volumes for the time being. 
-
-Create a *Service* and implement the communication.
-
-The output will stay the same:
-
-```
-2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.
-Ping / Pongs: 3
-```
-</div>
-
-<div class="exercise" markdown="1">
-Project v1.0
-
-Create a new container for the backend of the TODO application.
-
-You can use graphql or other solutions if you want.
-
-Use ingress routing to enable access to the backend.
-
-Create a POST /todos endpoint and a GET /todos endpoint where we can post a new todo and get all of the todos.
-
-The todos can be saved into memory, we'll add database later.
-
-Frontend already has an input field. Connect it into our backend so that inputting data and pressing send will add a new todo into the list.
-</div>
+{% include_relative exercises/2_02.html %}
 
 ## Namespaces and labels ##
 
@@ -99,17 +72,9 @@ spec:
 
 The *selector* and *matchLabels* reveal that the instructions of the deployment are directed to pods with the following label. *matchLabels* is a key-value pair but we could've used *matchExpressions* instead. While the template metadata includes a label with key-value pair app and hashgenerator. We can use the same label on multiple namespaces and the namespace would keep them from interfering with each other.
 
-<div class="exercise" markdown="1">
-Exercise 8:
+{% include_relative exercises/2_03.html %}
 
-Create a namespace for the applications in the exercises. Move the applications to that namespace and use that in the future for all of the exercises. You can follow the material in the default namespace.
-</div>
-
-<div class="exercise" markdown="1">
-Project v1.1
-
-Move the project into its own namespace as well.
-</div>
+{% include_relative exercises/2_04.html %}
 
 ## Configuration with Secrets and ConfigMaps ##
 
@@ -180,20 +145,7 @@ To confirm everything is working we can delete the pod and let it restart with t
 
 ConfigMaps are similar but the data doesn't have to be encoded and is not encrypted.
 
-<div class="exercise" markdown="1">
-Exercise 9: Documentation and ConfigMaps
-
-Use the official Kubernetes documentation for this exercise. [https://kubernetes.io/docs/concepts/configuration/configmap/](https://kubernetes.io/docs/concepts/configuration/configmap/) and [https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) should contain everything you need.
-
-Create a ConfigMap for a "dotenv file". A file where you define environment variables that are loaded by the application.
-For this use an environment variable "MESSAGE" with value "Hello" to test and print the value. Implementation is up to you but the output should look like this:
-
-```plaintext
-Hello
-2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.
-Ping / Pongs: 3
-```
-</div>
+{% include_relative exercises/2_05.html %}
 
 ## StatefulSets ##
 
@@ -264,19 +216,9 @@ You can delete a pod and it will continue right where you left off. In addition 
 
 Looks a lot like *Deployment* but uses volumeClaimTemplate to claim a volume for each pod. We can try killing either of the pods and it continue where it left off.
 
-<div class="exercise" markdown="1">
-Exercise 10:
+{% include_relative exercises/2_06.html %}
 
-Let's run a postgres database and save the ping/pong application counter into the database. The postgres database and ping/pong application should not be in the same pod. A single postgres database is enough and it may disappear with the cluster but it should survive even if all pods are taken down.
-</div>
-
-<div class="exercise" markdown="1">
-Project v1.2
-
-Create a database and save the todos there.
-
-Use Secrets and/or ConfigMaps to have the backend access the database.
-</div>
+{% include_relative exercises/2_07.html %}
 
 ## Monitoring ##
 
@@ -358,15 +300,7 @@ Now we can use the Explore tab (compass) to explore the data.
 
 ![]({{ "/images/part2/loki_app_redisapp.png" | absolute_url }})
 
-<div class="exercise" markdown="1">
-Project v1.3
-
-The project could really use logging.
-
-Add request logging so that you can monitor every todo that is sent to the backend.
-
-Set the limit of 140 characters for todos into the backend as well. Use Postman or curl to test that too long todos are blocked by the backend and you can see the non-allowed messages in your grafana.
-</div>
+{% include_relative exercises/2_08.html %}
 
 ## Summary ##
 

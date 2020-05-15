@@ -524,22 +524,11 @@ If you are interested in learning more about running your own storage you can ch
 
 [StorageOS](https://storageos.com/)
 
-<div class="exercise" markdown="1">
-Exercise 6:
-
-Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment*. As *PersistentVolume* is often maintained by cluster administrators rather than developers and are not application specific you should keep the definition for that separated. 
-
-In the end the two pods should share a persistent volume between the two applications. Save the number of requests to ping / pong application into a file in the volume and output it with the timestamp and hash when sending a request to our main application. So the browser should display the following when accessing the main application:
-
-```plaintext
-2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.
-Ping / Pongs: 3
-```
-</div>
-
 {% include_relative exercises/1_11.html %}
 
 {% include_relative exercises/1_12.html %}
+
+{% include_relative exercises/1_13.html %}
 
 ## Summary ##
 
