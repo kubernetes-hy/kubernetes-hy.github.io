@@ -18,13 +18,13 @@ To complete the exercises and examples in material attendees are required to hav
 
 The course material is meant to be read part by part from start to finish. To get a passing grade you have to do every exercise. There are exercises in the material placed so that you will have learned needed skills in the material before it. You should do the exercises as you go through the material.
 
-The course material is written for Mac, so some instructions may lack platform specific details. Please make a pull request to the course material in case you find any mistakes or wish to add something. You can also add an "issue" through github in case you find any issues with the course material.
+The course material is written for Mac, so some instructions may lack platform specific details. Please make a pull request to the course material in case you find any mistakes or wish to add something. You can also add an "issue" through GitHub in case you find any issues with the course material.
 
 ### Completing course ###
 
 ### Grading ###
 
-This course size is 5 ECTS credits. The details for optional completion methods are not available yet.
+This course size is ? ECTS credits. The details for optional completion methods are not available yet.
 
 ## Getting started ##
 
