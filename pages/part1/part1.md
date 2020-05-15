@@ -114,32 +114,9 @@ To see the output we can run `kubectl logs -f hashgenerator-dep-6965c5c7-2pkxc`
 
 A helpful list for other commands from docker-cli translated to kubectl is available here [https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/](https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/)
 
-<div class="exercise" markdown="1">
-Exercise 1:
+{% include_relative exercises/1_01.html %}
 
-**Exercises can be done with any language and framework you want.**
-
-Create an application that generates a random string on startup, stores this hash into memory andoutputs it every 5 seconds with a timestamp. e.g.
-
-```plaintext
-2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43
-2020-03-30T12:15:22.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43
-```
-
-Deploy it into your Kubernetes cluster and confirm that it's running with `kubectl logs ...`
-
-In the future exercises this application will be referred too as "Main application"
-</div>
-
-<div class="exercise" markdown="1">
-Project v0.1:
-
-**Project can be done with any language and framework you want**
-
-The project is a simple todo application with the familiar features of a CRUD.
-
-Create a web server that outputs "Server started in port NNNN" when it's started and deploy it into your Kubernetes cluster. You won't have access to the port yet but that'll come soon.
-</div>
+{% include_relative exercises/1_02.html %}
 
 ## Declarative configuration with YAML ##
 
@@ -216,18 +193,9 @@ $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-exam
 
 Woah! The fact that you can apply manifest from the internet just like that will come in handy.
 
-<div class="exercise" markdown="1">
-Exercise 2:
+{% include_relative exercises/1_03.html %}
 
-In your main application project create the folder for manifests and move your deployment into a declarative file. Make sure everything still works by restarting and following logs.
-
-</div>
-
-<div class="exercise" markdown="1">
-Project v0.2
-
-Create deployment for your project. You won't have access to the port yet but that'll come soon.
-</div>
+{% include_relative exercises/1_04.html %}
 
 
 ## Networking Part 1 ##
@@ -262,13 +230,7 @@ $ kubectl port-forward hashresponse-dep-57bcc888d7-dj5vk 3003:3000
 
 Now we can view the response from http://localhost:3003 and confirm that it is working as expected.
 
-<div class="exercise" markdown="1">
-Project v0.3
-
-Have the application return something with a GET to the root of the port. A simple html page or whatever is returned your single-page-application works.
-
-Test the port-forward to confirm that the project actually works in the cluster.
-</div>
+{% include_relative exercises/1_05.html %}
 
 External connections with docker used the flag -p `-p 3003:3000` or in docker-compose ports declaration. Unfortunately Kubernetes isn't as simple. We're going to use either a *Service* resource or an *Ingress* resource.
 
@@ -356,11 +318,7 @@ What we'd want to use instead of NodePort would be a *LoadBalancer* type service
 
 There's one additional resource that will help us with serving the application, *Ingress*.
 
-<div class="exercise" markdown="1">
-Project v0.4
-
-Use a Service to enable access to the project!
-</div>
+{% include_relative exercises/1_06.html %}
 
 #### What is an Ingress? ####
 
@@ -432,27 +390,13 @@ $ kubectl get ing
 
 We can see that the ingress is listening on port 80. As we already opened port there we can access the application on http://localhost:8081.
 
-<div class="exercise" markdown="1">
-Exercise 3:
 
-In addition to outputting the timestamp and hash, save it to memory and display it when accessing the main application via HTTP. Then use ingress to access it with a browser.
-</div>
+{% include_relative exercises/1_07.html %}
 
-<div class="exercise" markdown="1">
-Project v0.5
+{% include_relative exercises/1_08.html %}
 
-Start using Ingress instead of NodePort to access the project.
-</div>
+{% include_relative exercises/1_09.html %}
 
-
-<div class="exercise" markdown="1">
-Exercise 4:
-
-Develop a second application that simply responds with "pong 0" to a GET request and increases a counter (the 0) so that you can see how many requests have been sent. The counter should be in memory so it may reset at some point.
-Create a new deployment for it and use ingress to route requests directed '/ping' to it.
-
-In future exercises this second application will be referred to as "ping/pong application"
-</div>
 
 ## Volumes Part 1 ##
 
@@ -507,15 +451,7 @@ As the display is dependant on the volume we can confirm that it works by access
 
 Note that all data is lost when the pod goes down.
 
-
-<div class="exercise" markdown="1">
-Exercise 5:
-
-Split the main application into two different containers:
-
-One generates a new timestamp every 5 seconds and saves it into a file.
-The other reads that file and outputs it with its hash for the user to see.
-</div>
+{% include_relative exercises/1_10.html %}
 
 ### Persistent Volumes ###
 
@@ -601,26 +537,9 @@ Ping / Pongs: 3
 ```
 </div>
 
-<div class="exercise" markdown="1">
-Project v0.6
+{% include_relative exercises/1_11.html %}
 
-Since the project looks really boring at the moment let's add some outside resources.
-
-A daily image where every day a new image is fetched on the first request.
-
-Get an image from Lorem Picsum like `https://picsum.photos/1200` and display it in the project. Make sure to cache the image into a volume so we don't spam the API for new images every time we access the application or the container crashes.
-</div>
-
-<div class="exercise" markdown="1">
-Project v0.7
-
-We'll need to do some coding to start seeing results in the next part.
-
-- Add an input field into the project and a send button. The input should not take todos that are over 140 characters long.
-
-- Add a list of the existing todos with some hard coded todos.
-
-</div>
+{% include_relative exercises/1_12.html %}
 
 ## Summary ##
 
