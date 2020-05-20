@@ -260,7 +260,7 @@ Both solutions are widely used.
 
 {% include_relative exercises/3_04.html %}
 
-## Scaling
+## Scaling ##
 
 Scaling can be either horizontal scaling or vertical scaling. Vertical scaling is the act of increasing resources available to a pod or a node. Horizontal scaling is what we most often mean when talking about scaling, increasing the number of pods or nodes. We'll focus on horizontal scaling.
 
@@ -365,6 +365,10 @@ $ kubectl logs -f cpushredder-dep-85f5b578d7-nb5rs
 
 After a few requests we will see the *HorizontalPodAutoscaler* create a new replica as the CPU utilization rises. As the resources are fluctuating, sometimes very greatly due to increased resource usage on start or exit, the *HPA* will by default wait 5 minutes between downscaling attempts. If your application has multiple replicas even at 0%/50% just wait. If the wait time is set to a value that's too short for stable statistics of the resource usage the replica count may start "thrashing".
 
+{% include_relative exercises/3_05.html %}
+
+{% include_relative exercises/3_06.html %}
+
 ### Scaling nodes ###
 
 Scaling nodes is a supported feature in GKE. Via the cluster autoscaling feature we can use the right amount of nodes needed.
@@ -395,7 +399,12 @@ spec:
 
 This would ensure that no more than half of the pods can be unavailable at. The Kubernetes documentation states "The budget can only protect against voluntary evictions, not all causes of unavailability."
 
-{% include_relative exercises/3_05.html %}
+{% include_relative exercises/3_07.html %}
 
 ## Summary ##
 
+When deploying running software in a maintained Kubernetes service it really does get that easy. Vendor lock-in is a term commonly heard when talking about the cloud. In this section we dived into GKE and the services Google offered us. As we saw here we could migrate almost everything to Google Cloud with Cloud SQL and monitoring as the prime examples.
+
+There's a case for and against vendor lock-in and you should evaluate whether to use a single cloud or possibly a multi-cloud strategy based on your needs. Nothing is preventing you from cherry-picking "the best" services from each provider. Often vendor lock-in doesn't show any negatives until after you're locked-in.
+
+In the next section lets look into other practices that are included in an ecosystem like this and develop the project into its final form. We'll say good bye to GKE and if you have any credits left may use the rest of the, as you see fit. (**Beta testers** please do not use them yet, you may have a sudden need for the credits)
