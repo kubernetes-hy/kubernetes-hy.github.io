@@ -121,11 +121,7 @@ You may lose some important running applications so if you decide to take a brea
 
 <br />
 
-<div class="exercise" markdown="1"> 
-Exercise 11:
-
-Deploy the main application as well as the ping / pong application into GKE.
-</div>
+{% include_relative exercises/3_01.html %}
 
 ## Deployment Pipeline ##
 
@@ -252,11 +248,7 @@ The last step is to add our secrets to Github.
 With the workflow and kustomization we can start pushing changes to our project and they will automatically be deployed. Note that the registry is [not free](https://cloud.google.com/container-registry/pricing).
 
 
-<div class="exercise" markdown="1"> 
-Exercise 11:
-
-Setup automatic deployment for ... as well.
-</div>
+{% include_relative exercises/3_02.html %}
 
 ## Volumes again ##
 
@@ -264,19 +256,9 @@ Now we arrive at an intersection. We can either start using a Database as a Serv
 
 Both solutions are widely used.
 
-<div class="exercise" markdown="1">
-Exercise 12:
+{% include_relative exercises/3_03.html %}
 
-Do a pros/cons comparison of the solutions in terms of meaningful differences. This includes **at least** the required work and cost to initialize as well as maintain. Backup methods and their ease of usage should be considered as well.
-
-Set the list into the README of the project.
-</div>
-
-<div class="exercise" markdown="1">
-Exercise 13:
-
-Use Google Cloud SQL or Postgres with PersistentVolumeClaims in your project. Give a reasoning to which you chose in the README. There are no non-valid reasons, an excellent would be "because it sounded easier".
-</div>
+{% include_relative exercises/3_04.html %}
 
 ## Scaling
 
@@ -413,12 +395,7 @@ spec:
 
 This would ensure that no more than half of the pods can be unavailable at. The Kubernetes documentation states "The budget can only protect against voluntary evictions, not all causes of unavailability."
 
-
-<div class="exercise" markdown="1">
-Exercise 14:
-
-
-</div>
+{% include_relative exercises/3_05.html %}
 
 ## Summary ##
 
