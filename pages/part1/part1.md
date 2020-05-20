@@ -20,7 +20,9 @@ A container orchestration system such as Kubernetes is often required when maint
 
 A more familiar orchestration system may be docker-compose, which also does the same tasks; starting and stopping, networking and health monitoring. What makes Kubernetes special is the robust feature set for automating all of it.
 
-We can get started with a lightweight Kubernetes distribution. [K3s - 5 less than K8s](https://k3s.io/), offers us an actual Kubernetes cluster that we can run in containers using [k3d](https://github.com/rancher/k3d).
+Read this comic to get a fast introduction <https://cloud.google.com/kubernetes-engine/kubernetes-comic/>. You may want to revisit the comic after this part!
+
+We will get started with a lightweight Kubernetes distribution. [K3s - 5 less than K8s](https://k3s.io/), offers us an actual Kubernetes cluster that we can run in containers using [k3d](https://github.com/rancher/k3d).
 
 ### Kubernetes cluster with k3d ###
 
