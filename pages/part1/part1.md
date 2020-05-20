@@ -52,6 +52,24 @@ Here we also see that port 6443 is opened to "k3d-k3s-default-server", our maste
 
 Now kubectl will be able to access the cluster: `kubectl cluster-info` outputs the address of the master in port 6443. 
 
+If you want to stop / start the cluster you can simply run
+
+```console
+$ k3d stop
+  INFO[0000] Stopping cluster [k3s-default]
+  INFO[0000] ...Stopping 2 workers
+  INFO[0000] ...Stopping server
+  INFO[0001] Stopped cluster [k3s-default]
+
+$ k3d start
+  INFO[0000] Starting cluster [k3s-default]
+  INFO[0000] ...Starting server
+  INFO[0000] ...Starting 2 workers
+  INFO[0001] SUCCESS: Started cluster [k3s-default]
+```
+
+For now we're going to need the cluster but if we want to remove the cluster we can run `k3d delete`.
+
 ## First Deploy ##
 
 ### Preparing for first deploy ###
