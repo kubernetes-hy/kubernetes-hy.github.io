@@ -46,7 +46,9 @@ We'll use k3d for practice. [Install instructions](https://github.com/rancher/k3
 
 ## Google Cloud Credits ##
 
-Getting google cloud credits. Starting on part 3 we'll start using Google Kubernetes Engine. It's not free but google has offered us some credits with a few caveats.
+Getting Google Cloud credits. Starting on part 3 we'll start using Google Kubernetes Engine. It's not free but google has offered us some credits with a few caveats.
+
+Beta testers please contact me @jakousa. 
 
 ### Mistakes ###
 
