@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Frequently Asked Questions
+title: FAQ
 inheader: yes
 permalink: /faq/
 order: 99
