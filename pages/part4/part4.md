@@ -183,7 +183,7 @@ $ kubectl apply -f deployment.yaml
   deployment.apps/flaky-update-dep configured
 ```
 
-After a while it may look something like this if you're lucky.
+After a while it may look something like this, if you're lucky.
 
 ```console
 $ kubectl get po
@@ -200,8 +200,80 @@ A *StartupProbe* can delay the liveness probe so that an application with a long
 
 ### Canary release ###
 
-TODO: I have no idea what will happen here, but canary release sounds nice in theory
+With rolling updates, when including the Probes, we could create releases with no downtime for users. Sometimes this is not enough and you need to be able to do a partial release for some users and get data for the new / upcoming release. Canary release is the term used to describe a release strategy in which we introduce a subset of the users to a new version of the application. Then increasing the number of users in the new version until the old version is no longer used.
 
-### Other strategies ###
+At the moment of writing this Canary is not a strategy for deployments. This may be due to the ambiguity of the methods for canary release. We will use [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) to test one type of canary release. At the moment of writing the latest release is v0.8.2.
 
-There are also update strategies that support A/B testing where a group of users (or QA testers) are using a different version. 
+```
+$ kubectl create namespace argo-rollouts
+$ kubectl apply -n argo-rollouts -f https://raw.githubusercontent.com/argoproj/argo-rollouts/stable/manifests/install.yaml
+```
+
+Now we have a new resource "Rollout" available to us. The Rollout will replace our previously created deployment and enable us to use a new field:
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: flaky-update-dep
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: flaky-update
+  strategy:
+    canary:
+      steps:
+      - setWeight: 25
+      - pause:
+          duration: 30s
+      - setWeight: 50
+      - pause:
+          duration: 30s
+  template:
+    ...
+```
+
+The above will first move 25% of the pods to a new version (in our case 1 pod) after which it will wait for 20 seconds, move to 50% of pods and then wait for 20 seconds until every pod is updated. A kubectl plugin from Argo also offers us promote command to enable us to pause the rollout indefinitely and then use the promote to move forward.
+
+There are other options such as the familiar *maxUnavailable* but the defaults will work for us. However, simply rolling slowly to production will not be enough for a canary deployment. Just like with rolling updates we need to know the status of the application.
+
+With another custom resource we've already installed with Argo Rollouts called "AnalysisTemplate" we will be able to define a test that doesn't let the broken versions through.
+
+If you don't have Prometheus available go back to part 2 for a reminder.
+
+```yaml
+  ...
+  strategy:
+    canary:
+      steps:
+      - setWeight: 50
+      - analysis:
+          templates:
+          - templateName: restart-rate
+  template:
+  ...
+```
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: restart-rate
+spec:
+  metrics:
+  - name: restart-rate
+    initialDelay: 30s
+    successCondition: result < 2
+    provider:
+      prometheus:
+        address: 
+        query: |
+          sum(kube_pod_container_status_restarts_total{namespace="default", container="flaky-update"}) -
+          sum(kube_pod_container_status_restarts_total{namespace="default", container="flaky-update"} offset 30s)
+
+```
+
+### Other deployment strategies ###
+
+Kubernetes supports Recreate strategy which takes down the previous pods and replaces everything with the updated one. This creates a moment of downtime for the application but ensures that different versions are not running at the same time. Argo Rollouts supports BlueGreen strategy, in which a new version is run side by side to the new one but traffic is switched between the two at a certain point, such as after running update scripts or after your QA team has approved the new version.
