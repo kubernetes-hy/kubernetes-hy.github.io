@@ -240,7 +240,7 @@ There are other options such as the familiar *maxUnavailable* but the defaults w
 
 With another custom resource we've already installed with Argo Rollouts called "AnalysisTemplate" we will be able to define a test that doesn't let the broken versions through.
 
-If you don't have Prometheus available go back to part 2 for a reminder.
+If you don't have Prometheus available go back to part 2 for a reminder. We'll have the analysis done as the version is updating. If the analysis fails it will automatically cancel the rollout. 
 
 ```yaml
   ...
@@ -255,6 +255,8 @@ If you don't have Prometheus available go back to part 2 for a reminder.
   ...
 ```
 
+The CRD (Custom Resource Definition) AnalysisTemplate will, in our case, use Prometheus and send a query. The query result is then compared to a preset value. In this simplified case if the number of overall restarts over the last 2 minutes is higher than two it will fail the analysis. *initialDelay* will ensure that the test is not run until the data required is gathered. Note that this is not a robust test as the production version may crash and prevent the update even if the update itself is working correctly. The *AnalysisTemplate* is not dependant on Prometheus and could use a different source, such as a json endpoint, instead.
+
 ```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
@@ -263,17 +265,22 @@ metadata:
 spec:
   metrics:
   - name: restart-rate
-    initialDelay: 30s
+    initialDelay: 2m
     successCondition: result < 2
     provider:
       prometheus:
-        address: 
+        address: http://prometheus-operator-159041-prometheus.prometheus.svc.cluster.local:9090 # DNS name for my Prometheus, find yours with kubectl describe svc ...
         query: |
-          sum(kube_pod_container_status_restarts_total{namespace="default", container="flaky-update"}) -
-          sum(kube_pod_container_status_restarts_total{namespace="default", container="flaky-update"} offset 30s)
-
+          scalar(
+            sum(kube_pod_container_status_restarts_total{namespace="default", container="flaky-update"}) -
+            sum(kube_pod_container_status_restarts_total{namespace="default", container="flaky-update"} offset 2m)
+          )
 ```
+
+With the new Rollout and AnalysisTemplate we can safely try to deploy any version. Deploy for v2 is prevented with the Probes we set up. Deploy for v3 will automatically roll back when it notices that it has random crashes. And v4 will also fail. The short 2 minutes to test may still let a version pass. With more steps and pauses for analysis and more robust tests we could be more confident in our solution. Use `kubectl describe ar flaky-update-dep-6d5669dc9f-2-1` to get info for a specific AnalysisRun.
 
 ### Other deployment strategies ###
 
 Kubernetes supports Recreate strategy which takes down the previous pods and replaces everything with the updated one. This creates a moment of downtime for the application but ensures that different versions are not running at the same time. Argo Rollouts supports BlueGreen strategy, in which a new version is run side by side to the new one but traffic is switched between the two at a certain point, such as after running update scripts or after your QA team has approved the new version.
+
+# Message Queues #
