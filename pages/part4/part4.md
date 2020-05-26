@@ -283,4 +283,4 @@ With the new Rollout and AnalysisTemplate we can safely try to deploy any versio
 
 Kubernetes supports Recreate strategy which takes down the previous pods and replaces everything with the updated one. This creates a moment of downtime for the application but ensures that different versions are not running at the same time. Argo Rollouts supports BlueGreen strategy, in which a new version is run side by side to the new one but traffic is switched between the two at a certain point, such as after running update scripts or after your QA team has approved the new version.
 
-# Message Queues #
+## Message Queues ##
