@@ -204,7 +204,7 @@ With rolling updates, when including the Probes, we could create releases with n
 
 At the moment of writing this Canary is not a strategy for deployments. This may be due to the ambiguity of the methods for canary release. We will use [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) to test one type of canary release. At the moment of writing the latest release is v0.8.2.
 
-```
+```console
 $ kubectl create namespace argo-rollouts
 $ kubectl apply -n argo-rollouts -f https://raw.githubusercontent.com/argoproj/argo-rollouts/stable/manifests/install.yaml
 ```
