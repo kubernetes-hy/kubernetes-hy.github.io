@@ -198,6 +198,14 @@ At least something is working!
 
 A *StartupProbe* can delay the liveness probe so that an application with a longer startup can take its time. You may require it in real life but is not discussed further on this course
 
+<div class="exercise" markdown="1">
+  <h1>Exercise 4.?: Project v??</h1>
+
+  Create the required Probes and endpoint for the application to ensure that it's working and connected to a database.
+  
+  Test that it's indeed working with a version without database access, for example by supplying a wrong database url or credentials.
+</div>
+
 ### Canary release ###
 
 With rolling updates, when including the Probes, we could create releases with no downtime for users. Sometimes this is not enough and you need to be able to do a partial release for some users and get data for the new / upcoming release. Canary release is the term used to describe a release strategy in which we introduce a subset of the users to a new version of the application. Then increasing the number of users in the new version until the old version is no longer used.
@@ -279,8 +287,40 @@ spec:
 
 With the new Rollout and AnalysisTemplate we can safely try to deploy any version. Deploy for v2 is prevented with the Probes we set up. Deploy for v3 will automatically roll back when it notices that it has random crashes. And v4 will also fail. The short 2 minutes to test may still let a version pass. With more steps and pauses for analysis and more robust tests we could be more confident in our solution. Use `kubectl describe ar flaky-update-dep-6d5669dc9f-2-1` to get info for a specific AnalysisRun.
 
+<div class="exercise" markdown="1">
+  <h1>Exercise 4.?: Project v??</h1>
+
+
+</div>
+
+<div class="exercise" markdown="1">
+  <h1>Exercise 4.?: Project v??</h1>
+
+Create an AnalysisTemplate for the project that will monitor the memory usage for the first 10 minutes.
+</div>
+
 ### Other deployment strategies ###
 
 Kubernetes supports Recreate strategy which takes down the previous pods and replaces everything with the updated one. This creates a moment of downtime for the application but ensures that different versions are not running at the same time. Argo Rollouts supports BlueGreen strategy, in which a new version is run side by side to the new one but traffic is switched between the two at a certain point, such as after running update scripts or after your QA team has approved the new version.
 
 ## Message Queues ##
+
+Message Queues are a method for communication between services. They have a wide range of use cases and are helpful when you want to scale applications. A number of HTTP REST API services that want to communicate with each other require that the services know each other’s addresses. Whereas when using message queues, messages are sent to and received from the message queue, respectively.
+
+The section headline "Message Queues" can unfortunately be a little bit misleading. We will be using [NATS](https://docs.nats.io/), a "messaging system", to explore the benefits of messaging. Before we get started we will need to discuss the differences between NATS and a more conventional message queue.
+
+With NATS we can implement "at-most-once" messaging between our services. Conventionally message queues can persist the messages until another service consumes it. For example, in a case where none of the handlers for a message are available. "NATS Streaming", or STAN, is the opposite of NATS and would offer us "at-least-once" messaging with persistence.
+
+This in mind we can design our first application that uses messages for communication. 
+
+We have a data set of 100 000 json objects that we need to do some heavy processing on and then save the processed data. Unfortunately processing a single json object takes so long that processing all of the data would require hours of work. To solve this I've split the application into smaller services that we can scale individually.
+
+The application is in 3 parts, for simplification the saving to database and fetching from external API are omitted:
+
+- Fetcher, which fetches unprocessed data and passes it to NATS.
+- Mapper, which processes the data from NATS and after processing sends it back to NATS.
+- Saver, which receives the processed data from NATS and finally (could) save it.
+
+In this case the application is designed so that Fetcher can not be scaled. Fetcher splits the data into chunks of a 100 objects and keeps a record of which chunks have not been processed. Fetcher will wait for a Mapper to send a message confirming that it's listening before sending data forward. Note how the available Mapper will be the one to receive the message so the fastest Mapper could process a large number of chunks while the some of them might crash or be extremely slow. Saver will send a confirmation to Fetcher when a chunk has been saved and it will mark it as processed. So even if any part of the application crashes all of the data will be processed and saved.
+
+TODO IMAGE HERE
