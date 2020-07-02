@@ -255,7 +255,7 @@ $ kubectl get po -n prometheus
   prometheus-prometheus-operator-158773-prometheus-0                3/3     Running   1          23s
   prometheus-operator-1587733290-grafana-668cf4f5bb-k8xk7           1/2     Running   0          53s
 
-$ kubectl port-forward prometheus-operator-1587733290-grafana-668cf4f5bb-k8xk7 3000 -n prometheus
+$ kubectl -n prometheus port-forward prometheus-operator-1587733290-grafana-668cf4f5bb-k8xk7 3000
   Forwarding from 127.0.0.1:3000 -> 3000
   Forwarding from [::1]:3000 -> 3000
 ```
