@@ -13,10 +13,10 @@ Topics not yet included
 
 *CronJobs* run a container on schedule. You may have used cron before, these are essentially the same.
 
-- Nats / messageQueues
-  - Want to talk about these with microservices, maybe part 4
-
 - DaemonSets
   - Would be great with ????
 
+- More about CRDs ??
+  - Create our own ??
 
+- Kubernetes internals ??
