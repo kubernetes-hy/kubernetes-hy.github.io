@@ -445,7 +445,7 @@ If the result here is empty then something is wrong, the result may be a success
 
 Now we just need to add a Grafana dashboard for the data. Let's import a dashboard from [here](https://raw.githubusercontent.com/nats-io/prometheus-nats-exporter/5084a32850823b59069f21f3a7dde7e488fef1c6/walkthrough/grafana-nats-dash.json) instead of configuring our own. Note that the dashboard resources are defined as "gnatsd_XXXX" whereas our resources as seen from the Prometheus Exporter `kubectl port-forward my-nats-0 7777:7777` in http://127.0.0.1:7777/metrics are "nats_XXXX". Quick replace all later we can paste it into Grafana.
 
-```
+```console
 $ kubectl -n prometheus port-forward prometheus-operator-1593782473-grafana-7d457dff56-m2r6d 3000
 ```
 
