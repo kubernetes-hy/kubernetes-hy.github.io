@@ -323,7 +323,7 @@ The application is in 3 parts, for simplification the saving to database and fet
 
 In this case the application is designed so that Fetcher can not be scaled. Fetcher splits the data into chunks of a 100 objects and keeps a record of which chunks have not been processed. Fetcher will wait for a Mapper to send a message confirming that it's listening before sending data forward. Note how the available Mapper will be the one to receive the message so the fastest Mapper could process a large number of chunks while the some of them might crash or be extremely slow. Saver will send a confirmation to Fetcher when a chunk has been saved and it will mark it as processed. So even if any part of the application crashes all of the data will be processed and saved.
 
-TODO IMAGE HERE
+![]({{ "/images/part4/app9-plan.png" | absolute_url }})
 
 We're going to use helm to install nats into our cluster.
 
@@ -456,3 +456,7 @@ Here we can paste the json to "import via panel json" and then choose Prometheus
 And now we have a simple dashboard with data:
 
 ![]({{ "/images/part4/grafana_nats.png" | absolute_url }})
+
+This is now the final configuration:
+
+![]({{ "/images/part4/app9-nats-prometheus-grafana.png" | absolute_url }})
