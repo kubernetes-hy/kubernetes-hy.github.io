@@ -357,7 +357,7 @@ $ helm install my-nats nats/nats
   Thanks for using NATS!
 ```
 
-We'll want to monitor the state of NATS as well. Fortunately it already has a Prometheus Exporter included in port 7777. We can access from browser with `kubectl port-forward my-nats-0 7777:7777` in http://127.0.0.1:7777/metrics to confirm that it works. Connecting Prometheus to the exporter will require a new resource ServiceMonitor, a CRD (Custom Resource Definition).
+We'll want to monitor the state of NATS as well. Fortunately it already has a Prometheus Exporter included in port 7777. We can access from browser with `kubectl port-forward my-nats-0 7777:7777` in [http://127.0.0.1:7777/metrics](http://127.0.0.1:7777/metrics) to confirm that it works. Connecting Prometheus to the exporter will require a new resource ServiceMonitor, a CRD (Custom Resource Definition).
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
@@ -443,7 +443,7 @@ $ curl 'http://localhost:9090/api/v1/query?query=nats_varz_cpu'
 
 If the result here is empty then something is wrong, the result may be a success even if the query doesn't make sense.
 
-Now we just need to add a Grafana dashboard for the data. Let's import a dashboard from [here](https://raw.githubusercontent.com/nats-io/prometheus-nats-exporter/5084a32850823b59069f21f3a7dde7e488fef1c6/walkthrough/grafana-nats-dash.json) instead of configuring our own. Note that the dashboard resources are defined as "gnatsd_XXXX" whereas our resources as seen from the Prometheus Exporter `kubectl port-forward my-nats-0 7777:7777` in http://127.0.0.1:7777/metrics are "nats_XXXX". Quick replace all later we can paste it into Grafana.
+Now we just need to add a Grafana dashboard for the data. Let's import a dashboard from [here](https://raw.githubusercontent.com/nats-io/prometheus-nats-exporter/5084a32850823b59069f21f3a7dde7e488fef1c6/walkthrough/grafana-nats-dash.json) instead of configuring our own. Note that the dashboard resources are defined as "gnatsd_XXXX" whereas our resources as seen from the Prometheus Exporter `kubectl port-forward my-nats-0 7777:7777` in [http://127.0.0.1:7777/metrics](http://127.0.0.1:7777/metrics) are "nats_XXXX". Quick replace all later we can paste it into Grafana.
 
 ```console
 $ kubectl -n prometheus port-forward prometheus-operator-1593782473-grafana-7d457dff56-m2r6d 3000
