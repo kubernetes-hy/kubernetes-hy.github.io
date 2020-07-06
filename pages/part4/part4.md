@@ -323,6 +323,62 @@ The application is in 3 parts, for simplification the saving to database and fet
 
 ![]({{ "/images/part4/app9-plan.png" | absolute_url }})
 
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mapper-dep
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: mapper
+  template:
+    metadata:
+      labels:
+        app: mapper
+    spec:
+      containers:
+        - name: mapper
+          image: jakousa/dwk-app9-mapper:0bcd6794804c367684a9a79bb142bb4455096974
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fetcher-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fetcher
+  template:
+    metadata:
+      labels:
+        app: fetcher
+    spec:
+      containers:
+        - name: fetcher
+          image: jakousa/dwk-app9-fetcher:0bcd6794804c367684a9a79bb142bb4455096974
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: saver-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: saver
+  template:
+    metadata:
+      labels:
+        app: saver
+    spec:
+      containers:
+        - name: saver
+          image: jakousa/dwk-app9-saver:0bcd6794804c367684a9a79bb142bb4455096974
+```
+
 In this case the application is designed so that Fetcher can not be scaled. Fetcher splits the data into chunks of a 100 objects and keeps a record of which chunks have not been processed. Fetcher will wait for a Mapper to send a message confirming that it's listening before sending data forward. Note how the available Mapper will be the one to receive the message so the fastest Mapper could process a large number of chunks while the some of them might crash or be extremely slow. Saver will send a confirmation to Fetcher when a chunk has been saved and it will mark it as processed. So even if any part of the application crashes all of the data will be processed and saved.
 
 We're going to use Helm to install NATS into our cluster.
@@ -357,7 +413,29 @@ $ helm install my-nats nats/nats
   Thanks for using NATS!
 ```
 
-We'll want to monitor the state of NATS as well. Fortunately it already has a Prometheus Exporter included in port 7777. We can access from browser with `kubectl port-forward my-nats-0 7777:7777` in [http://127.0.0.1:7777/metrics](http://127.0.0.1:7777/metrics) to confirm that it works. Connecting Prometheus to the exporter will require a new resource ServiceMonitor, a CRD (Custom Resource Definition).
+This added NATS into the cluster. At this state however, the applications don't know where the NATS is so we'll add that to each of the deployments
+
+```yaml
+      ...
+      containers:
+        - name: mapper
+          image: jakousa/dwk-app9-mapper:0bcd6794804c367684a9a79bb142bb4455096974
+          env:
+            - name: NATS_URL
+              value: nats://my-nats:4222
+      ...
+          image: jakousa/dwk-app9-fetcher:0bcd6794804c367684a9a79bb142bb4455096974
+          env:
+            - name: NATS_URL
+              value: nats://my-nats:4222
+      ...
+          image: jakousa/dwk-app9-saver:0bcd6794804c367684a9a79bb142bb4455096974
+          env:
+            - name: NATS_URL
+              value: nats://my-nats:4222
+```
+
+After applying the modified deployments we can confirm that everything is working here by reading the logs of the fetcher - `kubectl logs fetcher-dep-7d799bb6bf-zz8hr -f`. We'll want to monitor the state of NATS as well. Fortunately it already has a Prometheus Exporter included in port 7777. We can access from browser with `kubectl port-forward my-nats-0 7777:7777` in [http://127.0.0.1:7777/metrics](http://127.0.0.1:7777/metrics) to confirm that it works. Connecting Prometheus to the exporter will require a new resource ServiceMonitor, a CRD (Custom Resource Definition).
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
