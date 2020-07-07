@@ -7,7 +7,13 @@ order: 4
 ---
 
 
-**HERE BE DRAGONS**
+**MISSING EXERCISES**
+
+In this part we'll go over common practices and examples on how to implement them in Kubernetes. By the end of this part you will be able to
+
+- **Confidently** deploy software with canary releases
+
+- Use and monitor messaging systems (NATS) in Kubernetes
 
 ## Update strategies ##
 
@@ -538,3 +544,15 @@ And now we have a simple dashboard with data:
 This is now the final configuration:
 
 ![]({{ "/images/part4/app9-nats-prometheus-grafana.png" | absolute_url }})
+
+## Summary ##
+
+By this point you have a grasp on the variety of decisions that are made during application development and how it may affect the operations side.
+
+We're now at the stage where we are using some of the best web development practices and all of it using Kubernetes.
+
+* Deployments to multiple branch specific environments
+* Canary releases with automatic malfunction detection
+* State of the art monitoring with Grafana and Prometheus
+
+
