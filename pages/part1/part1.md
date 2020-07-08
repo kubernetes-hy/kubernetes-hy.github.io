@@ -20,7 +20,7 @@ On this course we'll talk about microservices and create microservices. Before w
 
 As such the easiest method to achieve microservice architecture is by splitting off a single piece out of a monolith - they are then both less than a monolith. Why would you do this? For example, to scale a piece of the application separately or to have a separate team work on a piece of the application.
 
-The misconception of microservices being a large number of extremely small services is proliferated by large enterprises. If you have an extremely large enterprise where teams don't even know the existence of other teams you may have a unconventionally large number of microservices. Due of the insanity of large number of small services without any good reasoning we're witnessing the term monolith trending.
+The misconception of microservices being a large number of extremely small services is proliferated by large enterprises. If you have an extremely large enterprise where teams don't even know the existence of other teams you may have a unconventionally large number of microservices. Due of the insanity of large number of small services without any good reasoning we're witnessing the term monolith trending in 2020.
 
 - "Monoliths are the future" - Kelsey Hightower, Staff Developer Advocate at Google, ["Monoliths are the Future"](https://changelog.com/posts/monoliths-are-the-future)
 
@@ -30,7 +30,7 @@ For the context of this unpopular opinion Kelsey Hightower points the fault at *
 
 And this evolves into ["The Majestic Monolith can become The Citadel"](https://m.signalvnoise.com/the-majestic-monolith-can-become-the-citadel/) with the following: "next step is The Citadel, which keeps the Majestic Monolith at the center, but supports it with a set of Outposts, each extracting a small subset of application responsibilities."
 
-During this course we'll do arbitrary splits to our services just to show that it works and we will see an actual use case for microservices.
+Sometimes during this course we'll do **arbitrary** splits to our services just to show the features of Kubernetes. We will also see at least one actual use case for [microservices](https://www.youtube.com/watch?v=y8OnoxKotPQ).
 
 ## What is Kubernetes? ##
 
