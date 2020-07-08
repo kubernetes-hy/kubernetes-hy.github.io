@@ -12,6 +12,26 @@ In this part we'll go over a lot of things you need to get yourself started with
 
 - Deploy applications to Kubernetes
 
+## Foreword on microservices ##
+
+On this course we'll talk about microservices and create microservices. Before we get started with anything else we'll need to define what a microservice is.
+
+**A microservice is any service that is smaller than a monolith.**
+
+As such the easiest method to achieve microservice architecture is by splitting off a single piece out of a monolith - they are then both less than a monolith. Why would you do this? For example, to scale a piece of the application separately or to have a separate team work on a piece of the application.
+
+The misconception of microservices being a large number of extremely small services is proliferated by large enterprises. If you have an extremely large enterprise where teams don't even know the existence of other teams you may have a unconventionally large number of microservices. Due of the insanity of large number of small services without any good reasoning we're witnessing the term monolith trending.
+
+- "Monoliths are the future" - Kelsey Hightower, Staff Developer Advocate at Google, ["Monoliths are the Future"](https://changelog.com/posts/monoliths-are-the-future)
+
+For the context of this unpopular opinion Kelsey Hightower points the fault at *Distributed Monoliths* where you have a large number of microservices without a good reason.
+
+- "Run a small team, not a tech behemoth? Embrace the monolith and make it majestic. You Deserve It!" - David Heinemeier Hansson, cofounder & CTO at Basecamp, ["The Majestic Monolith"](https://m.signalvnoise.com/the-majestic-monolith/)
+
+And this evolves into ["The Majestic Monolith can become The Citadel"](https://m.signalvnoise.com/the-majestic-monolith-can-become-the-citadel/) with the following: "next step is The Citadel, which keeps the Majestic Monolith at the center, but supports it with a set of Outposts, each extracting a small subset of application responsibilities."
+
+During this course we'll do arbitrary splits to our services just to show that it works and we will see an actual use case for microservices.
+
 ## What is Kubernetes? ##
 
 “Kubernetes (K8s) is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery.” - [kubernetes.io](https://kubernetes.io/)
