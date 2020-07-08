@@ -120,3 +120,8 @@ To get a complete picture of how each part communicates with each other [what ha
 
 ## Custom Resource Definitions ##
 
+We've used a number of Custom Resource Definitions previously. They are a way to extend Kubernetes with our own Resources. So let us do just that and extend Kubernetes!
+
+We'll want a resource that counts down from 30. And a controller that makes sure that resources with count at 0 are removed. ???
+
+Exercise, a proxy ???
