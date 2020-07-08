@@ -20,26 +20,103 @@ Now that we'll start talking about the internals we'll learn new insight on Kube
 
 Due to this section being mostly a reiteration of Kubernetes documentation I will include various links the official version of the documentation - we will not setup our own Kubernetes cluster manually. If you want to go hands on and learn to setup your own cluster with you should read and complete [Kubernetes the Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way) by Kelsey Hightower.
 
+### Controllers and Eventual Consistency ###
+
+[Controllers](https://kubernetes.io/docs/concepts/architecture/controller/) watch the state of your cluster and then tries to move the current state of the cluster closer to the desired state. When you declare X replicas of a Pod in your deployment.yaml, a controller called Replication Controller makes sure that that will be true. There are a number of controllers for different responsibilities.
+
 ### Kubernetes Control Plane ###
 
 [Kubernetes Control Plane](https://kubernetes.io/docs/concepts/overview/components/#control-plane-components) consists of
 
 * etcd
-  - A key-value storage that Kubernetes uses to save all cluster data
+  - A key-value storage that Kubernetes uses to save all cluster data.
 
 * kube-scheduler
-  - 
+  - Decides on which node a Pod should be run on.
 
 * kube-controller-manager
-  - 
-
-* cloud-controller-manager
-  - 
+  - Is responsible for and runs all of the controllers.
 
 * kube-apiserver
   - This exposes the Kubernetes Control Plane through an API
 
-### Eventual consistency model ###
+There's also cloud-controller-manager that lets you link your cluster into a cloud provider's API. If you wanted to build your own cluster on [Hetzner](https://www.hetzner.com/cloud), for example, you could use [hcloud-cloud-controller-manager](https://github.com/hetznercloud/hcloud-cloud-controller-manager) in your own cluster installed on their VMs.
+
+### Node Components ###
+
+Every node has a number [components](https://kubernetes.io/docs/concepts/overview/components/#node-components) that maintain the running pods.
+
+* kubelet
+  - Makes sure containers are running in a Pod
+
+* kube-proxy
+  - network proxy and maintains the network rules. Enables connections outside and inside of the cluster as well as Services to work as we've been using them.
+
+And also the Container Runtime. We've been using Docker for this course.
+
+### Addons ###
+
+In addition to all of the previously mentioned, Kubernetes has [Addons](https://kubernetes.io/docs/concepts/cluster-administration/addons/) which use the same Kubernetes resources we've been using and extend Kubernetes. You can view which resources the addons have created in the `kube-system` namespace.
+
+```console
+$ kubectl -n kube-system get all
+  NAME                                                            READY   STATUS    RESTARTS   AGE
+  pod/event-exporter-v0.2.5-599d65f456-vh4st                      2/2     Running   0          5h42m
+  pod/fluentd-gcp-scaler-bfd6cf8dd-kmk2x                          1/1     Running   0          5h42m
+  pod/fluentd-gcp-v3.1.1-9sl8g                                    2/2     Running   0          5h41m
+  pod/fluentd-gcp-v3.1.1-9wpqh                                    2/2     Running   0          5h41m
+  pod/fluentd-gcp-v3.1.1-fr48m                                    2/2     Running   0          5h41m
+  pod/heapster-gke-9588c9855-pc4wr                                3/3     Running   0          5h41m
+  pod/kube-dns-5995c95f64-m7k4j                                   4/4     Running   0          5h41m
+  pod/kube-dns-5995c95f64-rrjpx                                   4/4     Running   0          5h42m
+  pod/kube-dns-autoscaler-8687c64fc-xv6p6                         1/1     Running   0          5h41m
+  pod/kube-proxy-gke-dwk-cluster-default-pool-700eba89-j735       1/1     Running   0          5h41m
+  pod/kube-proxy-gke-dwk-cluster-default-pool-700eba89-mlht       1/1     Running   0          5h41m
+  pod/kube-proxy-gke-dwk-cluster-default-pool-700eba89-xss7       1/1     Running   0          5h41m
+  pod/l7-default-backend-8f479dd9-jbv9l                           1/1     Running   0          5h42m
+  pod/metrics-server-v0.3.1-5c6fbf777-lz2zh                       2/2     Running   0          5h41m
+  pod/prometheus-to-sd-jw9rs                                      2/2     Running   0          5h41m
+  pod/prometheus-to-sd-qkxvd                                      2/2     Running   0          5h41m
+  pod/prometheus-to-sd-z4ssv                                      2/2     Running   0          5h41m
+  pod/stackdriver-metadata-agent-cluster-level-5d8cd7b6bf-rfd8d   2/2     Running   0          5h41m
+  
+  NAME                           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)         AGE
+  service/default-http-backend   NodePort    10.31.251.116   <none>        80:31581/TCP    5h42m
+  service/heapster               ClusterIP   10.31.247.145   <none>        80/TCP          5h42m
+  service/kube-dns               ClusterIP   10.31.240.10    <none>        53/UDP,53/TCP   5h42m
+  service/metrics-server         ClusterIP   10.31.249.74    <none>        443/TCP         5h42m
+  
+  NAME                                      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                                                              AGE
+  daemonset.apps/fluentd-gcp-v3.1.1         3         3         3       3            3           beta.kubernetes.io/fluentd-ds-ready=true,beta.kubernetes.io/os=linux       5h42m
+  daemonset.apps/metadata-proxy-v0.1        0         0         0       0            0           beta.kubernetes.io/metadata-proxy-ready=true,beta.kubernetes.io/os=linux   5h42m
+  daemonset.apps/nvidia-gpu-device-plugin   0         0         0       0            0           <none>                                                                     5h42m
+  daemonset.apps/prometheus-to-sd           3         3         3       3            3           beta.kubernetes.io/os=linux                                                5h42m
+  
+  NAME                                                       READY   UP-TO-DATE   AVAILABLE   AGE
+  deployment.apps/event-exporter-v0.2.5                      1/1     1            1           5h42m
+  deployment.apps/fluentd-gcp-scaler                         1/1     1            1           5h42m
+  deployment.apps/heapster-gke                               1/1     1            1           5h42m
+  deployment.apps/kube-dns                                   2/2     2            2           5h42m
+  deployment.apps/kube-dns-autoscaler                        1/1     1            1           5h42m
+  deployment.apps/l7-default-backend                         1/1     1            1           5h42m
+  deployment.apps/metrics-server-v0.3.1                      1/1     1            1           5h42m
+  deployment.apps/stackdriver-metadata-agent-cluster-level   1/1     1            1           5h42m
+  
+  NAME                                                                  DESIRED   CURRENT   READY   AGE
+  replicaset.apps/event-exporter-v0.2.5-599d65f456                      1         1         1       5h42m
+  replicaset.apps/fluentd-gcp-scaler-bfd6cf8dd                          1         1         1       5h42m
+  replicaset.apps/heapster-gke-58bf4cb5f5                               0         0         0       5h42m
+  replicaset.apps/heapster-gke-9588c9855                                1         1         1       5h41m
+  replicaset.apps/kube-dns-5995c95f64                                   2         2         2       5h42m
+  replicaset.apps/kube-dns-autoscaler-8687c64fc                         1         1         1       5h42m
+  replicaset.apps/l7-default-backend-8f479dd9                           1         1         1       5h42m
+  replicaset.apps/metrics-server-v0.3.1-5c6fbf777                       1         1         1       5h41m
+  replicaset.apps/metrics-server-v0.3.1-8559697b9c                      0         0         0       5h42m
+  replicaset.apps/stackdriver-metadata-agent-cluster-level-5d8cd7b6bf   1         1         1       5h41m
+  replicaset.apps/stackdriver-metadata-agent-cluster-level-7bd5ddd849   0         0         0       5h42m
+```
+
+To get a complete picture of how each part communicates with each other [what happens when k8s](https://github.com/jamiehannaford/what-happens-when-k8s) explores what happens when you do `kubectl run nginx --image=nginx --replicas=3` shedding some more light on the magic that happens behind the scenes.
 
 ## Custom Resource Definitions ##
 
