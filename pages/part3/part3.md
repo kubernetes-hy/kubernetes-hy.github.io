@@ -150,7 +150,8 @@ and a index.html with the following content
 
 Let's make sure that everything works with `docker build . -t colorcontent && docker run -p 3000:80 colorcontent` and accessing it through [http://localhost:3000](http://localhost:3000). Next is the addition of manifests for our website.
 
-- manifests/service.yaml
+**manifests/service.yaml**
+
 ```yaml
 apiVersion: v1
 kind: Service
@@ -166,7 +167,8 @@ spec:
       targetPort: 80
 ```
 
-- manifests/deployment.yaml
+**manifests/deployment.yaml**
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -189,7 +191,7 @@ spec:
 
 Next, to test our manifests deploy this into our cluster. Above I had pushed the built image using `docker push`.
 
-```
+```console
 $ kubectl apply -f manifests/service.yaml
 $ kubectl apply -f manifests/deployment.yaml
 ```
@@ -218,7 +220,8 @@ $ kubectl apply -k .
 
 We can preview the file with `kubectl kustomize .`. Kustomize will be an essential tool for our deployment pipeline. It'll allow us to individially choose which image to use. For this let's declare the image inside the kustomization.yaml. 
 
-- kustomization.yaml
+**kustomization.yaml**
+
 ```yaml
 ...
 images:
@@ -228,7 +231,8 @@ images:
 
 This will replace image "IMAGE:TAG" with the one defined in newName. Next setting a placeholder value inside the deployment.yaml for the image:
 
-- deployment.yaml
+**deployment.yaml**
+
 ```yaml
       ...
       containers:
