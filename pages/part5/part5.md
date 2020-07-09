@@ -122,7 +122,7 @@ To get a complete picture of how each part communicates with each other [what ha
 
 We've used a number of CRDs, Custom Resource Definitions, previously. They are a way to extend Kubernetes with our own Resources. So let us do just that and extend Kubernetes! There's another option for [API Aggregation](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/apiserver-aggregation/) but that's left outside of the course. 
 
-We'll want a resource that counts down to 0. And a controller that makes sure that countdowns at 0 are removed. So let's start by defining a resource called "Countdown" - as a template I'll use one provided by the [docs](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/).
+We'll want a resource that counts down to 0. So let's start by defining a resource called "Countdown" - as a template I'll use one provided by the [docs](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/).
 
 **resourcedefinition.yaml**
 ```yaml
@@ -130,10 +130,22 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   # name must match the spec fields below, and be in the form: <plural>.<group>
-  name: countdown.stable.dwkcu
+  name: countdowns.stable.dwk
 spec:
   # group name to use for REST API: /apis/<group>/<version>
   group: stable.dwk
+  # either Namespaced or Cluster
+  scope: Namespaced
+  names:
+    # kind is normally the CamelCased singular type. Your resource manifests use this.
+    kind: Countdown
+    # plural name to be used in the URL: /apis/<group>/<version>/<plural>
+    plural: countdowns
+    # singular name to be used as an alias on the CLI and for display
+    singular: countdown
+    # shortNames allow shorter string to match your resource on the CLI
+    shortNames:
+    - cd
   # list of versions supported by this CustomResourceDefinition
   versions:
     - name: v1
@@ -148,26 +160,15 @@ spec:
             spec:
               type: object
               properties:
-                length: # We will be able to define the length of the countdown
+                length:
                   type: integer
-                  default: 10
-                image: # define the image for countdown
+                image:
                   type: string
-                replicas: # define how many countdowns
-                  type: integer
-                  default: 1
-  # either Namespaced or Cluster
-  scope: Namespaced
-  names:
-    # kind is normally the CamelCased singular type. Your resource manifests use this.
-    kind: Countdown
-    # plural name to be used in the URL: /apis/<group>/<version>/<plural>
-    plural: countdowns
-    # singular name to be used as an alias on the CLI and for display
-    singular: countdown
-    # shortNames allow shorter string to match your resource on the CLI
-    shortNames:
-    - cd
+      additionalPrinterColumns:
+        - name: Length
+          type: integer
+          description: The length of the countdown
+          jsonPath: .spec.length
 ```
 
 Now we can create our own Countdown:
@@ -178,8 +179,7 @@ kind: Countdown
 metadata:
   name: doomsday
 spec:
-  replicas: 1
-  length: 10
+  length: 14
   image: jakousa/dwk-app10:sha-adaefc5
 ```
 
@@ -190,11 +190,10 @@ $ kubectl apply -f countdown.yaml
   countdown.stable.dwk/doomsday created
 
 $ kubectl get cd
-  NAME       AGE
-  doomsday   3s
+  NAME       LENGTH
+  doomsday   14
 ```
 
-Now it's running, but unfortunately 
-
+Next step is to make sure that countdowns at 0 are removed.
 
 Exercise, a proxy ???
