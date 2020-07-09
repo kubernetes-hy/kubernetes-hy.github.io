@@ -50,7 +50,9 @@ Labels are used to separate an application from others inside a namespace. They 
 
 Let's look at the labels in *Deployment* yamls. This is the first yaml we created and you've copy pasted something similar:
 
-```yml
+**deployment.yaml**
+
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -97,7 +99,10 @@ $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-exam
 
 The requirement for an environment variable inside a secret is added to the deployment like so
 
-```yml
+**deployment.yaml**
+
+```yaml
+...
           envFrom:
           - secretRef:
               name: pixabay-apikey
@@ -107,9 +112,11 @@ The application won't run at first and we can see the reason with `kubectl get p
 
 Let's use secret to pass the api key environment variable to the application. 
 
-Secrets use base64 encoding to avoid having to deal with special characters. We would like to use encryption to avoid printing our API_KEY for the world to see but for the sake of testing create and apply a new file secret.yml with the following:
+Secrets use base64 encoding to avoid having to deal with special characters. We would like to use encryption to avoid printing our API_KEY for the world to see but for the sake of testing create and apply a new file secret.yaml with the following:
 
-```yml
+**secret.yaml**
+
+```yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -159,8 +166,10 @@ Let's run redis and save some information there. We're going to need a Persisten
 
 You can apply the statefulset from `https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app5/manifests/statefulset.yaml`
 
-```yml
-apiVersion: v1
+**statefulset.yaml**
+
+```yaml
+apiVersion: v1 # Includes the Service for lazyness
 kind: Service
 metadata:
   name: redis-svc

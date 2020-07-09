@@ -78,7 +78,9 @@ $ kubectl apply -f
 
 Now as a warning the next step is going to add into the [cost of the cluster](https://cloud.google.com/compute/all-pricing#lb) as well. Let's add a *LoadBalancer* Service!
 
-```yml
+**service.yaml**
+
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -204,6 +206,8 @@ As you may've noticed applying multiple files like this gets bothersome.
 
 For us a new file *kustomization.yaml* in the root of the project will work. The *kustomization.yaml* should include instructions to use the deployment.yaml and service.yaml.
 
+**kustomization.yaml**
+
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -265,6 +269,8 @@ Create a file .github/workflows/main.yaml. We'll want the workflow to do 3 thing
 
 The initial config will look something like this:
 
+**main.yaml**
+
 ```yaml
 name: Release application
 
@@ -297,7 +303,7 @@ This sets the environment for the job and triggers the [checkout action](https:/
 
 Next we'll use some additional actions, mainly from [GoogleCloudPlatform](https://github.com/GoogleCloudPlatform/github-actions) that are designed to help on deployments to Google Cloud.
 
-```yml
+```yaml
 ...
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
@@ -372,6 +378,8 @@ And with Kustomize we can set the image PROJECT/IMAGE as the one we just publish
 A quite popular choice when using a deployment pipeline is having a separate environment for every branch - especially when using feature branching.
 
 Let's implement our own version of this. Let's extend the previously defined pipeline. Previously this was our final state:
+
+**main.yaml**
 
 ```yaml
 name: Release application
@@ -482,7 +490,9 @@ There are multiple reasons for wanting to scale an application. The most common 
 
 I've prepared an application that uses up CPU resources here: `jakousa/dwk-app7:478244ce87503c4abab757b1d13db5aff10963c9`. The application accepts a query parameter to increase the time until freeing CPU via "?fibos=25", you should use values between 15 and 30.
 
-```yml
+**deployment.yaml**
+
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -508,7 +518,9 @@ spec:
 
 Note that finally we have set the resource limits for a Deployment as well
 
-```yml
+**service.yaml**
+
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -525,7 +537,9 @@ spec:
 
 Service looks completely familiar by now.
 
-```yml
+**horiziontalpodautoscaler.yaml**
+
+```yaml
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
@@ -597,7 +611,9 @@ For a more robust cluster see examples on creation here: <https://cloud.google.c
 
 Cluster autoscaling may disrupt pods by moving them around as the number of nodes increases or decreases. To solve possible issues with this the resource [PodDisruptionBudget](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#how-disruption-budgets-work) with which the requirements for a pod can be defined via two of the fields: *minAvailable* and *maxUnavailable*.
 
-```yml
+**poddisruptionbudget.yaml**
+
+```yaml
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:

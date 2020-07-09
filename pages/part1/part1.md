@@ -185,7 +185,9 @@ $ kubectl delete deployment hashgenerator-dep
 
 and create a new folder named `manifests` to the project and a file called deployment.yaml with the following contents (you can check the example [here](https://github.com/kubernetes-hy/material-example/tree/master/app1)): 
 
-```yml
+**deployment.yaml**
+
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -207,7 +209,7 @@ spec:
 
 > I personally use vscode to create these yaml files. It has helpful autofill, definitions and syntax check for Kubernetes with the extension Kubernetes by Microsoft. Even now it helpfully warns us that we haven't defined resource limitations.
 
-This looks a lot like the docker-compose.ymls we have previously written. Let's ignore what we don't know for now, which is mainly labels, and focus on the things that we know:
+This looks a lot like the docker-compose.yamls we have previously written. Let's ignore what we don't know for now, which is mainly labels, and focus on the things that we know:
 
 * We're declaring what kind it is (kind: Deployment)
 * We're declaring it a name as metadata (name: hashgenerator-dep)
@@ -328,7 +330,9 @@ Create a file service.yaml into the manifests folder and we need the service to 
 
 This translates into a yaml file with contents
 
-```yml
+**service.yaml**
+
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -375,6 +379,8 @@ In this case we will need to declare
 
 For resource 1 the new *Service* we want a simpler version of the one above. A ClusterIP resource that will let TCP traffic from port XXXX to port 3000:
 
+**service.yaml**
+
 ```yaml
 apiVersion: v1
 kind: Service
@@ -395,7 +401,10 @@ For resource 2 the new *Ingress*.
 1. Declare that it should be an Ingress
 2. And route all traffic to our service
 
-```yml
+
+**ingress.yaml**
+
+```yaml
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -413,9 +422,9 @@ spec:
 Then we can apply everything and view the result
 
 ```console
-$ kubectl apply -f manifests/service.yml
+$ kubectl apply -f manifests/service.yaml
   service/hashresponse-svc created
-$ kubectl apply -f manifests/ingress.yml
+$ kubectl apply -f manifests/ingress.yaml
   ingress.extensions/dwk-material-ingress created
 
 $ kubectl get svc
@@ -455,6 +464,8 @@ App 1 will check if /usr/src/app/files/image.jpg exists and if not download a ra
 App 2 will check for /usr/src/app/files/image.jpg and show it if it is available.
 
 They share a deployment so that both of them are inside the same pod. My version available [here](https://github.com/kubernetes-hy/material-example/tree/master/app3). The example includes ingress and service to access the application.
+
+**deployment.yaml**
 
 ```yaml
 apiVersion: apps/v1
@@ -501,6 +512,8 @@ The reason for the difficulty is because you should not store data with the appl
 
 A *local* volume is a *PersistentVolume* that binds a path from the node to use as a storage. This ties the volume to the node.
 
+**persistentvolume.yaml**
+
 ```yaml
 apiVersion: v1
 kind: PersistentVolume
@@ -528,6 +541,8 @@ spec:
 > As this is bound into that node avoid using this in production.
 
 The type *local* we're using now can not be dynamically provisioned. A new *PersistentVolume* needs to be defined only rarely, for example to your personal cluster once a new physical disk is added. After that a *PersistentVolumeClaim* is used to claim a part of the storage for an application.
+
+**persistentvolumeclaim.yaml**
 
 ```yaml
 apiVersion: v1

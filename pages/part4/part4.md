@@ -32,7 +32,7 @@ By default Kubernetes initiates a "rolling update" when we change the image. Tha
 
 I've prepared an application with 5 versions here. v1 works always, v2 never works, v3 works 90% of the time, v4 will die after 20 seconds and v5 works always.
 
-deployment.yaml
+**deployment.yaml**
 
 ```yaml
 apiVersion: apps/v1
@@ -79,6 +79,8 @@ You can see the rolling update performed but unfortunately the application no lo
 With a *ReadinessProbe* Kubernetes can check if a pod is ready to process requests. The application has an endpoint [/healthz](https://stackoverflow.com/questions/43380939/where-does-the-convention-of-using-healthz-for-application-health-checks-come-f) in port 3541 we can test for health. It will simply answer with status code 500 if it's not working and 200 if it is.
 
 Let's roll the version back to v1 as well so we can test the update to v2 again.
+
+**deployment.yaml**
 
 ```yaml
 apiVersion: apps/v1
@@ -149,6 +151,8 @@ $ kubectl rollout undo deployment flaky-update-dep
 ```
 
 There's another probe that could've helped us in a situation like this. *LivenessProbes* can be configured similarly to *ReadinessProbes*, but if the check fails the container will be restarted. 
+
+**deployment.yaml**
 
 ```yaml
 apiVersion: apps/v1
@@ -225,6 +229,8 @@ $ kubectl apply -n argo-rollouts -f https://raw.githubusercontent.com/argoproj/a
 
 Now we have a new resource "Rollout" available to us. The Rollout will replace our previously created deployment and enable us to use a new field:
 
+**rollout.yaml**
+
 ```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
@@ -270,6 +276,8 @@ If you don't have Prometheus available go back to part 2 for a reminder. We'll h
 ```
 
 The CRD (Custom Resource Definition) AnalysisTemplate will, in our case, use Prometheus and send a query. The query result is then compared to a preset value. In this simplified case if the number of overall restarts over the last 2 minutes is higher than two it will fail the analysis. *initialDelay* will ensure that the test is not run until the data required is gathered. Note that this is not a robust test as the production version may crash and prevent the update even if the update itself is working correctly. The *AnalysisTemplate* is not dependant on Prometheus and could use a different source, such as a json endpoint, instead.
+
+**analysistemplate.yaml**
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -328,6 +336,8 @@ The application is in 3 parts, for simplification the saving to database and fet
 - Saver, which receives the processed data from NATS and finally (could) save it.
 
 ![]({{ "/images/part4/app9-plan.png" | absolute_url }})
+
+**deployment.yaml**
 
 ```yaml
 apiVersion: apps/v1
@@ -421,6 +431,8 @@ $ helm install my-nats nats/nats
 
 This added NATS into the cluster. At this state however, the applications don't know where the NATS is so we'll add that to each of the deployments
 
+**deployment.yaml**
+
 ```yaml
       ...
       containers:
@@ -442,6 +454,8 @@ This added NATS into the cluster. At this state however, the applications don't 
 ```
 
 After applying the modified deployments we can confirm that everything is working here by reading the logs of the fetcher - `kubectl logs fetcher-dep-7d799bb6bf-zz8hr -f`. We'll want to monitor the state of NATS as well. Fortunately it already has a Prometheus Exporter included in port 7777. We can access from browser with `kubectl port-forward my-nats-0 7777:7777` in [http://127.0.0.1:7777/metrics](http://127.0.0.1:7777/metrics) to confirm that it works. Connecting Prometheus to the exporter will require a new resource ServiceMonitor, a CRD (Custom Resource Definition).
+
+**servicemonitor.yaml**
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
