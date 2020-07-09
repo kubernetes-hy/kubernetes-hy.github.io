@@ -174,7 +174,7 @@ $ kubectl scale deployment/hashgenerator-dep --replicas=4`
 $ kubectl set image deployment/hashgenerator-dep dwk-app1=jakousa/dwk-app1:78031863af07c4c4cc3c96d07af68e8ce6e3afba`
 ```
 
-Things start to get really cumbersome. In the dark ages deployments were created similarly by running commands after each other in a "correct" order. We'll now use a declarative approach, where we define how things should be, rather than iterative is more sustainable in the long term.
+Things start to get really cumbersome. In the dark ages deployments were created similarly by running commands after each other in a "correct" order. We'll now use a declarative approach where we define how things should be. This is more sustainable in the long term than the iterative approach.
 
 Before redoing the previous let's take the deployment down.
 
