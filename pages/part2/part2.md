@@ -103,6 +103,8 @@ The requirement for an environment variable inside a secret is added to the depl
 
 ```yaml
 ...
+      containers:
+        - name: imageagain
           envFrom:
           - secretRef:
               name: pixabay-apikey
