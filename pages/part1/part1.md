@@ -512,6 +512,8 @@ The reason for the difficulty is because you should not store data with the appl
 
 A *local* volume is a *PersistentVolume* that binds a path from the node to use as a storage. This ties the volume to the node.
 
+Let's create a directory at `/tmp/kube` in the `k3d-k3s-default-worker-0` container so we can tell Kubernetes to use the space with `docker exec k3d-k3s-default-worker-0 mkdir -p /tmp/kube`.
+
 **persistentvolume.yaml**
 
 ```yaml
@@ -540,7 +542,7 @@ spec:
 
 > As this is bound into that node avoid using this in production.
 
-The type *local* we're using now can not be dynamically provisioned. A new *PersistentVolume* needs to be defined only rarely, for example to your personal cluster once a new physical disk is added. After that a *PersistentVolumeClaim* is used to claim a part of the storage for an application.
+The type *local* we're using now can not be dynamically provisioned. A new *PersistentVolume* needs to be defined only rarely, for example to your personal cluster once a new physical disk is added. After that a *PersistentVolumeClaim* is used to claim a part of the storage for an application. If we create multiple *PersistentVolumeClaims* the rest will stay in Pending state, waiting for a suitable *PersistentVolume*.
 
 **persistentvolumeclaim.yaml**
 
@@ -558,7 +560,30 @@ spec:
       storage: 1Gi
 ```
 
-Let's apply a modified deployment that uses it:
+Modify the previously introduced deployment to use it:
+
+**deployment.yaml**
+```yaml
+...
+    spec:
+      volumes:
+        - name: shared-image
+          persistentVolumeClaim:
+            claimName: image-claim
+      containers:
+        - name: image-finder
+          image: jakousa/dwk-app3-image-finder:a04092af0393067d08280db7a79057eaab67692b
+          volumeMounts:
+          - name: shared-image
+            mountPath: /usr/src/app/files
+        - name: image-response
+          image: jakousa/dwk-app3-image-response:31a78aec1090d7ea44446d2f9af621a2c59efe72
+          volumeMounts:
+          - name: shared-image
+            mountPath: /usr/src/app/files
+```
+
+And apply it
 
 ```console
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
