@@ -152,6 +152,8 @@ $ kubectl get pods
 
 To see the output we can run `kubectl logs -f hashgenerator-dep-6965c5c7-2pkxc`
 
+> Use `source <(kubectl completion bash)` to save yourself a lot of headache. Add it to .bashrc for automatic load. (Also available for zsh)
+
 A helpful list for other commands from docker-cli translated to kubectl is available here [https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/](https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/)
 
 {% include_relative exercises/1_01.html %}
