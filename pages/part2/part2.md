@@ -18,7 +18,27 @@ In this part we'll learn more about management and maintenance as well as expand
 
 In part 1 we managed to setup networking configuration to enable routing traffic from outside of the cluster to a container inside a pod. In Part 2 we'll focus on communication between applications.
 
-Kubernetes includes a DNS service so communication between pods and containers in Kubernetes is as much of a challenge as it was with containers in docker-compose. Containers in a pod share the network. As such every other container inside a pod is accessible from `localhost`. For communication between Pods a *Service* is used.
+Kubernetes includes a DNS service so communication between pods and containers in Kubernetes is as much of a challenge as it was with containers in docker-compose. Containers in a pod share the network. As such every other container inside a pod is accessible from `localhost`. For communication between Pods a *Service* is used as they expose the Pods as a network service. 
+
+The following creates a cluster-internal IP which will enable other pods in the cluster to access the port 8080 of "example" application from http://example-service. ClusterIP is the default type for a Service.
+
+**service.yaml**
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-service
+spec:
+  type: ClusterIP
+  selector:
+    app: example
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+```
 
 > Alternatively each Pod has an IP created by Kubernetes
 
@@ -30,7 +50,7 @@ Kubernetes includes a DNS service so communication between pods and containers i
 
 As you can imagine there may be a lot of resources inside a cluster. In fact, at the moment of writing this Kubernetes supports over 100 000 pods in a single cluster.
 
-Namespaces are used to keep resources separated. A company which uses 1 cluster but has multiple projects can use namespaces to split the cluster into virtual clusters, one for each project. Most commonly they would be used to separate environments such as production, testing, staging. DNS entry for services includes the namespace so you can still have projects communicate with each other if needed.
+Namespaces are used to keep resources separated. A company which uses 1 cluster but has multiple projects can use namespaces to split the cluster into virtual clusters, one for each project. Most commonly they would be used to separate environments such as production, testing, staging. DNS entry for services includes the namespace so you can still have projects communicate with each other if needed through service.namespace address. e.g if the example-service from previous section was in a namespace "ns-test" it could be found from other namespaces via "http://example-service.ns-test".
 
 Accessing namespaces with kubectl is by using `-n` flag. For example you can see what the namespace kube-system has with
 
