@@ -559,6 +559,8 @@ This is now the final configuration:
 
 ![]({{ "/images/part4/app9-nats-prometheus-grafana.png" | absolute_url }})
 
+Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
+
 ## Summary ##
 
 By this point you have a grasp on the variety of decisions that are made during application development and how it may affect the operations side.

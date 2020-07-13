@@ -629,6 +629,8 @@ This would ensure that no more than half of the pods can be unavailable at. The 
 
 {% include_relative exercises/3_09.html %}
 
+Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
+
 ## Summary ##
 
 When deploying running software in a maintained Kubernetes service it really does get that easy. Vendor lock-in is a term commonly heard when talking about the cloud. In this section we dived into GKE and the services Google offered us. As we saw here we could migrate almost everything to Google Cloud with Cloud SQL and monitoring as the prime examples.
