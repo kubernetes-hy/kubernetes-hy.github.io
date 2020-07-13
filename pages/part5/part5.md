@@ -162,6 +162,8 @@ spec:
               properties:
                 length:
                   type: integer
+                delay:
+                  type: integer
                 image:
                   type: string
       additionalPrinterColumns:
@@ -169,6 +171,10 @@ spec:
           type: integer
           description: The length of the countdown
           jsonPath: .spec.length
+        - name: Delay
+          type: integer
+          description: The length of time (ms) between executions
+          jsonPath: .spec.delay
 ```
 
 Now we can create our own Countdown:
@@ -179,8 +185,9 @@ kind: Countdown
 metadata:
   name: doomsday
 spec:
-  length: 14
-  image: jakousa/dwk-app10:sha-adaefc5
+  length: 20
+  delay: 1200
+  image: jakousa/dwk-app10:sha-fa508b6
 ```
 
 And then..
@@ -190,10 +197,12 @@ $ kubectl apply -f countdown.yaml
   countdown.stable.dwk/doomsday created
 
 $ kubectl get cd
-  NAME       LENGTH
-  doomsday   14
+  NAME        LENGTH   DELAY
+  doomsday   20       1200
 ```
 
-Next step is to make sure that countdowns at 0 are removed.
+Now we have a new resource. Next let's create a new custom controller that'll start a pod that runs a container from the image and makes sure countdowns are destroyed. This will require some coding..
+
+For the implementation I decided on a Kubernetes resource called *Jobs*. *Jobs* are...
 
 Exercise, a proxy ???
