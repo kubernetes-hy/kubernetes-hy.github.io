@@ -66,6 +66,16 @@ $ kubectl get all --all-namespaces
 
 Namespaces should be kept separate - you could run all of the examples and do the exercises of this course in a cluster that is shared with critical software. An administrator should set a *ResourceQuota* for that namespace so that you can safely run anything there. We'll look into resource limits and requests later.
 
+Defining a namespace is a oneliner, but requires the namespace to exist (`kubectl create namespace example-namespace`):
+
+```yaml
+...
+metadata:
+  namespace: example-namespace
+  name: example
+...
+```
+
 Labels are used to separate an application from others inside a namespace. They make it possible for having multiple applications as you've used in this course already.
 
 Let's look at the labels in *Deployment* yamls. This is the first yaml we created and you've copy pasted something similar:
