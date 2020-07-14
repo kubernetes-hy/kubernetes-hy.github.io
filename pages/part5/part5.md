@@ -187,7 +187,7 @@ metadata:
 spec:
   length: 20
   delay: 1200
-  image: jakousa/dwk-app10:sha-fa508b6
+  image: jakousa/dwk-app10:sha-84d581d
 ```
 
 And then..
@@ -198,11 +198,90 @@ $ kubectl apply -f countdown.yaml
 
 $ kubectl get cd
   NAME        LENGTH   DELAY
-  doomsday   20       1200
+  doomsday    20       1200
 ```
 
 Now we have a new resource. Next let's create a new custom controller that'll start a pod that runs a container from the image and makes sure countdowns are destroyed. This will require some coding..
 
-For the implementation I decided on a Kubernetes resource called *Jobs*. *Jobs* are...
+For the implementation I decided on a Kubernetes resource called *Jobs*. *Jobs* are a resource that creates a pod like the Deployments we're now familiar with. Jobs are intended to run once and after execution are often removed, however they are not removed automatically and neither are the Pods created from a Job removed with the Job. The Pods are preserved so that the execution logs can be reviewed after job execution.
+
+So our controller has to do 3 things:
+
+- Create Job from a Countdown
+- Reschedule Jobs until the number of executions defined in Countdown have been completed.
+- Clean all Jobs and Pods after execution
+
+By listening to the Kubernetes API at `/apis/stable.dwk/v1/countdowns?watch=true` we will receive an ADDED for every Countdown object in the cluster. Then creating a job is just parsing the data from the message and POSTing a valid payload to `/apis/batch/v1/namespaces/<namespace>/jobs`.
+
+For jobs we'll listen to `/apis/batch/v1/jobs?watch=true` and wait for MODIFIED event where the success state is set to true and update the labels for the jobs to store the status. To delete a job and its pod we can send delete request to `/api/v1/namespaces/<namespace>/pods/<pod_name>` and `/apis/batch/v1/namespaces/<namespace>/jobs/<job_name>`
+
+And finally to delete the countdown a request to `/apis/stable.dwk/v1/namespaces/<namespace>/countdowns/<countdown_name>`.
+
+A version of this controller has been implemented here: `jakousa/dwk-app10-controller:sha-4f80cd3`. But we cannot simply deploy it as it won't have access to the APIs. For this we will need to define a suitable access. 
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: countdown-controller-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: countdown-controller
+  template:
+    metadata:
+      labels:
+        app: countdown-controller
+    spec:
+      serviceAccountName: countdown-controller-account
+      containers:
+        - name: countdown-controller
+          image: jakousa/dwk-app10-controller:sha-1fb850e
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: countdown-controller-account
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: countdown-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: countdown-controller-role
+subjects:
+- kind: ServiceAccount
+  name: countdown-controller-account
+  namespace: default
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: countdown-controller-role
+rules:
+- apiGroups: [""]
+  # at the HTTP level, the name of the resource for accessing Node
+  # objects is "nodes"
+  resources: ["nodes"]
+  verbs: ["list"]
+- apiGroups: [""]
+  # at the HTTP level, the name of the resource for accessing Pod
+  # objects is "pods"
+  resources: ["pods"]
+  verbs: ["get", "list", "delete"]
+- apiGroups: ["batch"]
+  # at the HTTP level, the name of the resource for accessing Job
+  # objects is "jobs"
+  resources: ["jobs"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["stable.dwk"]
+  # at the HTTP level, the name of the resource for accessing Countdowns
+  # objects is "countdowns"
+  resources: ["countdowns"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+```
 
 Exercise, a proxy ???
