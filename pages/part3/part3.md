@@ -67,7 +67,7 @@ $ gcloud container clusters get-credentials dwk-cluster --zone=europe-north1-b
   Fetching cluster endpoint and auth data.
   kubeconfig entry generated for dwk-cluster.
 
-$ kubectl cluster info
+$ kubectl cluster-info
 ```
 
 Now that we have a cluster it's used almost exactly like the one we had locally. Let's apply this application that creates a random string and then serves an image based on that random string. This will create 6 replicas of the process "seedimage".
