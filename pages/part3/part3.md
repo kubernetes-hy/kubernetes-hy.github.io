@@ -73,7 +73,7 @@ $ kubectl cluster info
 Now that we have a cluster it's used almost exactly like the one we had locally. Let's apply this application that creates a random string and then serves an image based on that random string. This will create 6 replicas of the process "seedimage".
 
 ```console
-$ kubectl apply -f 
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/e16301c4f223099e087cc010697250e584ac2022/app6/manifests/deployment.yaml
 ```
 
 Now as a warning the next step is going to add into the [cost of the cluster](https://cloud.google.com/compute/all-pricing#lb) as well. Let's add a *LoadBalancer* Service!
