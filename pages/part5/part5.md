@@ -217,7 +217,24 @@ For jobs we'll listen to `/apis/batch/v1/jobs?watch=true` and wait for MODIFIED 
 
 And finally to delete the countdown a request to `/apis/stable.dwk/v1/namespaces/<namespace>/countdowns/<countdown_name>`.
 
-A version of this controller has been implemented here: `jakousa/dwk-app10-controller:sha-4f80cd3`. But we cannot simply deploy it as it won't have access to the APIs. For this we will need to define a suitable access. 
+A version of this controller has been implemented here: `jakousa/dwk-app10-controller:sha-4256579`. But we cannot simply deploy it as it won't have access to the APIs. For this we will need to define a suitable access.
+
+## RBAC ##
+
+RBAC (Role-based access control) is an authorization method that allows us to define access for individual users, service accounts or groups by giving them roles. For our usecase we will define a serviceaccount
+
+**serviceaccount.yaml**
+
+```yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: countdown-controller-account
+```
+
+and then specify the *serviceAccountName* for the deployment
+
+**deployment.yaml**
 
 ```yaml
 apiVersion: apps/v1
@@ -237,13 +254,43 @@ spec:
       serviceAccountName: countdown-controller-account
       containers:
         - name: countdown-controller
-          image: jakousa/dwk-app10-controller:sha-1fb850e
----
-apiVersion: v1
-kind: ServiceAccount
+          image: jakousa/dwk-app10-controller:sha-4256579
+```
+
+Next is defining the role and its rules. There are two types of roles: *ClusterRole* and *Role*. Roles are namespace specific whereas ClusterRoles can access all of the namespaces - in our case the controller will access all countdowns in all namespaces so a ClusterRole will be required.
+
+The rules are defined with the apiGroup, resource and verbs. For example the jobs was `/apis/batch/v1/jobs?watch=true` so it's in the apiGroup "batch" and resource "jobs" and the verbs see [documentation](https://kubernetes.io/docs/reference/access-authn-authz/authorization/#determine-the-request-verb). Core api group is an empty string "" like in the case of pods.
+
+**clusterrole.yaml**
+
+```yaml
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: countdown-controller-account
----
+  name: countdown-controller-role
+rules:
+- apiGroups: [""]
+  # at the HTTP level, the name of the resource for accessing Pod
+  # objects is "pods"
+  resources: ["pods"]
+  verbs: ["get", "list", "delete"]
+- apiGroups: ["batch"]
+  # at the HTTP level, the name of the resource for accessing Job
+  # objects is "jobs"
+  resources: ["jobs"]
+  verbs: ["get", "list", "watch", "create", "delete"]
+- apiGroups: ["stable.dwk"]
+  resources: ["countdowns"]
+  verbs: ["get", "list", "watch", "create", "delete"]
+```
+
+And finally bind the serviceaccount and the role. There are two types of bindings as well. *ClusterRoleBinding* and *RoleBinding*. If we used a *RoleBinding* with a *ClusterRole* we would be able to restrict the access to a single namespace. For example, if permission to access secrets is defined to a ClusterRole and we gave it via *RoleBinding* to a namespace called "test" they would only be able to access secrets in the namespace "test" - even though the role is a "ClusterRole".
+
+In our case *ClusterRoleBinding* is required since we want the controller to access all of the namespaces from the namespace it's deployed in, in this case namespace "default".
+
+**clusterrolebinding.yaml**
+
+```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -256,32 +303,38 @@ subjects:
 - kind: ServiceAccount
   name: countdown-controller-account
   namespace: default
----
-kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: countdown-controller-role
-rules:
-- apiGroups: [""]
-  # at the HTTP level, the name of the resource for accessing Node
-  # objects is "nodes"
-  resources: ["nodes"]
-  verbs: ["list"]
-- apiGroups: [""]
-  # at the HTTP level, the name of the resource for accessing Pod
-  # objects is "pods"
-  resources: ["pods"]
-  verbs: ["get", "list", "delete"]
-- apiGroups: ["batch"]
-  # at the HTTP level, the name of the resource for accessing Job
-  # objects is "jobs"
-  resources: ["jobs"]
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-- apiGroups: ["stable.dwk"]
-  # at the HTTP level, the name of the resource for accessing Countdowns
-  # objects is "countdowns"
-  resources: ["countdowns"]
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 ```
 
-Exercise, a proxy ???
+After deploying all of that we can check logs after applying a countdown. (You may have to delete the pod to have it restart in case it didn't have access and it got stuck)
+
+```console
+$ kubectl logs countdown-controller-dep-7ff598ffbf-q2rp5
+  > app10@1.0.0 start /usr/src/app
+  > node index.js
+  
+  Scheduling new job number 20 for countdown doomsday to namespace default
+  Scheduling new job number 19 for countdown doomsday to namespace default
+  ...
+  Countdown ended. Removing countdown.
+  Doing cleanup
+```
+
+<div class="exercise" markdown="1"> 
+  <h1>Exercise 5.XX:</h1>
+  
+  This exercise doesn't rely on previous exercises. You may again choose which ever technologies you want for the implementation.
+
+  We need a *DummySite* resource that can be used to create a html page from any url.
+
+  1. Create a "DummySite" resource that takes has a string property called "website_url".
+
+  2. Create a controller that creates all of the required resources that are required for the functionality.
+
+  Refer to [https://kubernetes.io/docs/reference/using-api/client-libraries/](https://kubernetes.io/docs/reference/using-api/client-libraries/) for information about client libraries.
+
+  The API docs are here for the apiGroups and example requests: [https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18)
+
+  Test that creating a DummySite resource with website_url "[https://example.com/](https://example.com/)" should create a copy of the website.
+
+  <p style="color:firebrick;">The controller doesn't have to work perfectly in all circumstances. The following workflow should succeed: 1. apply role, account and binding. 2. apply deployment. 3. apply DummySite</p>
+</div>
