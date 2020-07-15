@@ -46,9 +46,11 @@ spec:
 
 {% include_relative exercises/2_02.html %}
 
-## Namespaces and labels ##
+## Organizing services ##
 
 As you can imagine there may be a lot of resources inside a cluster. In fact, at the moment of writing this Kubernetes supports over 100 000 pods in a single cluster.
+
+### Namespaces ###
 
 Namespaces are used to keep resources separated. A company which uses 1 cluster but has multiple projects can use namespaces to split the cluster into virtual clusters, one for each project. Most commonly they would be used to separate environments such as production, testing, staging. DNS entry for services includes the namespace so you can still have projects communicate with each other if needed through service.namespace address. e.g if the example-service from previous section was in a namespace "ns-test" it could be found from other namespaces via "http://example-service.ns-test".
 
@@ -76,7 +78,13 @@ metadata:
 ...
 ```
 
-If you're using a namespace constantly you can set the namespace to be used by default with `kubectl config set-context --current --namespace=<name>`. 
+If you're using a namespace constantly you can set the namespace to be used by default with `kubectl config set-context --current --namespace=<name>`.
+
+**Kubernetes Best Practices - Organizing Kubernetes with Namespaces**
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/xpnZX3if9Tc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### Labels ###
 
 Labels are used to separate an application from others inside a namespace. They make it possible for having multiple applications as you've used in this course already.
 
