@@ -123,7 +123,7 @@ You may lose some important running applications so if you decide to take a brea
 
 ### Persisting data in GKE ###
 
-Google Kubernetes Engine will automatically provision a persistent disk for your PersistentVolumeClaim. If you want you can read more about it [here](https://cloud.google.com/kubernetes-engine/docs/concepts/persistent-volumes)
+Google Kubernetes Engine will automatically provision a persistent disk for your PersistentVolumeClaim - just don't set the storage class. If you want you can read more about it [here](https://cloud.google.com/kubernetes-engine/docs/concepts/persistent-volumes).
 
 {% include_relative exercises/3_01.html %}
 
