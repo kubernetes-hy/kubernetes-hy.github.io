@@ -186,6 +186,10 @@ spec:
                port: 3541
 ```
 
+**Kubernetes Best Practices - Kubernetes Health Checks with Readiness and Liveness Probes**
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/mxEvAPQRwhw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 With this let's just deploy the worst of the versions, v3.
 
 ```console
@@ -208,13 +212,7 @@ At least something is working!
 
 A *StartupProbe* can delay the liveness probe so that an application with a longer startup can take its time. You may require it in real life but is not discussed further on this course
 
-<div class="exercise" markdown="1">
-  <h1>Exercise 4.?: Project v??</h1>
-
-  Create the required Probes and endpoint for the application to ensure that it's working and connected to a database.
-  
-  Test that it's indeed working with a version without database access, for example by supplying a wrong database url or credentials.
-</div>
+{% include_relative exercises/4_01.html %}
 
 ### Canary release ###
 
@@ -301,17 +299,7 @@ spec:
 
 With the new Rollout and AnalysisTemplate we can safely try to deploy any version. Deploy for v2 is prevented with the Probes we set up. Deploy for v3 will automatically roll back when it notices that it has random crashes. And v4 will also fail. The short 2 minutes to test may still let a version pass. With more steps and pauses for analysis and more robust tests we could be more confident in our solution. Use `kubectl describe ar flaky-update-dep-6d5669dc9f-2-1` to get info for a specific AnalysisRun.
 
-<div class="exercise" markdown="1">
-  <h1>Exercise 4.?: Project v??</h1>
-
-
-</div>
-
-<div class="exercise" markdown="1">
-  <h1>Exercise 4.?: Project v??</h1>
-
-Create an AnalysisTemplate for the project that will monitor the memory usage for the first 10 minutes.
-</div>
+{% include_relative exercises/4_02.html %}
 
 ### Other deployment strategies ###
 
@@ -558,6 +546,8 @@ And now we have a simple dashboard with data:
 This is now the final configuration:
 
 ![]({{ "/images/part4/app9-nats-prometheus-grafana.png" | absolute_url }})
+
+{% include_relative exercises/4_03.html %}
 
 Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
 
