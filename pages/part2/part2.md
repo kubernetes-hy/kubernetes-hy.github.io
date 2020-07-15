@@ -76,6 +76,8 @@ metadata:
 ...
 ```
 
+If you're using a namespace constantly you can set the namespace to be used by default with `kubectl config set-context --current --namespace=<name>`. 
+
 Labels are used to separate an application from others inside a namespace. They make it possible for having multiple applications as you've used in this course already.
 
 Let's look at the labels in *Deployment* yamls. This is the first yaml we created and you've copy pasted something similar:
