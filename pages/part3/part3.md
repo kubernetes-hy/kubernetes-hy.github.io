@@ -121,7 +121,9 @@ $ gcloud container clusters create dwk-cluster --zone=europe-north1-b
 You may lose some important running applications so if you decide to take a break during an example you may have to redo it, but everything else should be saved as a yaml file.
 </div>
 
-<br />
+### Persisting data in GKE ###
+
+Google Kubernetes Engine will automatically provision a persistent disk for your PersistentVolumeClaim. If you want you can read more about it [here](https://cloud.google.com/kubernetes-engine/docs/concepts/persistent-volumes)
 
 {% include_relative exercises/3_01.html %}
 
