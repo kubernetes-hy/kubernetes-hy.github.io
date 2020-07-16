@@ -106,6 +106,8 @@ $ kubectl get svc --watch
 
 If we now access http://35.228.41.16 with our browser we'll see the application up and running. By refreshing the page we can also see that the load balancer sometimes offers us a different image.
 
+Instead of using a LoadBalancer Service we could have used an Ingress just like we've used before. In that case the type for the service should be "NodePort".
+
 <div style="border: lightblue 0.2em outset; padding: 0.5em 1em 0 1em;" markdown="1">
 To avoid using up the credits delete the cluster whenever you do not need it
 
@@ -118,7 +120,7 @@ And when resuming progress create the cluster back.
 $ gcloud container clusters create dwk-cluster --zone=europe-north1-b
 ```
 
-You may lose some important running applications so if you decide to take a break during an example you may have to redo it, but everything else should be saved as a yaml file.
+Closing the cluster will also remove everything you've deployed on the cluster. If you decide to take a break during an example you may have to redo it. Thankfully we have used declarative approach so continuing progress will only require you to apply the yamls.
 </div>
 
 ### Persisting data in GKE ###

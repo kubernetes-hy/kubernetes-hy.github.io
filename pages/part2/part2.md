@@ -262,10 +262,9 @@ spec:
             storage: 100Mi
 ```
 
-The Service is responsible for the network identity The redisfiller app is for us to look at. You can open two terminals and run `$ kubectl logs -f redis-ss-X redisfiller` where X is 0 or 1.
-You can delete a pod and it will continue right where you left off. In addition you can delete the statefulset and the volume will stay and bind back when you apply the statefulset back.
+Looks a lot like *Deployment* but uses volumeClaimTemplate to claim a volume for each pod. StatefulSets require a "Headless Service" to be responsible for the network identity. We define a "Headless Service" with `clusterIP: None` - this will instruct Kubernetes to not do proxying or load balancing and instead to allow access straight to the Pods.
 
-Looks a lot like *Deployment* but uses volumeClaimTemplate to claim a volume for each pod. We can try killing either of the pods and it continue where it left off.
+You can now open two terminals and run `$ kubectl logs -f redis-ss-X redisfiller` where X is 0 or 1. To confirm it's working we can delete a pod and it will restart and continue right where you left off. In addition we can delete the statefulset and the volume will stay and bind back when you apply the statefulset back.
 
 {% include_relative exercises/2_06.html %}
 
