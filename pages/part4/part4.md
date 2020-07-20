@@ -6,9 +6,6 @@ permalink: /part4/
 order: 4
 ---
 
-
-**MISSING EXERCISES**
-
 In this part we'll go over common practices and examples on how to implement them in Kubernetes. By the end of this part you will be able to
 
 - **Confidently** deploy software with canary releases
