@@ -1,7 +1,7 @@
 <div class="exercise" markdown="1"> 
-  <h1>Exercise 4.01: Project v1.7</h1>
+  <h1>Exercise 4.01: Readiness Probe</h1>
 
-  Create the required Probes and endpoint for the application to ensure that it's working and connected to a database.
-  
-  Test that it's indeed working with a version without database access, for example by supplying a wrong database url or credentials.
+  Create a ReadinessProbe for "ping/pong" application. It should be ready when it has a connection to database.
+
+  And another ReadinessProbe for "main" application. It should be ready when it can receive data from pingpong application.
 </div>

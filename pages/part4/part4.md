@@ -129,6 +129,8 @@ $ kubectl get po
 
 Here three of the pods are completely functional, one of v1 was dropped to make way for the v2 ones but since they do not work they are never READY and the update can not continue.
 
+{% include_relative exercises/4_01.html %}
+
 But as the application is working we can just push a new update on top of the v2. Let's try the v4 which our colleague has assured us will "surely" work:
 
 ```console
@@ -212,7 +214,7 @@ At least something is working!
 
 A *StartupProbe* can delay the liveness probe so that an application with a longer startup can take its time. You may require it in real life but is not discussed further on this course
 
-{% include_relative exercises/4_01.html %}
+{% include_relative exercises/4_02.html %}
 
 ### Canary release ###
 
@@ -273,6 +275,8 @@ If you don't have Prometheus available go back to part 2 for a reminder. We'll h
   ...
 ```
 
+{% include_relative exercises/4_03.html %}
+
 The CRD (Custom Resource Definition) AnalysisTemplate will, in our case, use Prometheus and send a query. The query result is then compared to a preset value. In this simplified case if the number of overall restarts over the last 2 minutes is higher than two it will fail the analysis. *initialDelay* will ensure that the test is not run until the data required is gathered. Note that this is not a robust test as the production version may crash and prevent the update even if the update itself is working correctly. The *AnalysisTemplate* is not dependant on Prometheus and could use a different source, such as a json endpoint, instead.
 
 **analysistemplate.yaml**
@@ -299,11 +303,13 @@ spec:
 
 With the new Rollout and AnalysisTemplate we can safely try to deploy any version. Deploy for v2 is prevented with the Probes we set up. Deploy for v3 will automatically roll back when it notices that it has random crashes. And v4 will also fail. The short 2 minutes to test may still let a version pass. With more steps and pauses for analysis and more robust tests we could be more confident in our solution. Use `kubectl describe ar flaky-update-dep-6d5669dc9f-2-1` to get info for a specific AnalysisRun.
 
-{% include_relative exercises/4_02.html %}
+{% include_relative exercises/4_04.html %}
 
 ### Other deployment strategies ###
 
 Kubernetes supports Recreate strategy which takes down the previous pods and replaces everything with the updated one. This creates a moment of downtime for the application but ensures that different versions are not running at the same time. Argo Rollouts supports BlueGreen strategy, in which a new version is run side by side to the new one but traffic is switched between the two at a certain point, such as after running update scripts or after your QA team has approved the new version.
+
+{% include_relative exercises/4_05.html %}
 
 ## Message Queues ##
 
@@ -547,7 +553,9 @@ This is now the final configuration:
 
 ![]({{ "/images/part4/app9-nats-prometheus-grafana.png" | absolute_url }})
 
-{% include_relative exercises/4_03.html %}
+{% include_relative exercises/4_06.html %}
+
+{% include_relative exercises/4_07.html %}
 
 Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
 

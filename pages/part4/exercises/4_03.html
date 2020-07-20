@@ -1,26 +1,37 @@
 <div class="exercise" markdown="1"> 
-  <h1>Exercise 4.03: Project v1.9</h1>
+  <h1>Exercise 4.03: Prometheus</h1>
 
-  Create a new separate service for sending status messages of the todos to a popular chat application. Let's call the new service "broadcaster".
+  We've been using Prometheus since part 2, but basically we've only heard the name and seen some nice graphs on Grafana. Let's do a single hands-on query to learn more.
 
-  Requirements:
-  1. The backend saving / updating todos should send a message to NATS
-  2. The broadcaster should subscribe to NATS messages
-  3. The broadcaster should send the message forward to an external service in a format they support
+  Start a Prometheus with helm (see part 2) and use port-forward to access the gui website. Port 9090 is the default for Prometheus:
 
-  Choose either:
-   - Telegram
-   - Slack
-   - Discord
-  
-  or if you don't want to use them use "Generic" where an URL is set as an Environment variable and the payload is e.g.
+```console
+$ kubectl -n prometheus get pods
+  NAME                                                              READY   STATUS    RESTARTS   AGE
+  prometheus-operator-159525-operator-7ccb8df999-cnx2g              2/2     Running   0          2m30s
+  prometheus-operator-1595250757-prometheus-node-exporter-n69gb     1/1     Running   0          2m30s
+  prometheus-operator-1595250757-prometheus-node-exporter-m6fq9     1/1     Running   0          2m30s
+  prometheus-operator-1595250757-prometheus-node-exporter-xbl4h     1/1     Running   0          2m30s
+  prometheus-operator-1595250757-kube-state-metrics-679fc685x2gkq   1/1     Running   0          2m30s
+  alertmanager-prometheus-operator-159525-alertmanager-0            2/2     Running   0          2m19s
+  prometheus-operator-1595250757-grafana-598f6dbbdf-28l6z           2/2     Running   0          2m30s
+  prometheus-prometheus-operator-159525-prometheus-0                3/3     Running   0          2m7s 
 
-```json
-{
-  "user": "bot",
-  "message": "A todo was created"
-}
+$ kubectl -n prometheus port-forward prometheus-prometheus-operator-159525-prometheus-0 9090
+  Forwarding from 127.0.0.1:9090 -> 9090
+  Forwarding from [::1]:9090 -> 9090
 ```
 
-  The broadcaster should be able to be scaled without sending the message multiple times. Test that it can run with 6 replicas without issues. The messages only have to be sent to the external service if all of the services are working correctly. So a randomly missing message is not an issue but a duplicate is.
+  And now accessing [http://localhost:9090](http://localhost:9090) will allow us to write queries. **Write a query** that shows the number of pods created by StatefulSets in "prometheus" namespace. For the above setup the "Value" should be 2 different pods. Something similar:
+
+  <table>
+    <thead>
+      <tr><td>Element</td><td>Value</td></tr>
+    </thead>
+    <tbody>
+      <tr><td>Scalar</td><td>2</td></tr>
+    </tbody>
+  </table>
+
+  Query for "kube_pod_info" should have the required fields to filter through. See [documentation](https://prometheus.io/docs/prometheus/latest/querying/basics/) for help with querying.
 </div>
