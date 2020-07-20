@@ -1,5 +1,26 @@
 <div class="exercise" markdown="1"> 
   <h1>Exercise 4.03: Project v1.9</h1>
 
-  Use NATS for ....
+  Create a new separate service for sending status messages of the todos to a popular chat application. Let's call the new service "broadcaster".
+
+  Requirements:
+  1. The backend saving / updating todos should send a message to NATS
+  2. The broadcaster should subscribe to NATS messages
+  3. The broadcaster should send the message forward to an external service in a format they support
+
+  Choose either:
+   - Telegram
+   - Slack
+   - Discord
+  
+  or if you don't want to use them use "Generic" where an URL is set as an Environment variable and the payload is e.g.
+
+```json
+{
+  "user": "bot",
+  "message": "A todo was created"
+}
+```
+
+  The broadcaster should be able to be scaled without sending the message multiple times. Test that it can run with 6 replicas without issues. The messages only have to be sent to the external service if all of the services are working correctly. So a randomly missing message is not an issue but a duplicate is.
 </div>

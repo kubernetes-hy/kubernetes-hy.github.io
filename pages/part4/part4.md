@@ -76,6 +76,10 @@ $ kubectl get po --watch
 
 You can see the rolling update performed but unfortunately the application no longer works. The application is running, it's just that there's a bug which prevents it from working correctly. This is where *ReadinessProbes* come in.
 
+**Kubernetes Best Practices - Kubernetes Health Checks with Readiness and Liveness Probes**
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/mxEvAPQRwhw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 With a *ReadinessProbe* Kubernetes can check if a pod is ready to process requests. The application has an endpoint [/healthz](https://stackoverflow.com/questions/43380939/where-does-the-convention-of-using-healthz-for-application-health-checks-come-f) in port 3541 we can test for health. It will simply answer with status code 500 if it's not working and 200 if it is.
 
 Let's roll the version back to v1 as well so we can test the update to v2 again.
@@ -185,10 +189,6 @@ spec:
                path: /healthz
                port: 3541
 ```
-
-**Kubernetes Best Practices - Kubernetes Health Checks with Readiness and Liveness Probes**
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/mxEvAPQRwhw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 With this let's just deploy the worst of the versions, v3.
 
