@@ -34,6 +34,12 @@ Sometimes during this course we'll do **arbitrary** splits to our services just 
 
 ## What is Kubernetes? ##
 
+Let's say you have 3 processes and 2 computers incapable of running all 3 processes. How would you approach this problem?
+
+You'll have to start by deciding which 2 processes go on the same computer and which 1 will be on the different one. How would you fit them? By having the ones demanding most resources and the least resources on the same machine or having the most demanding be on it's own? Maybe you want to add one process and now you have to reorganize all of them. What happens when you have more than 2 computers and more than 3 processes? One of the processes is eating all of the memory and you need to get that away from the "critical-bank-application". Should we virtualize everything? Containers would solve that problem, right? Would you move the most important process to a new computer? Maybe some of the processes need to communicate with each other and now you have to deal with networking. What if one of the computers break?
+
+What if you could just define "This process should have 6 copies using X amount of resources." and have the 2..N computers working as a single entity to fulfill your request? That's just one thing Kubernetes makes possible.
+
 “Kubernetes (K8s) is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery.” - [kubernetes.io](https://kubernetes.io/)
 
 A container orchestration system such as Kubernetes is often required when maintaining containerized applications. The main responsibility of an orchestration system is the starting and stopping of containers. In addition, they offer networking between containers and health monitoring. Rather than manually doing `docker run critical-bank-application` every time the application crashes, or restart it if it becomes unresponsive, we want the system to keep the application automatically healthy.
@@ -50,47 +56,59 @@ We will get started with a lightweight Kubernetes distribution. [K3s - 5 less th
 
 #### What is a cluster? ####
 
-A cluster is a group of machines, *nodes*, that work together - in this case they are part of Kubernetes cluster. Kubernetes cluster consists of at least two nodes, one worker and one master.
+A cluster is a group of machines, *nodes*, that work together - in this case they are part of Kubernetes cluster. Kubernetes cluster can be of any size - a single node cluster would consist of one machine that hosts the Kubernetes control-plane (exposing API and maintaining the cluster) and that cluster can then be expanded with a number of worker nodes.
+
+We will use the term "server node" to refer to nodes with control-plane and "agent node" to refer to the nodes without that role.
 
 #### Starting a cluster with k3d ####
 
 We'll use K3d to create a group of docker containers that run k3s. Thus creating our very own Kubernetes cluster.
 
 ```console
-$ k3d create -w 2
+$ k3d cluster create -a 2
 ```
 
-This created a Kubernetes cluster with 2 worker nodes. As they're in docker you can confirm that they exist with `docker ps`.
+This created a Kubernetes cluster with 2 agent nodes. As they're in docker you can confirm that they exist with `docker ps`.
 
 ```console
 $ docker ps
-  CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS                    NAMES
-  57f8952c0cb3        rancher/k3s:v1.0.1   "/bin/k3s agent"         7 seconds ago       Up 6 seconds                                 k3d-k3s-default-worker-1
-  324954c08977        rancher/k3s:v1.0.1   "/bin/k3s agent"         9 seconds ago       Up 7 seconds                                 k3d-k3s-default-worker-0
-  088cd949015e        rancher/k3s:v1.0.1   "/bin/k3s server --h…"   10 seconds ago      Up 8 seconds        0.0.0.0:6443->6443/tcp   k3d-k3s-default-server
+  CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS              PORTS                             NAMES
+  11543a6b5015        rancher/k3d-proxy:v3.0.0   "/bin/sh -c nginx-pr…"   16 seconds ago      Up 14 seconds       80/tcp, 0.0.0.0:57734->6443/tcp   k3d-k3s-default-serverlb
+  f17e07a77061        rancher/k3s:latest         "/bin/k3s agent"         26 seconds ago      Up 24 seconds                                         k3d-k3s-default-agent-1
+  b135b5ac987d        rancher/k3s:latest         "/bin/k3s agent"         27 seconds ago      Up 25 seconds                                         k3d-k3s-default-agent-0
+  7e5fbc8db7e9        rancher/k3s:latest         "/bin/k3s server --t…"   28 seconds ago      Up 27 seconds                                         k3d-k3s-default-server-0
 ```
 
-Here we also see that port 6443 is opened to "k3d-k3s-default-server", our master node, and that's how we can access the contents of the cluster. K3d helpfully set up a *kubeconfig*, the location of which is output by `k3d get-kubeconfig --name='k3s-default'`. kubectl will read kubeconfig from the location in KUBECONFIG environment value so set it: `export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"`.
+Here we also see that port 6443 is opened to "k3d-k3s-default-serverlb", a useful loadbalancer proxy, that'll redirect connection to 6443 into the server node, and that's how we can access the contents of the cluster. The port on our machine, above 57734, is randomly chosen. We could have opted out of the loadbalancer with `k3d cluster create -a 2 --no-lb` and the port would be open straight to the server node but having a loadbalancer will offer us a few features we wouldn't otherwise have.
 
-Now kubectl will be able to access the cluster: `kubectl cluster-info` outputs the address of the master in port 6443. 
+K3d helpfully also set up a *kubeconfig*, the contents of which is output by `k3d kubeconfig get k3s-default`. Kubectl will read kubeconfig from the location in KUBECONFIG environment value or by default from `~/.kube/config` and use the information to connect to the cluster. The contents include certificates, passwords and the address in which the cluster API. You can manually set the config with `k3d kubeconfig merge k3d-default --switch-context`.
+
+Now kubectl will be able to access the cluster
+
+```console
+$ kubectl cluster-info
+  Kubernetes master is running at https://0.0.0.0:57734
+  CoreDNS is running at https://0.0.0.0:57545/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+  Metrics-server is running at https://0.0.0.0:57545/api/v1/namespaces/kube-system/services/https:metrics-server:/proxy
+```
+
+We can see that kubectl is connected to the container *k3d-k3s-default-serverlb* through (in this case) port 57734.
 
 If you want to stop / start the cluster you can simply run
 
 ```console
-$ k3d stop
-  INFO[0000] Stopping cluster [k3s-default]
-  INFO[0000] ...Stopping 2 workers
-  INFO[0000] ...Stopping server
-  INFO[0001] Stopped cluster [k3s-default]
+$ k3d cluster stop
+  INFO[0000] Stopping cluster 'k3s-default'
 
-$ k3d start
-  INFO[0000] Starting cluster [k3s-default]
-  INFO[0000] ...Starting server
-  INFO[0000] ...Starting 2 workers
-  INFO[0001] SUCCESS: Started cluster [k3s-default]
+$ k3d cluster start
+  INFO[0000] Starting cluster 'k3s-default'
+  INFO[0000] Starting Node 'k3d-k3s-default-agent-1'
+  INFO[0000] Starting Node 'k3d-k3s-default-agent-0'
+  INFO[0000] Starting Node 'k3d-k3s-default-server-0'
+  INFO[0001] Starting Node 'k3d-k3s-default-serverlb'
 ```
 
-For now we're going to need the cluster but if we want to remove the cluster we can run `k3d delete`.
+For now we're going to need the cluster but if we want to remove the cluster we can run `k3d cluster delete`.
 
 ## First Deploy ##
 
@@ -102,7 +120,7 @@ Let's create an application that generates and outputs a hash every 5 seconds or
 
 I've prepared one [here](https://github.com/kubernetes-hy/material-example/tree/master/app1) `docker run jakousa/dwk-app1`.
 
-To deploy we need the cluster to have an access to the image. K3d offers `import-images` command, but since that won't work when we go to non-k3d solutions we'll use the now very familiar registry *Docker Hub*.
+To deploy we need the cluster to have an access to the image. By default Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but since that won't work when we go to non-k3d solutions we'll use the now very familiar registry *Docker Hub*.
 
 ```console
 $ docker tag _image_ _username_/_image_
@@ -282,40 +300,38 @@ External connections with docker used the flag -p `-p 3003:3000` or in docker-co
 
 #### Before anything else ####
 
-Because we are running our cluster inside docker with k3d we have to do a few preparations.
-Opening a route from outside of the cluster to the pod will not be enough as we have no means of accessing the cluster inside the containers!
-
-To illustrate:
+Because we are running our cluster inside docker with k3d we will have to do a few preparations.
+Opening a route from outside of the cluster to the pod will not be enough if we have no means of accessing the cluster inside the containers!
 
 ```console
 $ docker ps
-  CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS                    NAMES
-  83dde7d5fcac        rancher/k3s:v1.0.1   "/bin/k3s agent"         3 days ago          Up 23 hours                                  k3d-k3s-default-worker-1
-  00b2dff4b2a9        rancher/k3s:v1.0.1   "/bin/k3s agent"         3 days ago          Up 23 hours                                  k3d-k3s-default-worker-0
-  6a3bef5af379        rancher/k3s:v1.0.1   "/bin/k3s server --h…"   3 days ago          Up 23 hours         0.0.0.0:6443->6443/tcp   k3d-k3s-default-server
+  CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS              PORTS                             NAMES
+  b60f6c246ebb        rancher/k3d-proxy:v3.0.0   "/bin/sh -c nginx-pr…"   2 hours ago         Up 2 hours          80/tcp, 0.0.0.0:58264->6443/tcp   k3d-k3s-default-serverlb
+  553041f96fc6        rancher/k3s:latest         "/bin/k3s agent"         2 hours ago         Up 2 hours                                            k3d-k3s-default-agent-1
+  aebd23c2ef99        rancher/k3s:latest         "/bin/k3s agent"         2 hours ago         Up 2 hours                                            k3d-k3s-default-agent-0
+  a34e49184d37        rancher/k3s:latest         "/bin/k3s server --t…"   2 hours ago         Up 2 hours                                            k3d-k3s-default-server-0
 ```
 
-As you can see only port 6443 is open (this is used by kubectl). Let's delete our old cluster and create a new one with ports 8081 and 8082 open:
+K3d has helpfully prepared us a port to access the API in 6443 and in addition has opened port to 80. All requests to the loadbalancer here will be proxied to the same ports of all server nodes of the cluster. However, for testing purposes we'll want an individual port open for a single node. Let's delete our old cluster and create a new one with port 8082 open:
 
 ```console
-$ k3d delete
-  INFO[0000] Removing cluster [k3s-default]               
-  INFO[0000] ...Removing 2 workers                        
-  INFO[0022] ...Removing server                           
-  INFO[0036] ...Removing docker image volume              
-  INFO[0036] Removed cluster [k3s-default]
-
-$ k3d create --publish 8081:80 --publish 8082:30080@k3d-k3s-default-worker-0 --workers 2
-  INFO[0000] Created cluster network with ID   903e292db40363804d315ff9543414e58cf1bbdb5985c5e61b9941ed4bc29679 
-  INFO[0000] Created docker volume  k3d-k3s-default-images
+$ k3d cluster delete
+  INFO[0000] Deleting cluster 'k3s-default'               
   ...
+  INFO[0002] Successfully deleted cluster k3s-default!    
 
-$ export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"
+$ k3d cluster create --port '8082:30080@agent[0]' --agents 2
+  INFO[0000] Created network 'k3d-k3s-default'
+  ...
+  INFO[0021] Cluster 'k3s-default' created successfully!
+  INFO[0021] You can now use it like this:
+  kubectl cluster-info
+
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app2/manifests/deployment.yaml
   deployment.apps/hashresponse-dep created
 ```
 
-Now we've opened port 8081 to our master and 8082 to one of our workers port 30080. They will be used to showcase different methods of communicating with the servers.
+Now we have access through port 80 to our server node and 8082 to one of our agent nodes port 30080. They will be used to showcase different methods of communicating with the servers.
 
 > We will have limited amount of ports available in the future but that's ok for your own machine.
 
@@ -441,8 +457,7 @@ $ kubectl get ing
   dwk-material-ingress    *       172.28.0.4   80      77s
 ```
 
-We can see that the ingress is listening on port 80. As we already opened port there we can access the application on http://localhost:8081.
-
+We can see that the ingress is listening on port 80. As we already opened port there we can access the application on http://localhost.
 
 {% include_relative exercises/1_07.html %}
 
@@ -502,7 +517,7 @@ spec:
             mountPath: /usr/src/app/files
 ```
 
-As the display is dependant on the volume we can confirm that it works by accessing the image-response and getting the image. The provided ingress used the previously opened port http://localhost:8081
+As the display is dependant on the volume we can confirm that it works by accessing the image-response and getting the image. The provided ingress used the previously opened port 80 <http://localhost>
 
 Note that all data is lost when the pod goes down.
 
@@ -516,7 +531,7 @@ The reason for the difficulty is because you should not store data with the appl
 
 A *local* volume is a *PersistentVolume* that binds a path from the node to use as a storage. This ties the volume to the node.
 
-Let's create a directory at `/tmp/kube` in the `k3d-k3s-default-worker-0` container so we can tell Kubernetes to use the space with `docker exec k3d-k3s-default-worker-0 mkdir -p /tmp/kube`.
+For the _PersistentVolume_ to work you first need to create the local path in the node we are binding it to. Since our k3d cluster runs via docker let's create a directory at `/tmp/kube` in the `k3d-k3s-default-agent-0` container. This can simply be done via `docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/kube` 
 
 **persistentvolume.yaml**
 
@@ -541,10 +556,8 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - k3d-k3s-default-worker-0
+          - k3d-k3s-default-agent-0
 ```
-
-For the above _PersistentVolume_ to work you first need to create the local path in the node we are binding it to. Since our k3d cluster runs via docker this can simply be done via `docker exec k3d-k3s-default-worker-0 mkdir /tmp/kube` 
 
 > As this is bound into that node avoid using this in production.
 
@@ -595,7 +608,7 @@ And apply it
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
 ```
 
-With the previous service and ingress we can access it from http://localhost:8081. To confirm that the data is persistent we can run
+With the previous service and ingress we can access it from http://localhost. To confirm that the data is persistent we can run
 
 ```console
 $ kubectl delete -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
