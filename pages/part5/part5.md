@@ -116,7 +116,7 @@ $ kubectl -n kube-system get all
   replicaset.apps/stackdriver-metadata-agent-cluster-level-7bd5ddd849   0         0         0       5h42m
 ```
 
-To get a complete picture of how each part communicates with each other [what happens when k8s](https://github.com/jamiehannaford/what-happens-when-k8s) explores what happens when you do `kubectl run nginx --image=nginx --replicas=3` shedding some more light on the magic that happens behind the scenes.
+To get a complete picture of how each part communicates with each other "[what happens when k8s](https://github.com/jamiehannaford/what-happens-when-k8s)" explores what happens when you do `kubectl run nginx --image=nginx --replicas=3` shedding some more light on the magic that happens behind the scenes.
 
 ## Custom Resource Definitions ##
 
@@ -339,5 +339,22 @@ $ kubectl logs countdown-controller-dep-7ff598ffbf-q2rp5
   <p style="color:firebrick;">The controller doesn't have to work perfectly in all circumstances. The following workflow should succeed: 1. apply role, account and binding. 2. apply deployment. 3. apply DummySite</p>
 </div>
 
-## Final Section ? ##
+## Beyond Kubernetes ##
 
+Finally it's important to reiterate that Kubernetes is a platform.
+
+I've personally had conversations about this multiple times and want to clear some possible misconceptions.
+
+If someone tells you they're using [OpenShift](https://en.wikipedia.org/wiki/OpenShift) they're using Kubernetes ([Red Hat OpenShift Overview](https://developers.redhat.com/products/openshift/overview)). Saying you don't have Kubernetes because you have OpenShift is like saying ["I don't have an engine. I have a car!"](https://www.openshift.com/blog/enterprise-kubernetes-with-openshift-part-one)
+
+If someone tells you they're using [serverless](https://en.wikipedia.org/wiki/Serverless_computing) they may be using Kubernetes, be it Google Cloud Run, Knative, OpenFaaS, OpenWhisk, Fission or Kubeless. Where the older the platform is the more likely it won't be running on Kubernetes. Saying Kubernetes is competing with serverless doesn't make much sense.
+
+As this isn't a serverless course we won't go into depth about it but serverless sounds pretty dope. So next let's setup a serverless platform on our k3d because that's something we can do. Let's choose [Knative](https://knative.dev/) for this, for no particular reason other than that it sounds great.
+
+We will follow [this guide](https://knative.dev/docs/install/any-kubernetes-cluster/)
+
+TODO: Follow guide
+
+### Istio ###
+
+TODO: Something here
