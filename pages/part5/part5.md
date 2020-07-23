@@ -319,42 +319,158 @@ $ kubectl logs countdown-controller-dep-7ff598ffbf-q2rp5
   Doing cleanup
 ```
 
-<div class="exercise" markdown="1"> 
-  <h1>Exercise 5.XX:</h1>
-  
-  This exercise doesn't rely on previous exercises. You may again choose which ever technologies you want for the implementation.
-
-  We need a *DummySite* resource that can be used to create a html page from any url.
-
-  1. Create a "DummySite" resource that takes has a string property called "website_url".
-
-  2. Create a controller that creates all of the required resources that are required for the functionality.
-
-  Refer to [https://kubernetes.io/docs/reference/using-api/client-libraries/](https://kubernetes.io/docs/reference/using-api/client-libraries/) for information about client libraries.
-
-  The API docs are here for the apiGroups and example requests: [https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18)
-
-  Test that creating a DummySite resource with website_url "[https://example.com/](https://example.com/)" should create a copy of the website.
-
-  <p style="color:firebrick;">The controller doesn't have to work perfectly in all circumstances. The following workflow should succeed: 1. apply role, account and binding. 2. apply deployment. 3. apply DummySite</p>
-</div>
+{% include_relative exercises/5_01.html %}
 
 ## Beyond Kubernetes ##
 
-Finally it's important to reiterate that Kubernetes is a platform.
+Finally as Kubernetes is a platform we'll go over a few popular building blocks that use Kubernetes.
 
-I've personally had conversations about this multiple times and want to clear some possible misconceptions.
+[OpenShift](https://en.wikipedia.org/wiki/OpenShift) is an "enterprise" Kubernetes ([Red Hat OpenShift Overview](https://developers.redhat.com/products/openshift/overview)). Claiming that you don't have Kubernetes because you have OpenShift would be equal to claiming ["I don't have an engine. I have a car!"](https://www.openshift.com/blog/enterprise-kubernetes-with-openshift-part-one). And as such OpenShift is an option when you're making the crucial decision between which Kubernetes distribution you want or would you like to use a managed service. Other options for production-ready Kubernetes see [Rancher](https://rancher.com/), which you might have seen before in this url [https://github.com/rancher/k3d](https://github.com/rancher/k3d), and [Anthos GKE](https://cloud.google.com/anthos/gke), which might also sound familiar.
 
-If someone tells you they're using [OpenShift](https://en.wikipedia.org/wiki/OpenShift) they're using Kubernetes ([Red Hat OpenShift Overview](https://developers.redhat.com/products/openshift/overview)). Saying you don't have Kubernetes because you have OpenShift is like saying ["I don't have an engine. I have a car!"](https://www.openshift.com/blog/enterprise-kubernetes-with-openshift-part-one)
+[Serverless](https://en.wikipedia.org/wiki/Serverless_computing) has gained a lot of popularity and it's easy to see why. Be it Google Cloud Run, Knative, OpenFaaS, OpenWhisk, Fission or Kubeless they're running on top of Kubernetes, or atleast capable of doing so. The older the serverless platform the more likely it won't be running on Kubernetes. With this in light a discussions if Kubernetes is competing with serverless doesn't make much sense.
 
-If someone tells you they're using [serverless](https://en.wikipedia.org/wiki/Serverless_computing) they may be using Kubernetes, be it Google Cloud Run, Knative, OpenFaaS, OpenWhisk, Fission or Kubeless. Where the older the platform is the more likely it won't be running on Kubernetes. Saying Kubernetes is competing with serverless doesn't make much sense.
+As this isn't a serverless course we won't go into depth about it but serverless sounds pretty dope. So next let's setup a serverless platform on our k3d because that's something we can do. For this let's choose [Knative](https://knative.dev/) for no particular reason other than that it sounds great.
 
-As this isn't a serverless course we won't go into depth about it but serverless sounds pretty dope. So next let's setup a serverless platform on our k3d because that's something we can do. Let's choose [Knative](https://knative.dev/) for this, for no particular reason other than that it sounds great.
+We will follow [this guide](https://knative.dev/docs/install/any-kubernetes-cluster/) to install "Serving" component of Knative. There's probably a Helm Chart for this but we'll meet another tool called Istio along the way. For Istio to work locally in k3d we'll need to create our cluster without the traefik ingress.
 
-We will follow [this guide](https://knative.dev/docs/install/any-kubernetes-cluster/)
+```console
+$ k3d cluster create --port '8082:30080@agent[0]' -p 8081:80@loadbalancer --agents 2 --k3s-server-arg '--no-deploy=traefik'
+```
 
-TODO: Follow guide
+Now Knative crds and core:
+
+```console
+$ kubectl apply -f https://github.com/knative/serving/releases/download/v0.16.0/serving-crds.yaml
+  ...
+
+$ kubectl apply -f https://github.com/knative/serving/releases/download/v0.16.0/serving-core.yaml
+  ...
+```
+
+Next we'll install Istio.
 
 ### Istio ###
 
-TODO: Something here
+Surprisingly we haven't met [Istio](https://istio.io/latest/) before now. Istio is a service mesh. Service mesh works as a layer facilitating communications between services. This means load-balancing, monitoring, encryption and traffic control. Full set of features of it can be found on their website ["What is Istio"](https://istio.io/latest/docs/concepts/what-is-istio/).
+
+> As Istio handles traffic control it could've handled the canary rollouts introduced in part 4
+
+Istio will require its own command line tools. Let's install [istioctl](https://istio.io/latest/docs/ops/diagnostic-tools/istioctl/) and install the minimal operator with instructions from Knative guide with the following yaml:
+
+**istio-minimal-operator.yaml**
+
+```yaml
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  values:
+    global:
+      proxy:
+        autoInject: disabled
+      useMCP: false
+      # The third-party-jwt is not enabled on all k8s.
+      # See: https://istio.io/docs/ops/best-practices/security/#configure-third-party-service-account-tokens
+      jwtPolicy: first-party-jwt
+
+  addonComponents:
+    pilot:
+      enabled: true
+    prometheus:
+      enabled: false
+
+  components:
+    ingressGateways:
+      - name: istio-ingressgateway
+        enabled: true
+      - name: cluster-local-gateway
+        enabled: true
+        label:
+          istio: cluster-local-gateway
+          app: cluster-local-gateway
+        k8s:
+          service:
+            type: ClusterIP
+            ports:
+            - port: 15020
+              name: status-port
+            - port: 80
+              name: http2
+            - port: 443
+              name: https
+```
+
+And install Istio with
+
+```console
+$ istioctl install -f istio-minimal-operator.yaml
+  ✔ Istio core installed
+  ✔ Istiod installed
+  ✔ Ingress gateways installed
+  ✔ Addons installed
+  ✔ Installation complete  
+```
+
+Next we can install Knative Istio controller
+
+```console
+$ kubectl apply -f https://github.com/knative/net-istio/releases/download/v0.16.0/release.yaml
+  ...
+```
+
+And that's it. We'll leave the step 4 for configuring DNS out.
+
+#### Hello Serverless World ####
+
+For testing purposes let's do a hello world from the Knative samples:
+
+**knative-service.yaml**
+
+```yaml
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: helloworld-go
+spec:
+  template:
+    spec:
+      containers:
+        - image: gcr.io/knative-samples/helloworld-go
+          env:
+            - name: TARGET
+              value: "DwK"
+```
+
+```console
+$ kubectl apply -f knative-service.yaml
+  service.serving.knative.dev/helloworld-go created
+```
+
+As previously mentioned we don't have DNS so accessing the application isn't as easy. We'll have to set the Host parameter for our requests. Find out the host from:
+
+```console
+$ kubectl get ksvc
+  NAME            URL                                        LATESTCREATED         LATESTREADY           READY   REASON
+  helloworld-go   http://helloworld-go.default.example.com   helloworld-go-n6v2t   helloworld-go-n6v2t   True    
+```
+
+Now we can see that there are no pods running
+
+```console
+$ kubectl get po
+  No resources found in default namespace.
+```
+
+and when we send request to the application
+
+```console
+$ curl -H "Host: helloworld-go.default.example.com" http://localhost:8081
+  Hello DwK!
+
+$ kubectl get po
+  NAME                                              READY   STATUS    RESTARTS   AGE
+  helloworld-go-n6v2t-deployment-5d498495fb-vvwnd   1/2     Running   0          6s
+```
+
+it works and there are almost instantly pods ready.
+
+{% include_relative exercises/5_02.html %}
