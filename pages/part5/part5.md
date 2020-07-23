@@ -421,7 +421,7 @@ And that's it. We'll leave the step 4 for configuring DNS out.
 
 #### Hello Serverless World ####
 
-For testing purposes let's do a hello world from the Knative samples:
+For testing purposes let's do a hello world from the Knative samples. In Knative there's another new resource called _Service_, not to be mixed up with the Kubernetes resource Service. These Services are used to manage the core Kubernetes resources 
 
 **knative-service.yaml**
 
@@ -432,6 +432,8 @@ metadata:
   name: helloworld-go
 spec:
   template:
+    metadata:
+      name: helloworld-go-dwk-message-v1
     spec:
       containers:
         - image: gcr.io/knative-samples/helloworld-go
@@ -449,11 +451,13 @@ As previously mentioned we don't have DNS so accessing the application isn't as 
 
 ```console
 $ kubectl get ksvc
-  NAME            URL                                        LATESTCREATED         LATESTREADY           READY   REASON
-  helloworld-go   http://helloworld-go.default.example.com   helloworld-go-n6v2t   helloworld-go-n6v2t   True    
+  NAME            URL                                        LATESTCREATED                  LATESTREADY                    READY   REASON
+  helloworld-go   http://helloworld-go.default.example.com   helloworld-go-dwk-message-v1   helloworld-go-dwk-message-v1   True
 ```
 
-Now we can see that there are no pods running
+We'll need the URL field. Note also LATESTCREATED and LATESTREADY, they're revisions of the application. If we alter the knative-service.yaml it'll create new revisions where we could change between revisions.
+
+Now we can see that there are no pods running. There may be one as Knative spins one pod during the creation of the service, wait until no helloworld-go resources are found.
 
 ```console
 $ kubectl get po
@@ -467,10 +471,106 @@ $ curl -H "Host: helloworld-go.default.example.com" http://localhost:8081
   Hello DwK!
 
 $ kubectl get po
-  NAME                                              READY   STATUS    RESTARTS   AGE
-  helloworld-go-n6v2t-deployment-5d498495fb-vvwnd   1/2     Running   0          6s
+  NAME                                                       READY   STATUS    RESTARTS   AGE
+  helloworld-go-dwk-message-v1-deployment-6664bc858f-jqlv6   1/2     Running   0          6s
 ```
 
 it works and there are almost instantly pods ready.
+
+Let's test the revisions by changing the contents of the yaml and applying it.
+
+**knative-service.yaml**
+```yaml
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: helloworld-go
+spec:
+  template:
+    metadata:
+      name: helloworld-go-dwk-message-v2 # v2
+    spec:
+      containers:
+        - image: gcr.io/knative-samples/helloworld-go
+          env:
+            - name: TARGET
+              value: "DwK-but-better" # Changed content
+  traffic: # traffic enables us to split traffic between multiple revisions!
+  - revisionName: helloworld-go-dwk-message-v1
+    percent: 100
+  - revisionName: helloworld-go-dwk-message-v2
+    percent: 0
+```
+
+This created a new revision and edited the route. We can view the CRDs _Revision_ and _Route_.
+
+```console
+$ kubectl get revisions,routes
+  NAME                                                        CONFIG NAME     K8S SERVICE NAME               GENERATION   READY   REASON
+  revision.serving.knative.dev/helloworld-go-dwk-message-v1   helloworld-go   helloworld-go-dwk-message-v1   1            True    
+  revision.serving.knative.dev/helloworld-go-dwk-message-v2   helloworld-go   helloworld-go-dwk-message-v2   2            True    
+  
+  NAME                                      URL                                        READY   REASON
+  route.serving.knative.dev/helloworld-go   http://helloworld-go.default.example.com   True
+```
+
+So now when we send a request it's still the old message!
+
+```console
+$ curl -H "Host: helloworld-go.default.example.com" http://localhost:8081
+  Hello DwK!
+```
+
+Let's set the messages between v1 and v2 at 50% each and create a new revision with the best that'll be open at another host!
+
+**knative-service.yaml**
+```yaml
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: helloworld-go
+spec:
+  template:
+    metadata:
+      name: helloworld-go-dwk-message-v3 # v3
+    spec:
+      containers:
+        - image: gcr.io/knative-samples/helloworld-go
+          env:
+            - name: TARGET
+              value: "DwK-but-extreme" # Changed content
+  traffic: # traffic enables us to split traffic between multiple revisions!
+  - revisionName: helloworld-go-dwk-message-v1
+    percent: 50
+  - revisionName: helloworld-go-dwk-message-v2
+    percent: 50
+```
+
+Now curling will result in 50% - 50% difference between the v1 and v2 messages. But accessing v3 is currently disabled. Let's add routing to v3 by defining a Route ourselves.
+
+**route.yaml**
+```yaml
+apiVersion: serving.knative.dev/v1
+kind: Route
+metadata:
+  name: tester-route
+spec:
+  traffic:
+    - revisionName: helloworld-go-dwk-message-v3
+      percent: 100
+```
+
+```console
+$ kubectl apply -f route.yaml
+  route.serving.knative.dev/tester-route created
+
+$ kubectl get routes
+  NAME            URL                                        READY   REASON
+  helloworld-go   http://helloworld-go.default.example.com   True    
+  tester-route    http://tester-route.default.example.com    True    
+
+$ curl -H "Host: tester-route.default.example.com" http://localhost:8081
+  Hello DwK-but-extreme!
+```
 
 {% include_relative exercises/5_02.html %}
