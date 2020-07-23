@@ -320,7 +320,7 @@ $ k3d cluster delete
   ...
   INFO[0002] Successfully deleted cluster k3s-default!    
 
-$ k3d cluster create --port '8082:30080@agent[0]' --agents 2
+$ k3d cluster create --port '8082:30080@agent[0]' -p 8081:80@loadbalancer --agents 2
   INFO[0000] Created network 'k3d-k3s-default'
   ...
   INFO[0021] Cluster 'k3s-default' created successfully!
@@ -331,7 +331,7 @@ $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-exam
   deployment.apps/hashresponse-dep created
 ```
 
-Now we have access through port 80 to our server node and 8082 to one of our agent nodes port 30080. They will be used to showcase different methods of communicating with the servers.
+Now we have access through port 8081 to our server node (actually all nodes) and 8082 to one of our agent nodes port 30080. They will be used to showcase different methods of communicating with the servers.
 
 > We will have limited amount of ports available in the future but that's ok for your own machine.
 
@@ -457,7 +457,7 @@ $ kubectl get ing
   dwk-material-ingress    *       172.28.0.4   80      77s
 ```
 
-We can see that the ingress is listening on port 80. As we already opened port there we can access the application on http://localhost.
+We can see that the ingress is listening on port 80. As we already opened port there we can access the application on http://localhost:8081.
 
 {% include_relative exercises/1_07.html %}
 
@@ -517,7 +517,7 @@ spec:
             mountPath: /usr/src/app/files
 ```
 
-As the display is dependant on the volume we can confirm that it works by accessing the image-response and getting the image. The provided ingress used the previously opened port 80 <http://localhost>
+As the display is dependant on the volume we can confirm that it works by accessing the image-response and getting the image. The provided ingress used the previously opened port 8081 <http://localhost:8081>
 
 Note that all data is lost when the pod goes down.
 
@@ -608,7 +608,7 @@ And apply it
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
 ```
 
-With the previous service and ingress we can access it from http://localhost. To confirm that the data is persistent we can run
+With the previous service and ingress we can access it from http://localhost:8081. To confirm that the data is persistent we can run
 
 ```console
 $ kubectl delete -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
