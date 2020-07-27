@@ -10,8 +10,8 @@ order: 0
 
 ### Prerequisites ###
 
-Attendees are also expected to have completed [DevOps with Docker](https://devopswithdocker.com) or have experience with Docker and docker-compose.
-In addition experience with web software is required, such as [Full Stack Web Development](https://fullstackopen.com/en/) or equivalent
+Attendees are expected to have completed [DevOps with Docker](https://devopswithdocker.com) or have experience with Docker and docker-compose.
+In addition experience with web software is required, such as [Full Stack Web Development](https://fullstackopen.com/en/) or equivalent.
 To complete the exercises and examples in material attendees are required to have computers with admin/superuser priviledges.
 
 ### Course material ###
@@ -20,11 +20,11 @@ The course material is meant to be read part by part from start to finish. To ge
 
 The course material is written for Mac, so some instructions may lack platform specific details. Please make a pull request to the course material in case you find any mistakes or wish to add something. You can also add an "issue" through GitHub in case you find any issues with the course material.
 
-### Completing course ###
+## Completing course ##
 
 ### Grading ###
 
-This course size is ? ECTS credits. The details for optional completion methods are not available yet.
+Course size is 5 ECTS credits. Details for optional completion methods are not available yet.
 
 ## Getting started ##
 
@@ -46,9 +46,11 @@ We'll use k3d for practice. [Install instructions](https://github.com/rancher/k3
 
 ## Google Cloud Credits ##
 
-Getting Google Cloud credits. Starting on part 3 we'll start using Google Kubernetes Engine. It's not free but google has offered us some credits with a few caveats.
+In part 3 we'll use Google Kubernetes Engine. It's not free but Google has offered students with @helsinki.fi email addresses some Google Cloud Credits. 
 
-Beta testers please contact me @jakousa. 
+Unfortunately if you do not own a @helsinki.fi email you have to use your own credits. Google offers some credits for free for every user.
+
+Beta testers please contact me @jakousa on Telegram. 
 
 ### Mistakes ###
 
