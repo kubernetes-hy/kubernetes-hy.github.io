@@ -21,7 +21,7 @@ There are multiple update/deployment/release strategies. We will focus on two of
 - Rolling update
 - Canary release
 
-Both of these update are designed to make sure that the application works during and after an update. Rather than updating every pod at the same time the idea is to update the pods one at a time and confirm that the application works.
+Both of these update strategies are designed to make sure that the application works during and after an update. Rather than updating every pod at the same time the idea is to update the pods one at a time and confirm that the application works.
 
 ### Rolling update ###
 
@@ -146,7 +146,7 @@ $ kubectl get po
   flaky-update-dep-dd78944f4-zczmw   0/1     Running   0          90s
 ```
 
-Let's roll back to previous version. This may come in handy if you ever are in a panic mode and need to roll an update back:
+Let's roll back to the previous version. This may come in handy if you ever are in a panic mode and need to roll an update back:
 
 ```console
 $ kubectl rollout undo deployment flaky-update-dep
@@ -196,7 +196,7 @@ $ kubectl apply -f deployment.yaml
   deployment.apps/flaky-update-dep configured
 ```
 
-After a while it may look something like this, if you're lucky.
+After a while it may look something like this (if you're lucky).
 
 ```console
 $ kubectl get po
@@ -274,7 +274,7 @@ If you don't have Prometheus available go back to part 2 for a reminder. We'll h
 
 {% include_relative exercises/4_03.html %}
 
-The CRD (Custom Resource Definition) AnalysisTemplate will, in our case, use Prometheus and send a query. The query result is then compared to a preset value. In this simplified case if the number of overall restarts over the last 2 minutes is higher than two it will fail the analysis. *initialDelay* will ensure that the test is not run until the data required is gathered. Note that this is not a robust test as the production version may crash and prevent the update even if the update itself is working correctly. The *AnalysisTemplate* is not dependant on Prometheus and could use a different source, such as a json endpoint, instead.
+The CRD (Custom Resource Definition) AnalysisTemplate will, in our case, use Prometheus and send a query. The query result is then compared to a preset value. In this simplified case if the number of overall restarts over the last 2 minutes is higher than two it will fail the analysis. *initialDelay* will ensure that the test is not run until the data required is gathered. Note that this is not a robust test as the production version may crash and prevent the update even if the update itself is working correctly. The *AnalysisTemplate* is not dependant on Prometheus and could use a different source, such as a JSON endpoint, instead.
 
 **analysistemplate.yaml**
 
@@ -318,9 +318,9 @@ With NATS we can implement "at-most-once" messaging between our services. Conven
 
 This in mind we can design our first application that uses messages for communication. 
 
-We have a data set of 100 000 json objects that we need to do some heavy processing on and then save the processed data. Unfortunately processing a single json object takes so long that processing all of the data would require hours of work. To solve this I've split the application into smaller services that we can scale individually.
+We have a data set of 100 000 JSON objects that we need to do some heavy processing on and then save the processed data. Unfortunately processing a single json object takes so long that processing all of the data would require hours of work. To solve this I've split the application into smaller services that we can scale individually.
 
-The application is in 3 parts, for simplification the saving to database and fetching from external API are omitted:
+The application is in 3 parts, for simplification the saving to a database and fetching from external API are omitted:
 
 - Fetcher, which fetches unprocessed data and passes it to NATS.
 - Mapper, which processes the data from NATS and after processing sends it back to NATS.
@@ -386,7 +386,7 @@ spec:
           image: jakousa/dwk-app9-saver:0bcd6794804c367684a9a79bb142bb4455096974
 ```
 
-In this case the application is designed so that Fetcher can not be scaled. Fetcher splits the data into chunks of a 100 objects and keeps a record of which chunks have not been processed. Fetcher will wait for a Mapper to send a message confirming that it's listening before sending data forward. Note how the available Mapper will be the one to receive the message so the fastest Mapper could process a large number of chunks while the some of them might crash or be extremely slow. Saver will send a confirmation to Fetcher when a chunk has been saved and it will mark it as processed. So even if any part of the application crashes all of the data will be processed and saved.
+In this case the application is designed so that Fetcher can not be scaled. Fetcher splits the data into chunks of 100 objects and keeps a record of which chunks have not been processed. Fetcher will wait for a Mapper to send a message confirming that it's listening before sending data forward. Note how the available Mapper will be the one to receive the message so the fastest Mapper could process a large number of chunks while some of them might crash or be extremely slow. Saver will send a confirmation to Fetcher when a chunk has been saved and it will mark it as processed. So even if any part of the application crashes all of the data will be processed and saved.
 
 We're going to use Helm to install NATS into our cluster.
 
@@ -515,7 +515,7 @@ spec:
       - default
 ```
 
-And now prometheus has access to the new data. Let's check Prometheus:
+And now Prometheus has access to the new data. Let's check Prometheus:
 
 ```console
 $ kubectl -n prometheus port-forward prometheus-prometheus-operator-159378-prometheus-0 9090
@@ -538,7 +538,7 @@ Now we just need to add a Grafana dashboard for the data. Let's import a dashboa
 $ kubectl -n prometheus port-forward prometheus-operator-1593782473-grafana-7d457dff56-m2r6d 3000
 ```
 
-Here we can paste the json to "import via panel json" and then choose Prometheus as the source on the following page.
+Here we can paste the JSON to "import via panel json" and then choose Prometheus as the source on the following page.
 
 ![]({{ "/images/part4/grafana_import.png" | absolute_url }})
 
@@ -562,8 +562,10 @@ By this point you have a grasp on the variety of decisions that are made during 
 
 We're now at the stage where we are using some of the best web development practices and all of it using Kubernetes.
 
-* Deployments to multiple branch specific environments
+* Deployments to multiple branch-specific environments
+
 * Canary releases with automatic malfunction detection
+
 * State of the art monitoring with Grafana and Prometheus
 
 

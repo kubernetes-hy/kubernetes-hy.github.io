@@ -8,7 +8,13 @@ order: 5
 
 **HERE BE DRAGONS**
 
-Kubernetes is defined as an "container-orchestration system"  and "portable, existensible platform". In this part we'll focus on how and why its built and how to leverage the extensibility of Kubernetes.
+Kubernetes is defined as a "container-orchestration system"  and "portable, extensible platform". In this part we'll focus on how and why its built and how to leverage the extensibility of Kubernetes. After this part you will be able to
+
+- Create your own Custom Resource Definitions (CRDs)
+
+- List and compare platform options.
+
+- Setup a serverless platform (Knative) and deploy a simple workload
 
 ## Kubernetes Internals ##
 
@@ -18,7 +24,7 @@ Kubernetes is a layer on top of which we run our applications. It takes the reso
 
 Now that we'll start talking about the internals we'll learn new insight on Kubernetes and will be able to prevent and solve problems that may result from its nature.
 
-Due to this section being mostly a reiteration of Kubernetes documentation I will include various links the official version of the documentation - we will not setup our own Kubernetes cluster manually. If you want to go hands on and learn to setup your own cluster with you should read and complete [Kubernetes the Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way) by Kelsey Hightower.
+Due to this section being mostly a reiteration of Kubernetes documentation I will include various links the official version of the documentation - we will not setup our own Kubernetes cluster manually. If you want to go hands-on and learn to setup your own cluster with you should read and complete [Kubernetes the Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way) by Kelsey Hightower. If you have any leftover credits from part 3 this is a great way to spend some of them.
 
 ### Controllers and Eventual Consistency ###
 
@@ -201,9 +207,9 @@ $ kubectl get cd
   doomsday    20       1200
 ```
 
-Now we have a new resource. Next let's create a new custom controller that'll start a pod that runs a container from the image and makes sure countdowns are destroyed. This will require some coding..
+Now we have a new resource. Next let's create a new custom controller that'll start a pod that runs a container from the image and makes sure countdowns are destroyed. This will require some coding.
 
-For the implementation I decided on a Kubernetes resource called *Jobs*. *Jobs* are a resource that creates a pod like the Deployments we're now familiar with. Jobs are intended to run once and after execution are often removed, however they are not removed automatically and neither are the Pods created from a Job removed with the Job. The Pods are preserved so that the execution logs can be reviewed after job execution.
+For the implementation I decided on a Kubernetes resource called *Jobs*. *Jobs* are a resource that creates a pod just like the Deployments we're now familiar with. Pods created by Jobs are intended to run once until completion, however they are not removed automatically and neither are the Pods created from a Job removed with the Job. The Pods are preserved so that the execution logs can be reviewed after job execution. Excellent use cases for Jobs are, for example, backup operations.
 
 So our controller has to do 3 things:
 
@@ -217,11 +223,11 @@ For jobs we'll listen to `/apis/batch/v1/jobs?watch=true` and wait for MODIFIED 
 
 And finally to delete the countdown a request to `/apis/stable.dwk/v1/namespaces/<namespace>/countdowns/<countdown_name>`.
 
-A version of this controller has been implemented here: `jakousa/dwk-app10-controller:sha-4256579`. But we cannot simply deploy it as it won't have access to the APIs. For this we will need to define a suitable access.
+A version of this controller has been implemented here: `jakousa/dwk-app10-controller:sha-4256579`. But we cannot simply deploy it as it won't have access to the APIs. For this we will need to define suitable access.
 
 ## RBAC ##
 
-RBAC (Role-based access control) is an authorization method that allows us to define access for individual users, service accounts or groups by giving them roles. For our usecase we will define a serviceaccount
+RBAC (Role-based access control) is an authorization method that allows us to define access for individual users, service accounts or groups by giving them roles. For our use case we will define a ServiceAccount resource.
 
 **serviceaccount.yaml**
 
@@ -284,7 +290,7 @@ rules:
   verbs: ["get", "list", "watch", "create", "delete"]
 ```
 
-And finally bind the serviceaccount and the role. There are two types of bindings as well. *ClusterRoleBinding* and *RoleBinding*. If we used a *RoleBinding* with a *ClusterRole* we would be able to restrict the access to a single namespace. For example, if permission to access secrets is defined to a ClusterRole and we gave it via *RoleBinding* to a namespace called "test" they would only be able to access secrets in the namespace "test" - even though the role is a "ClusterRole".
+And finally bind the ServiceAccount and the role. There are two types of bindings as well. *ClusterRoleBinding* and *RoleBinding*. If we used a *RoleBinding* with a *ClusterRole* we would be able to restrict access to a single namespace. For example, if permission to access secrets is defined to a ClusterRole and we gave it via *RoleBinding* to a namespace called "test" they would only be able to access secrets in the namespace "test" - even though the role is a "ClusterRole".
 
 In our case *ClusterRoleBinding* is required since we want the controller to access all of the namespaces from the namespace it's deployed in, in this case namespace "default".
 
@@ -325,7 +331,11 @@ $ kubectl logs countdown-controller-dep-7ff598ffbf-q2rp5
 
 Finally as Kubernetes is a platform we'll go over a few popular building blocks that use Kubernetes.
 
-[OpenShift](https://en.wikipedia.org/wiki/OpenShift) is an "enterprise" Kubernetes ([Red Hat OpenShift Overview](https://developers.redhat.com/products/openshift/overview)). Claiming that you don't have Kubernetes because you have OpenShift would be equal to claiming ["I don't have an engine. I have a car!"](https://www.openshift.com/blog/enterprise-kubernetes-with-openshift-part-one). And as such OpenShift is an option when you're making the crucial decision between which Kubernetes distribution you want or would you like to use a managed service. Other options for production-ready Kubernetes see [Rancher](https://rancher.com/), which you might have seen before in this url [https://github.com/rancher/k3d](https://github.com/rancher/k3d), and [Anthos GKE](https://cloud.google.com/anthos/gke), which might also sound familiar.
+[OpenShift](https://en.wikipedia.org/wiki/OpenShift) is an "enterprise" Kubernetes ([Red Hat OpenShift Overview](https://developers.redhat.com/products/openshift/overview)). Claiming that you don't have Kubernetes because you have OpenShift would be equal to claiming ["I don't have an engine. I have a car!"](https://www.openshift.com/blog/enterprise-kubernetes-with-openshift-part-one). For other options for production-ready Kubernetes see [Rancher](https://rancher.com/), which you might have seen before in this url [https://github.com/rancher/k3d](https://github.com/rancher/k3d), and [Anthos GKE](https://cloud.google.com/anthos/gke), which might also sound familiar. They are all options when you're making the crucial decision between which Kubernetes distribution you want or would you like to use a managed service.
+
+TODO: Exercise for comparing platforms
+
+### Serverless ###
 
 [Serverless](https://en.wikipedia.org/wiki/Serverless_computing) has gained a lot of popularity and it's easy to see why. Be it Google Cloud Run, Knative, OpenFaaS, OpenWhisk, Fission or Kubeless they're running on top of Kubernetes, or atleast capable of doing so. The older the serverless platform the more likely it won't be running on Kubernetes. With this in light a discussions if Kubernetes is competing with serverless doesn't make much sense.
 
@@ -355,7 +365,7 @@ Surprisingly we haven't met [Istio](https://istio.io/latest/) before now. Istio 
 
 > As Istio handles traffic control it could've handled the canary rollouts introduced in part 4
 
-Istio will require its own command line tools. Let's install [istioctl](https://istio.io/latest/docs/ops/diagnostic-tools/istioctl/) and install the minimal operator with instructions from Knative guide with the following yaml:
+Istio will require its own command-line tools. Let's install [istioctl](https://istio.io/latest/docs/ops/diagnostic-tools/istioctl/) and install the minimal operator with instructions from Knative guide with the following yaml:
 
 **istio-minimal-operator.yaml**
 
@@ -464,7 +474,7 @@ $ kubectl get po
   No resources found in default namespace.
 ```
 
-and when we send request to the application
+and when we send a request to the application
 
 ```console
 $ curl -H "Host: helloworld-go.default.example.com" http://localhost:8081

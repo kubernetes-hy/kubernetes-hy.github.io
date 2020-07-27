@@ -10,7 +10,7 @@ In this part we'll start using GKE and see a few features that we didn't have av
 
 - Create your own cluster in GKE
 
-- Create an deployment pipeline, enabling continuous delivery from a git push to production
+- Create a deployment pipeline, enabling continuous delivery from a git push to production
 
 - Have the pods in the cluster autoscale
 
@@ -20,15 +20,15 @@ In this part we'll start using GKE and see a few features that we didn't have av
 
 We have used Kubernetes distribution k3s using docker containers via k3d. In a production environment the task of maintaining a Kubernetes cluster is often left to third parties. A managed Kubernetes as a service is often the best choice as the additional work required in maintenance exceeds the benefits of a personal cluster. In some, somewhat rare, cases setting up and maintaining your own cluster is a reasonable option. A case for it would be that your company/organization already has the hardware and/or wants to stay independent from providers, one such example could be a University. 
 
-Even in Kubernetes then the cost for running a software that is rarely used may be higher than the value it generates. In such cases using [Serverless](https://en.wikipedia.org/wiki/Serverless_computing) solutions could be more cost efficient. Kubernetes can get really expensive really fast.
+Even in Kubernetes then the cost for running software that is rarely used may be higher than the value it generates. In such cases using [Serverless](https://en.wikipedia.org/wiki/Serverless_computing) solutions could be more cost-efficient. Kubernetes can get really expensive really fast.
 
 Let's focus on the Google Kubernetes Engine (GKE) costs for now. Note that the GKE costs a little bit more than its competitors.
 
-The calculator here [https://cloud.google.com/products/calculator](https://cloud.google.com/products/calculator) offers us a picture of the pricing. I decided to try a cheap option: 6 nodes in 1 zonal cluster using 1 vCPU each. Datacenter location is in Finland and I don't need persistent disk. If we wanted less than 6 nodes why would we even use Kubernetes. The total cost for this example was 145€ - $160 per month. Adding additional services such as a Load balancer increase the cost.
+The calculator here [https://cloud.google.com/products/calculator](https://cloud.google.com/products/calculator) offers us a picture of the pricing. I decided to try a cheap option: 6 nodes in 1 zonal cluster using 1 vCPU each. The datacenter location is in Finland and I don't need a persistent disk. If we wanted less than 6 nodes why would we even use Kubernetes? The total cost for this example was 145€ - $160 per month. Adding additional services such as a Load balancer increase the cost.
 
-During the part 3 we will be using GKE either by using the student credits or the free credits offered by google. You are responsible for making sure that the credits last for the whole part and if all of them are consumed I can not help you.
+During part 3 we will be using GKE either by using the student credits or the free credits offered by Google. You are responsible for making sure that the credits last for the whole part and if all of them are consumed I can not help you.
 
-After redeeming the credits we can create a project with the billing account. The google cloud UI can be confusing. On the [resources page](https://console.cloud.google.com/cloud-resource-manager) we can create a new project and let's name it "dwk-gke" for the purposes of this course. After creating this project make sure that the project is linked to the correct billing account from the top left dropdown and billing and then "Account Management". It should look like this (account is "DevOps with Kubernetes" and project "dwk-gke"):
+After redeeming the credits we can create a project with the billing account. The google cloud UI can be confusing. On the [resources page](https://console.cloud.google.com/cloud-resource-manager) we can create a new project and let's name it "dwk-gke" for the purposes of this course. After creating this project make sure that the project is linked to the correct billing account from the top-left dropdown and billing and then "Account Management". It should look like this (account is "DevOps with Kubernetes" and project "dwk-gke"):
 
 ![]({{ "/images/part3/gke_billing.png" | absolute_url }})
 
@@ -131,7 +131,7 @@ Google Kubernetes Engine will automatically provision a persistent disk for your
 
 ## Deployment Pipeline ##
 
-Let's setup a deployment pipeline using github actions. We just need something to deploy so let's create a new website.
+Let's setup a deployment pipeline using GitHub actions. We just need something to deploy so let's create a new website.
 
 Create a Dockerfile with the following contents:
 
@@ -226,7 +226,7 @@ Now we can deploy this using -k flag identifying that we want to use Kustomize.
 $ kubectl apply -k .
 ```
 
-We can preview the file with `kubectl kustomize .`. Kustomize will be an essential tool for our deployment pipeline. It'll allow us to individially choose which image to use. For this let's declare the image inside the kustomization.yaml. 
+We can preview the file with `kubectl kustomize .`. Kustomize will be an essential tool for our deployment pipeline. It'll allow us to individually choose which image to use. For this let's declare the image inside the kustomization.yaml. 
 
 **kustomization.yaml**
 
@@ -237,7 +237,7 @@ images:
   newName: jakousa/colorcontent
 ```
 
-This will replace image "IMAGE:TAG" with the one defined in newName. Next setting a placeholder value inside the deployment.yaml for the image:
+This will replace the image "IMAGE:TAG" with the one defined in newName. Next setting a placeholder value inside the deployment.yaml for the image:
 
 **deployment.yaml**
 
@@ -263,7 +263,7 @@ Kustomize has a few additional tools you can test out if you want to install it 
 
 ### Github Actions ###
 
-Github Actions will be the CI/CD tool of choice for this course. The behavior is similar to CircleCI or even travis which you may've used previously.
+Github Actions will be the CI/CD tool of choice for this course. The behavior is similar to CircleCI or even travis which you may have used previously.
 
 Create a file .github/workflows/main.yaml. We'll want the workflow to do 3 things:
 
@@ -287,7 +287,7 @@ env:
   IMAGE: dwk-environments
 ```
 
-We set the workflow to run on push and set the environment variables accordingly - we'll need them later on.
+We set the workflow to run whenever changes are pushed to the repository and set the environment variables accordingly - we'll need them later on.
 
 Next is adding the jobs. For simplicity we'll add everything into a single job that'll build, publish and deploy.
 
@@ -317,21 +317,21 @@ Next we'll use some additional actions, mainly from [GoogleCloudPlatform](https:
 
 The secrets here are not from the environment variables but are included into the project from Github. Read their guide [here](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets). The *GKE_SA_KEY* is a service account key that is required to access the google cloud services - read their guide for it [here](https://cloud.google.com/iam/docs/creating-managing-service-account-keys).
 
-Next configure docker this'll enable push to Googles own image registry, which we'll use for no particular reason. Read more about it here <https://cloud.google.com/container-registry/>. If we wanted we could use Docker Hub instead. Note that the registry is [not free](https://cloud.google.com/container-registry/pricing) and you'll probably want to delete the images from there during and after this course.
+Next use gcloud to configure Docker and this will enable us to push to Google Container Registry, which we'll use for no particular reason. Read more about it here <https://cloud.google.com/container-registry/>. If we wanted we could use Docker Hub instead. Note that the registry is [not free](https://cloud.google.com/container-registry/pricing) and you'll probably want to delete the images from there during and after this course.
 
 ```yaml
 ...
     - run: gcloud --quiet auth configure-docker
 ```
 
-And then we'll access right cluster, as defined in the environment variables.
+And then we'll set the kubectl access to the right cluster, as defined in the environment variables.
 
 ```yaml
 ...
     - run: gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
 ```
 
-And finally let's write out the desired image with a tag. The image in this case will be `gcr.io/PROJECT_ID/IMAGE:GITHUB_BRANCH-GITHUB_SHA` and stored to environment IMAGE_WITH_TAG.
+And finally let's write out the desired image with a tag. The image in this case will be `gcr.io/PROJECT_ID/IMAGE:GITHUB_BRANCH-GITHUB_SHA` and stored to the environment value IMAGE_WITH_TAG.
 
 ```yaml
 ...
@@ -348,6 +348,7 @@ Now the setup is done and next is building the image:
 ```
 
 Publish similarily:
+
 ```yaml
 ...
     - name: Publish
@@ -442,7 +443,8 @@ Kustomize has a method to set the namespace. *${GITHUB_REF#refs/heads/}* will be
 ./kustomize edit set namespace ${GITHUB_REF#refs/heads/}
 ```
 
-But this'll error as there's no namespace defined - so we need to add a creation of a namespace
+But this will error as there's no namespace defined. So we need to add a creation of a namespace
+
 ```console
 kubectl create namespace ${GITHUB_REF#refs/heads/} || true
 ```
@@ -641,4 +643,4 @@ When deploying running software in a maintained Kubernetes service it really doe
 
 There's a case for and against vendor lock-in and you should evaluate whether to use a single cloud or possibly a multi-cloud strategy based on your needs. Nothing is preventing you from cherry-picking "the best" services from each provider. Often vendor lock-in doesn't show any negatives until after you're locked-in.
 
-In the next section lets look into other practices that are included in an ecosystem like this and develop the project into its final form. We'll say good bye to GKE and if you have any credits left may use the rest of the, as you see fit. (**Beta testers** please do not use them yet, you may have a sudden need for the credits)
+In the next section lets look into other practices that are included in an ecosystem like this and develop the project into its final form. We'll say goodbye to GKE but if you have any leftover credits you may want to hold onto them until the end of the course.
