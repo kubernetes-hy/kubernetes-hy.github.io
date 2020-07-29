@@ -270,6 +270,12 @@ You can now open two terminals and run `$ kubectl logs -f redis-ss-X redisfiller
 
 {% include_relative exercises/2_07.html %}
 
+## DaemonSets ##
+
+DaemonSets, like Deployments, define how to run Pods. DaemonSets differ from the other methods we're now used to by enabling us to run Pods based on Node statuses specifically. A default use case for DaemonSet is to run a single pod on every node of the cluster. With _nodeSelector_ proprety a DaemonSet can be targeted to specific nodes or ignore some nodes.
+
+If you ever have a requirement to have a single pod on every node specifically you may need DaemonSets. Otherwise you would almost always use a Deployments instead. Due to this behavior a basic use case for DaemonSets is in monitoring and logging.
+
 ## Monitoring ##
 
 Our cluster and the apps in in have been pretty much a black box. We've thrown stuff in and then hoped that everything works all right. We're going to use [Prometheus](https://prometheus.io/) to monitor the cluster and [Grafana](https://grafana.com/) to view the data.

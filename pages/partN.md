@@ -12,11 +12,3 @@ Topics not yet included
   - Would be great with database backups
 
 *CronJobs* run a container on schedule. You may have used cron before, these are essentially the same.
-
-- DaemonSets
-  - Would be great with ????
-
-- More about CRDs ??
-  - Create our own ??
-
-- Kubernetes internals ??
