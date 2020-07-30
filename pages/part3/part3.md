@@ -263,7 +263,7 @@ Kustomize has a few additional tools you can test out if you want to install it 
 
 ### Github Actions ###
 
-Github Actions will be the CI/CD tool of choice for this course. The behavior is similar to CircleCI or even travis which you may have used previously.
+Github Actions will be the CI/CD tool of choice for this course. The behavior is similar to CircleCI or even travis which you may have used previously. Google also offers [Cloud Build](https://cloud.google.com/cloud-build), and a [step-by-step guide to deploying to GKE](https://cloud.google.com/cloud-build/docs/deploying-builds/deploy-gke) with it. You can return here to implement deployment with Cloud Build if you have credits left over after the course!
 
 Create a file .github/workflows/main.yaml. We'll want the workflow to do 3 things:
 
