@@ -521,6 +521,7 @@ spec:
               cpu: "150m"
               memory: "100Mi"
 ```
+The suffix of the CPU limit `m` stands for "thousandth of a core". Thus `150m` equals 15% of a single CPU core (`150/1000=0,15`).
 
 Note that finally we have set the resource limits for a Deployment as well
 
@@ -632,6 +633,8 @@ spec:
 ```
 
 This would ensure that no more than half of the pods can be unavailable at. The Kubernetes documentation states "The budget can only protect against voluntary evictions, not all causes of unavailability."
+
+_Side note:_ Kubernetes also offers the possibility to limit resources per namespace. This can prevent apps in a development namespace from consuming too many resources. Google has [created a nice video](https://www.youtube.com/watch?v=xjpHggHKm78) that explains the possibilities of the `ResourceQuota` object.
 
 {% include_relative exercises/3_09.html %}
 
