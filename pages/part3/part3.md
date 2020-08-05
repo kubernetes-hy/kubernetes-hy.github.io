@@ -521,6 +521,7 @@ spec:
               cpu: "150m"
               memory: "100Mi"
 ```
+The suffix of the CPU limit `m` stands for "thousandth of a core". Thus `150m` equals 15% of a single CPU core (`150/1000=0,15`).
 
 Note that finally we have set the resource limits for a Deployment as well
 
