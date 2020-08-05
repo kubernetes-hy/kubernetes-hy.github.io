@@ -634,6 +634,8 @@ spec:
 
 This would ensure that no more than half of the pods can be unavailable at. The Kubernetes documentation states "The budget can only protect against voluntary evictions, not all causes of unavailability."
 
+_Side note:_ Kubernetes also offers the possibility to limit resources per namespace. This can prevent apps in a development namespace from consuming too many resources. Google has [created a nice video](https://www.youtube.com/watch?v=xjpHggHKm78) that explains the possibilities of the `ResourceQuota` object.
+
 {% include_relative exercises/3_09.html %}
 
 Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
