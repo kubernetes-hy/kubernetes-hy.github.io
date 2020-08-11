@@ -3,6 +3,14 @@
 
 @import "/assets/main.css";
 
+.logo {
+  display: block;
+  background-color: #fafafa;
+  border: solid 2px;
+  max-height: 20em;
+  margin: 0 auto 1em auto;
+}
+
 h3 {
   padding-top: 1em;
 }
