@@ -56,7 +56,7 @@ We will get started with a lightweight Kubernetes distribution. [K3s - 5 less th
 
 #### What is a cluster? ####
 
-A cluster is a group of machines, *nodes*, that work together - in this case they are part of Kubernetes cluster. Kubernetes cluster can be of any size - a single node cluster would consist of one machine that hosts the Kubernetes control-plane (exposing API and maintaining the cluster) and that cluster can then be expanded with a number of worker nodes.
+A cluster is a group of machines, *nodes*, that work together - in this case they are part of Kubernetes cluster. Kubernetes cluster can be of any size - a single node cluster would consist of one machine that hosts the Kubernetes control-plane (exposing API and maintaining the cluster) and that cluster can then be expanded with up to 5000 nodes total, as of Kubernetes v1.18.
 
 We will use the term "server node" to refer to nodes with control-plane and "agent node" to refer to the nodes without that role.
 
