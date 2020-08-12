@@ -23,6 +23,8 @@ Please identify the certificate if you wish to talk or ask about non-DwK certifi
 In writing this course I first and foremost used the Kubernetes documentation. They have excellent tutorials: <https://kubernetes.io/docs/tutorials/>.
 As the documentation can get only so far, if I had difficulties grasping a concept I used the [Kubernetes in Action](https://www.manning.com/books/kubernetes-in-action) book as well as various Google searches.
 
+You can get Kubernetes Up and Running for free [from Microsoft](https://azure.microsoft.com/en-us/resources/kubernetes-up-and-running/) or [from VMWare](https://k8s.vmware.com/kubernetes-up-and-running/).
+
 I personally have a hobby cluster in [Hetzner](https://www.hetzner.com/) that I setup with [kubespray](https://github.com/kubernetes-sigs/kubespray) that is running multiple videogame servers and a few other things at the moment.
 
 ## How to get the DwK certificate? ##

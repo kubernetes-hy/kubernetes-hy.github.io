@@ -378,7 +378,7 @@ As we've published 8082 as 30080 we can access it now via http://localhost:8082.
 
 We've now defined a nodeport with `type: NodePort`. *NodePorts* simply ports that are opened by Kubernetes to **all of the nodes** and the service will handle requests in that port. NodePorts are not flexible and require you to assign a different port for every application. As such NodePorts are not used in production but are helpful to know about.
 
-What we'd want to use instead of NodePort would be a *LoadBalancer* type service but this "only" works with cloud providers as it configures a, possibly costly, load balancer for it. We'll get to know them in part 2.
+What we'd want to use instead of NodePort would be a *LoadBalancer* type service but this "only" works with cloud providers as it configures a, possibly costly, load balancer for it. We'll get to know them in part 3.
 
 There's one additional resource that will help us with serving the application, *Ingress*.
 
@@ -386,18 +386,20 @@ There's one additional resource that will help us with serving the application, 
 
 #### What is an Ingress? ####
 
-Incoming Network Access resource *Ingress* is completely different type of resource from *Services*. If you've got your OSI model memorized, it works in the layer 7 while services work on layer 4. You could see these used together: first the aforementioned *LoadBalancer* and then Ingress to handle routing. In our case as we don't have a load balancer available we can use the Ingress as the first stop.
+Incoming Network Access resource *Ingress* is completely different type of resource from *Services*. If you've got your OSI model memorized, it works in the layer 7 while services work on layer 4. You could see these used together: first the aforementioned *LoadBalancer* and then Ingress to handle routing. In our case as we don't have a load balancer available we can use the Ingress as the first stop. If you're familiar with reverse proxies like Nginx, Ingress should seem familiar.
 
-This will require us to create two new resources. Ingress will route incoming traffic again to *Services*, but the old *NodePort* Service won't do. 
+Ingresses are implemented by various different "controllers". This means that ingresses do not automatically work in a cluster, but gives you the freedom of choosing which which ingress controller works for you the best. K3s has [Traefik](https://containo.us/traefik/) installed already. Other options include Istio and Nginx Ingress Controller, [more here](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/).
+
+Switching to Ingress will require us to create an Ingress resource. Ingress will route incoming traffic forward to a *Services*, but the old *NodePort* Service won't do. 
 
 ```console
 $ kubectl delete -f manifests/service.yaml
-service "hashresponse-svc" deleted
+  service "hashresponse-svc" deleted
 ```
 
-In this case we will need to declare
+A ClusterIP type Service resource gives the Service an internal IP that'll be accessible in the cluster.
 
-For resource 1 the new *Service* we want a simpler version of the one above. A ClusterIP resource that will let TCP traffic from port XXXX to port 3000:
+The following will let TCP traffic from port 2345 to port 3000.
 
 **service.yaml**
 
@@ -420,7 +422,6 @@ For resource 2 the new *Ingress*.
 
 1. Declare that it should be an Ingress
 2. And route all traffic to our service
-
 
 **ingress.yaml**
 
