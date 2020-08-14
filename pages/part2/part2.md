@@ -8,7 +8,7 @@ order: 2
 
 In this part we'll learn more about management and maintenance as well as expand our knowledge on known features of Kubernetes. By the end of this part you will be able to
 
-- Label and namespace the resources inside a cluster.
+- Organize your resources with label and namespaces.
 
 - Deploy stateful applications to Kubernetes
 
@@ -118,13 +118,11 @@ The *selector* and *matchLabels* reveal that the instructions of the deployment 
 
 {% include_relative exercises/2_04.html %}
 
-## Configuration with Secrets and ConfigMaps ##
+## Configuring your application ##
 
-*ConfigMaps* help by keeping configuration separate from images. 
+There are two resources for configuration management. *Secrets* are for sensitive information that are given to containers on runtime. *ConfigMaps* are basically secrets but may contain any kinds of configuration. Use cases for ConfigMaps vary: you may have a ConfigMap mapped to a file with some values that the server reads during runtime and changing the ConfigMap will instantly change the behavior of the application. Both can be used to introduce environment variables.
 
-*Secrets* help by keeping secrets secret.
-
-Both can be used to introduce variables: Secrets for things like api keys and ConfigMaps for other things you would find as an environment variable.
+### Secrets ###
 
 Let's use [pixabay](https://pixabay.com/) to display images on a simple web app. We will need to utilize authentication with api key.
 The api docs are good, we just need to log in to get ourselves a key here https://pixabay.com/api/docs/.
@@ -192,7 +190,30 @@ $ kubectl get secrets
 
 To confirm everything is working we can delete the pod and let it restart with the new environment variable `kubectl delete po imageapi-dep-...`. Using *SealedSecret* was our first time using a custom resource - you can design your own with the help of the Kubernetes [documentation](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/).
 
-ConfigMaps are similar but the data doesn't have to be encoded and is not encrypted.
+### ConfigMaps ###
+
+ConfigMaps are similar but the data doesn't have to be encoded and is not encrypted. Let's say you have a videogame server that takes a "serverconfig.txt" which looks like this:
+
+```ini
+maxplayers=12
+difficulty=2
+```
+
+The following ConfigMap would contain the values:
+
+**configmap.yaml**
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-configmap
+data:
+  serverconfig.txt: |
+    maxplayers=12
+    difficulty=2
+```
+
+Now the ConfigMap can be added into the container as a volume. By changing a value, like maxplayers in this case, and applying the ConfigMap the changes would be reflected in that volume.
 
 {% include_relative exercises/2_05.html %}
 
