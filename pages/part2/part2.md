@@ -148,6 +148,22 @@ The requirement for an environment variable inside a secret is added to the depl
               name: pixabay-apikey
 ```
 
+or if we wanted to remap the field, for example to use the same secret in multiple applications:
+
+**deployment.yaml**
+
+```yaml
+...
+      containers:
+        - name: imageagain
+          env:
+            - name: API_KEY # ENV name passed to container
+              valueFrom:
+                secretKeyRef:
+                  name: pixabay-apikey
+                  key: API_KEY # ENV name in the secret
+```
+
 The application won't run at first and we can see the reason with `kubectl get po` and a more detailed with `kubectl describe pod imageapi-dep-...`.
 
 Let's use secret to pass the api key environment variable to the application. 
