@@ -108,6 +108,8 @@ If we now access http://35.228.41.16 with our browser we'll see the application 
 
 Instead of using a LoadBalancer Service we could have used an Ingress just like we've used before. In that case the type for the service should be "NodePort".
 
+// TODO: ADD EXERCISE HERE
+
 <div style="border: lightblue 0.2em outset; padding: 0.5em 1em 0 1em;" markdown="1">
 To avoid using up the credits delete the cluster whenever you do not need it
 

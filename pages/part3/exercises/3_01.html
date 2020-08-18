@@ -1,5 +1,30 @@
 <div class="exercise" markdown="1"> 
   <h1>Exercise 3.01:</h1>
   
-  Deploy the main application as well as the ping / pong application into GKE.
+  Deploy the main application as well as the ping / pong application into GKE. 
+  
+  Pingpong does not have to respond from /pingpong anymore, so you can remove ingress. Or read about using ingress [here](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress).
+
+  If your postgres logs say
+
+  ```console
+initdb: error: directory "/var/lib/postgresql/data" exists but is not empty
+It contains a lost+found directory, perhaps due to it being a mount point.
+Using a mount point directly as the data directory is not recommended.
+Create a subdirectory under the mount point.
+  ```
+
+  you can add subPath configuration:
+
+  **statefulset.yaml**
+  ```yaml
+...
+  volumeMounts:
+  - name: data
+    mountPath: /var/lib/postgresql/data
+    subPath: postgres
+...
+  ```
+
+  This will create a postgres directory where the data will reside. subPaths also make it possible to use single volume for multiple purposes.
 </div>
