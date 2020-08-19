@@ -70,13 +70,17 @@ $ gcloud container clusters get-credentials dwk-cluster --zone=europe-north1-b
 $ kubectl cluster-info
 ```
 
-Now that we have a cluster it's used almost exactly like the one we had locally. Let's apply this application that creates a random string and then serves an image based on that random string. This will create 6 replicas of the process "seedimage".
+### Deploying to GKE ###
+
+The cluster we have now is *almost* like the one we had locally. Let's apply this application that creates a random string and then serves an image based on that random string. This will create 6 replicas of the process "seedimage".
 
 ```console
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/e16301c4f223099e087cc010697250e584ac2022/app6/manifests/deployment.yaml
 ```
 
-Now as a warning the next step is going to add into the [cost of the cluster](https://cloud.google.com/compute/all-pricing#lb) as well. Let's add a *LoadBalancer* Service!
+Exposing the service is where the differences start. Instead of an ingress we'll use *LoadBalancer* service. Now as a warning the next step is going to add into the [cost of the cluster](https://cloud.google.com/compute/all-pricing#lb) as well.
+
+Apply the following:
 
 **service.yaml**
 
@@ -106,10 +110,6 @@ $ kubectl get svc --watch
 
 If we now access http://35.228.41.16 with our browser we'll see the application up and running. By refreshing the page we can also see that the load balancer sometimes offers us a different image.
 
-Instead of using a LoadBalancer Service we could have used an Ingress just like we've used before. In that case the type for the service should be "NodePort".
-
-// TODO: ADD EXERCISE HERE
-
 <div style="border: lightblue 0.2em outset; padding: 0.5em 1em 0 1em;" markdown="1">
 To avoid using up the credits delete the cluster whenever you do not need it
 
@@ -130,6 +130,48 @@ Closing the cluster will also remove everything you've deployed on the cluster. 
 Google Kubernetes Engine will automatically provision a persistent disk for your PersistentVolumeClaim - just don't set the storage class. If you want you can read more about it [here](https://cloud.google.com/kubernetes-engine/docs/concepts/persistent-volumes).
 
 {% include_relative exercises/3_01.html %}
+
+### Why not Ingress ###
+
+Services are quite simple, but as ingresses offer us additional tools, in exchange for complexity, we'll test them out as well. Instead of using a LoadBalancer Service we could have used an Ingress just like we've used before. In that case the type for the service should be "NodePort". Let's test this by continuing with the previous example.
+
+**service.yaml**
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: seedimage-svc
+spec:
+  type: NodePort # Even though it is NodePort GKE does not expose it outside cluster.
+  selector:
+    app: seedimage
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 3000
+```
+
+**ingress.yaml**
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: seedimage-ing
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: seedimage-svc
+          servicePort: 80
+```
+
+This takes a while to deploy, responses may be 404 and 502 as it becomes available.
+
+{% include_relative exercises/3_02.html %}
 
 ## Deployment Pipeline ##
 
@@ -378,7 +420,7 @@ And with Kustomize we can set the image PROJECT/IMAGE as the one we just publish
         kubectl rollout status deployment $IMAGE
 ```
 
-{% include_relative exercises/3_02.html %}
+{% include_relative exercises/3_03.html %}
 
 ### Separate environment for each branch ###
 
@@ -474,9 +516,9 @@ To test this, edit the index.html and publish the changes to a new branch.
 
 The next step would be to configure the domain names for each branch so that we'd have "www.example.com" as the production and e.g. "feat_x.example.com" as the feat_x branch. If you have any credits left after the course you can return here and implement it. Google Cloud DNS and this [guide](https://cloud.google.com/kubernetes-engine/docs/tutorials/configuring-domain-name-static-ip) can get you started.
 
-{% include_relative exercises/3_03.html %}
-
 {% include_relative exercises/3_04.html %}
+
+{% include_relative exercises/3_05.html %}
 
 ## Volumes again ##
 
@@ -484,9 +526,9 @@ Now we arrive at an intersection. We can either start using a Database as a Serv
 
 Both solutions are widely used.
 
-{% include_relative exercises/3_05.html %}
-
 {% include_relative exercises/3_06.html %}
+
+{% include_relative exercises/3_07.html %}
 
 ## Scaling ##
 
@@ -600,9 +642,9 @@ $ kubectl logs -f cpushredder-dep-85f5b578d7-nb5rs
 
 After a few requests we will see the *HorizontalPodAutoscaler* create a new replica as the CPU utilization rises. As the resources are fluctuating, sometimes very greatly due to increased resource usage on start or exit, the *HPA* will by default wait 5 minutes between downscaling attempts. If your application has multiple replicas even at 0%/50% just wait. If the wait time is set to a value that's too short for stable statistics of the resource usage the replica count may start "thrashing".
 
-{% include_relative exercises/3_07.html %}
-
 {% include_relative exercises/3_08.html %}
+
+{% include_relative exercises/3_09.html %}
 
 ### Scaling nodes ###
 
@@ -638,7 +680,7 @@ This would ensure that no more than half of the pods can be unavailable at. The 
 
 _Side note:_ Kubernetes also offers the possibility to limit resources per namespace. This can prevent apps in a development namespace from consuming too many resources. Google has [created a nice video](https://www.youtube.com/watch?v=xjpHggHKm78) that explains the possibilities of the `ResourceQuota` object.
 
-{% include_relative exercises/3_09.html %}
+{% include_relative exercises/3_10.html %}
 
 Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
 
