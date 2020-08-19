@@ -131,9 +131,11 @@ Google Kubernetes Engine will automatically provision a persistent disk for your
 
 {% include_relative exercises/3_01.html %}
 
-### Why not Ingress ###
+### From Service to Ingress ###
 
-Services are quite simple, but as ingresses offer us additional tools, in exchange for complexity, we'll test them out as well. Instead of using a LoadBalancer Service we could have used an Ingress just like we've used before. In that case the type for the service should be "NodePort". Let's test this by continuing with the previous example.
+Services are quite simple, but as ingresses offer us additional tools, in exchange for complexity. We're no longer using traefik but instead "GKE Ingress".
+
+*NodePort* type service is required with Ingresses in GKE. Even though it is NodePort GKE does not expose it outside cluster. Let's test this by continuing with the previous example.
 
 **service.yaml**
 
@@ -143,7 +145,7 @@ kind: Service
 metadata:
   name: seedimage-svc
 spec:
-  type: NodePort # Even though it is NodePort GKE does not expose it outside cluster.
+  type: NodePort
   selector:
     app: seedimage
   ports:
@@ -169,7 +171,7 @@ spec:
           servicePort: 80
 ```
 
-This takes a while to deploy, responses may be 404 and 502 as it becomes available.
+This takes a while to deploy, responses may be 404 and 502 as it becomes available. The Ingress performs health checks by GET requesting / and expects a HTTP 200 response.
 
 {% include_relative exercises/3_02.html %}
 
