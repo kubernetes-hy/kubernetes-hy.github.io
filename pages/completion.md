@@ -14,7 +14,7 @@ For certificate just mark the course as finished in the submission software and 
 
 Next you will continue to work on the course in the Moodle online learning platform. Please follow the instructions below to gain access to the course’s Moodle space:
 
-1. **Enrollment.** Enroll yourself on the course through the Open University <https://www.avoin.helsinki.fi/palvelut/esittely.aspx?o=135660523>
+1. **Enrollment*.** Enroll yourself on the course through the Open University <https://www.avoin.helsinki.fi/palvelut/esittely.aspx?o=135660523>
 
 2. **Link and key.** You will receive the Moodle-link and the course key through email after course enrollment.
 
@@ -28,9 +28,17 @@ Next you will continue to work on the course in the Moodle online learning platf
 
 Please note!
 
-· Enrollment on the course through the Open University is possible until July 11, 2020.
+- Enrollment on the course through the Open University is possible until July 11, 2020.
 
-· Credits for the course are only available to those students who have successfully enrolled on the course through the Open University and have completed the course according to the instructions.
+- Credits for the course are only available to those students who have successfully enrolled on the course through the Open University and have completed the course according to the instructions.
+
+\* Electronic enrollment is available if you meet one of the following criteria:
+
+- You have a Finnish personal identity number (format: xxxxxxxx-xxxx), or an online banking ID, or
+
+- you are a student at the University of Helsinki, or
+
+- you are a student at a HAKA member institution.
 
 ### If you are not a student in Finland and want to enroll on the course and receive ECTS credits. ###
 
