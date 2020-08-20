@@ -16,7 +16,7 @@ Next you will continue to work on the course in the Moodle online learning platf
 
 1. **Enrollment*.** Enroll yourself on the course through the Open University <https://www.avoin.helsinki.fi/palvelut/esittely.aspx?o=135660523>
 
-2. **Link and key.** You will receive the Moodle-link and the course key through email after course enrollment.
+2. **Link and key.** You will receive the Moodle-link and the course key through email within 24 hours after course enrollment.
 
 3. **User ID.** Do you study at University of Helsinki or other HAKA member institution?
     
