@@ -261,10 +261,29 @@ Woah! The fact that you can apply manifest from the internet just like that will
 
 {% include_relative exercises/1_04.html %}
 
+## Debugging and self-healing ##
+
+Kubernetes is a "self-healing" system, and we'll get back to what Kubernetes consists of and how it actually works in part 5. But at this stage "self-healing" is an excellent concept: Often you (the maintainer or developer) don't have not have to do anything in case something goes wrong with a pod or a container.
+
+Sometimes you need to interfere, or you might have problems with your own configuration. As you are trying to find bugs in your configuration start by eliminating all possibilities one by one. The key is to be systematic and **question everything**. Here are the preliminary tools to solve problems.
+
+First is `kubectl describe` which can tell you most of everything you need to know about any resource.
+
+Second is `kubectl logs` with which you can follow the logs of your possibly broken software.
+
+Third is `kubectl delete` which will simply delete the resource and some cases, like with pods in a deployment, a new one will be automatically released.
+
+Finally we have the overarching tool [Lens "The Kubernetes IDE"](https://k8slens.dev/). Which you should start using right now to familiarize yourself with the usage.
+
+During exercises you also have our Telegram group available (which you joined in [part0](/part0)).
+
+Let's test these tools and experiment using Lens. You will likely face a real debugging challenge during the exercises and there is another preplanned one in part 5 when we have a larger set of moving parts available to us.
+
+// TODO HERE LET'S LOOK AT STUFF WITH DESCRIBE AND WITH LENS
 
 ## Networking Part 1 ##
 
-Restarting and following logs has been a treat. Next we'll open an endpoint to the application and access it via HTTP.
+Now back to development! Restarting and following logs has been a treat. Next we'll open an endpoint to the application and access it via HTTP.
 
 #### Simple networking application ####
 
