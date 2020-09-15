@@ -6,13 +6,13 @@ permalink: /part1/
 order: 1
 ---
 
-In this part we'll go over a lot of things you need to get yourself started with using Kubernetes. This includes terminology, your first deploy, a little bit of networking and introduction to volumes. By the end of this part you will be able to
+In this part we'll go over a lot of things you need to get yourself started with using Kubernetes. This includes terminology, your first deploy, a little bit of networking and an introduction to volumes. By the end of this part you will be able to
 
 - Create and run a Kubernetes cluster locally with k3d
 
 - Deploy applications to Kubernetes
 
-## Foreword on microservices ##
+## What are microservices? ##
 
 On this course we'll talk about microservices and create microservices. Before we get started with anything else we'll need to define what a microservice is.
 
@@ -20,7 +20,7 @@ On this course we'll talk about microservices and create microservices. Before w
 
 As such the easiest method to achieve microservice architecture is by splitting off a single piece out of a monolith - they are then both less than a monolith. Why would you do this? For example, to scale a piece of the application separately or to have a separate team work on a piece of the application.
 
-The misconception of microservices being a large number of extremely small services is proliferated by large enterprises. If you have an extremely large enterprise where teams don't even know the existence of other teams you may have a unconventionally large number of microservices. Due of the insanity of large number of small services without any good reasoning we're witnessing the term monolith trending in 2020.
+The misconception of microservices being a large number of extremely small services is proliferated by large enterprises. If you have an extremely large enterprise where teams don't even know the existence of other teams you may have an unconventionally large number of microservices. Due of the insanity of a large number of small services without any good reasoning we're witnessing the term monolith trending in 2020.
 
 - "Monoliths are the future" - Kelsey Hightower, Staff Developer Advocate at Google, ["Monoliths are the Future"](https://changelog.com/posts/monoliths-are-the-future)
 
@@ -36,7 +36,7 @@ Sometimes during this course we'll do **arbitrary** splits to our services just 
 
 Let's say you have 3 processes and 2 computers incapable of running all 3 processes. How would you approach this problem?
 
-You'll have to start by deciding which 2 processes go on the same computer and which 1 will be on the different one. How would you fit them? By having the ones demanding most resources and the least resources on the same machine or having the most demanding be on it's own? Maybe you want to add one process and now you have to reorganize all of them. What happens when you have more than 2 computers and more than 3 processes? One of the processes is eating all of the memory and you need to get that away from the "critical-bank-application". Should we virtualize everything? Containers would solve that problem, right? Would you move the most important process to a new computer? Maybe some of the processes need to communicate with each other and now you have to deal with networking. What if one of the computers break? What about your friday plans to visit the local Craft brewery?
+You'll have to start by deciding which 2 processes go on the same computer and which 1 will be on the different one. How would you fit them? By having the ones demanding most resources and the least resources on the same machine or having the most demanding be on it's own? Maybe you want to add one process and now you have to reorganize all of them. What happens when you have more than 2 computers and more than 3 processes? One of the processes is eating all of the memory and you need to get that away from the "critical-bank-application". Should we virtualize everything? Containers would solve that problem, right? Would you move the most important process to a new computer? Maybe some of the processes need to communicate with each other and now you have to deal with networking. What if one of the computers break? What about your Friday plans to visit the local Craft brewery?
 
 What if you could just define "This process should have 6 copies using X amount of resources." and have the 2..N computers working as a single entity to fulfill your request? That's just one thing Kubernetes makes possible.
 
@@ -56,7 +56,7 @@ We will get started with a lightweight Kubernetes distribution. [K3s - 5 less th
 
 #### What is a cluster? ####
 
-A cluster is a group of machines, *nodes*, that work together - in this case they are part of Kubernetes cluster. Kubernetes cluster can be of any size - a single node cluster would consist of one machine that hosts the Kubernetes control-plane (exposing API and maintaining the cluster) and that cluster can then be expanded with up to 5000 nodes total, as of Kubernetes v1.18.
+A cluster is a group of machines, *nodes*, that work together - in this case they are part of a Kubernetes cluster. Kubernetes cluster can be of any size - a single node cluster would consist of one machine that hosts the Kubernetes control-plane (exposing API and maintaining the cluster) and that cluster can then be expanded with up to 5000 nodes total, as of Kubernetes v1.18.
 
 We will use the term "server node" to refer to nodes with control-plane and "agent node" to refer to the nodes without that role.
 
@@ -79,7 +79,7 @@ $ docker ps
   7e5fbc8db7e9        rancher/k3s:latest         "/bin/k3s server --t…"   28 seconds ago      Up 27 seconds                                         k3d-k3s-default-server-0
 ```
 
-Here we also see that port 6443 is opened to "k3d-k3s-default-serverlb", a useful loadbalancer proxy, that'll redirect connection to 6443 into the server node, and that's how we can access the contents of the cluster. The port on our machine, above 57734, is randomly chosen. We could have opted out of the loadbalancer with `k3d cluster create -a 2 --no-lb` and the port would be open straight to the server node but having a loadbalancer will offer us a few features we wouldn't otherwise have.
+Here we also see that port 6443 is opened to "k3d-k3s-default-serverlb", a useful "load balancer" proxy, that'll redirect a connection to 6443 into the server node, and that's how we can access the contents of the cluster. The port on our machine, above 57734, is randomly chosen. We could have opted out of the load balancer with `k3d cluster create -a 2 --no-lb` and the port would be open straight to the server node but having a load balancer will offer us a few features we wouldn't otherwise have.
 
 K3d helpfully also set up a *kubeconfig*, the contents of which is output by `k3d kubeconfig get k3s-default`. Kubectl will read kubeconfig from the location in KUBECONFIG environment value or by default from `~/.kube/config` and use the information to connect to the cluster. The contents include certificates, passwords and the address in which the cluster API. You can manually set the config with `k3d kubeconfig merge k3d-default --switch-context`.
 
@@ -144,7 +144,7 @@ This action created a few things for us to look at: a *Deployment* and a *Pod*.
 
 #### What is a Pod? ####
 
-A *Pod* is an abstraction around one or more containers. Similarly as you've now used containers to define environments for a single process. Pods provide an context for 1..N containers so that they can share a storage and a network. They can be thought of as a container of containers. *Most* of the same rules apply: it is deleted if the containers stop running and files will be lost with it.
+*Pod* is an abstraction around one or more containers. Similarly as you've now used containers to define environments for a single process. Pods provide a context for 1..N containers so that they can share storage and a network. They can be thought of as a container of containers. *Most* of the same rules apply: it is deleted if the containers stop running and files will be lost with it.
 
 ![]({{ "/images/part1/pods.png" | absolute_url }})
 
@@ -172,7 +172,7 @@ $ kubectl get pods
 
 To see the output we can run `kubectl logs -f hashgenerator-dep-6965c5c7-2pkxc`
 
-> Use `source <(kubectl completion bash)` to save yourself a lot of headache. Add it to .bashrc for automatic load. (Also available for zsh)
+> Use `source <(kubectl completion bash)` to save yourself from a lot of headaches. Add it to .bashrc for an automatic load. (Also available for zsh)
 
 A helpful list for other commands from docker-cli translated to kubectl is available here [https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/](https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/)
 
@@ -196,7 +196,7 @@ $ kubectl scale deployment/hashgenerator-dep --replicas=4`
 $ kubectl set image deployment/hashgenerator-dep dwk-app1=jakousa/dwk-app1:78031863af07c4c4cc3c96d07af68e8ce6e3afba`
 ```
 
-Things start to get really cumbersome. In the dark ages deployments were created similarly by running commands after each other in a "correct" order. We'll now use a declarative approach where we define how things should be. This is more sustainable in the long term than the iterative approach.
+Things start to get really cumbersome. In the dark ages deployments were created similarly by running commands after each other in "correct" order. We'll now use a declarative approach where we define how things should be. This is more sustainable in the long term than the iterative approach.
 
 Before redoing the previous let's take the deployment down.
 
@@ -245,7 +245,7 @@ $ kubectl apply -f manifests/deployment.yaml
   deployment.apps/hashgenerator-dep created
 ```
 
-That's it, but for revisions sake lets delete it and create it again:
+That's it, but for the sake of revision let's delete it and create it again:
 
 ```console
 $ kubectl delete -f manifests/deployment.yaml
@@ -267,11 +267,11 @@ Kubernetes is a "self-healing" system, and we'll get back to what Kubernetes con
 
 Sometimes you need to interfere, or you might have problems with your own configuration. As you are trying to find bugs in your configuration start by eliminating all possibilities one by one. The key is to be systematic and **question everything**. Here are the preliminary tools to solve problems.
 
-First is `kubectl describe` which can tell you most of everything you need to know about any resource.
+The first is `kubectl describe` which can tell you most of everything you need to know about any resource.
 
-Second is `kubectl logs` with which you can follow the logs of your possibly broken software.
+The second is `kubectl logs` with which you can follow the logs of your possibly broken software.
 
-Third is `kubectl delete` which will simply delete the resource and some cases, like with pods in a deployment, a new one will be automatically released.
+The third is `kubectl delete` which will simply delete the resource and in some cases, like with pods in deployment, a new one will be automatically released.
 
 Finally we have the overarching tool [Lens "The Kubernetes IDE"](https://k8slens.dev/). Which you should start using right now to familiarize yourself with the usage.
 
@@ -287,7 +287,7 @@ Now back to development! Restarting and following logs has been a treat. Next we
 
 #### Simple networking application ####
 
-Let's develop our application so that it has a HTTP server responding with two hashes: a hash that is stored until the process is exited and a hash that is request specific. The response body can be something like "Application abc123. Request 94k9m2". Choose any port to listen to.
+Let's develop our application so that it has an HTTP server responding with two hashes: a hash that is stored until the process is exited and a hash that is request specific. The response body can be something like "Application abc123. Request 94k9m2". Choose any port to listen to.
 
 I've prepared one [here](https://github.com/kubernetes-hy/material-example/tree/master/app2). By default it will listen on port 3000.
 
@@ -298,7 +298,7 @@ $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-exam
 
 ### Connecting from outside of the cluster ###
 
-We can confirm that the hashresponse-dep is working with `port-forward` command. Let's see the name of the pod first and then port forward there:
+We can confirm that the hashresponse-dep is working with the `port-forward` command. Let's see the name of the pod first and then port forward there:
 
 ```console
 $ kubectl get po
@@ -331,7 +331,7 @@ $ docker ps
   a34e49184d37        rancher/k3s:latest         "/bin/k3s server --t…"   2 hours ago         Up 2 hours                                            k3d-k3s-default-server-0
 ```
 
-K3d has helpfully prepared us a port to access the API in 6443 and in addition has opened port to 80. All requests to the loadbalancer here will be proxied to the same ports of all server nodes of the cluster. However, for testing purposes we'll want an individual port open for a single node. Let's delete our old cluster and create a new one with port 8082 open:
+K3d has helpfully prepared us a port to access the API in 6443 and in addition has opened a port to 80. All requests to the load balancer here will be proxied to the same ports of all server nodes of the cluster. However, for testing purposes we'll want an individual port open for a single node. Let's delete our old cluster and create a new one with port 8082 open:
 
 ```console
 $ k3d cluster delete
@@ -352,7 +352,7 @@ $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-exam
 
 Now we have access through port 8081 to our server node (actually all nodes) and 8082 to one of our agent nodes port 30080. They will be used to showcase different methods of communicating with the servers.
 
-> We will have limited amount of ports available in the future but that's ok for your own machine.
+> We will have a limited amount of ports available in the future but that's ok for your own machine.
 
 > Your OS may support using the host network so no ports need to be opened.
 
@@ -405,9 +405,9 @@ There's one additional resource that will help us with serving the application, 
 
 #### What is an Ingress? ####
 
-Incoming Network Access resource *Ingress* is completely different type of resource from *Services*. If you've got your OSI model memorized, it works in the layer 7 while services work on layer 4. You could see these used together: first the aforementioned *LoadBalancer* and then Ingress to handle routing. In our case as we don't have a load balancer available we can use the Ingress as the first stop. If you're familiar with reverse proxies like Nginx, Ingress should seem familiar.
+Incoming Network Access resource *Ingress* is a completely different type of resource from *Services*. If you've got your OSI model memorized, it works in layer 7 while services work on layer 4. You could see these used together: first the aforementioned *LoadBalancer* and then Ingress to handle routing. In our case as we don't have a load balancer available we can use the Ingress as the first stop. If you're familiar with reverse proxies like Nginx, Ingress should seem familiar.
 
-Ingresses are implemented by various different "controllers". This means that ingresses do not automatically work in a cluster, but gives you the freedom of choosing which which ingress controller works for you the best. K3s has [Traefik](https://containo.us/traefik/) installed already. Other options include Istio and Nginx Ingress Controller, [more here](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/).
+Ingresses are implemented by various different "controllers". This means that ingresses do not automatically work in a cluster, but gives you the freedom of choosing which ingress controller works for you the best. K3s has [Traefik](https://containo.us/traefik/) installed already. Other options include Istio and Nginx Ingress Controller, [more here](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/).
 
 Switching to Ingress will require us to create an Ingress resource. Ingress will route incoming traffic forward to a *Services*, but the old *NodePort* Service won't do. 
 
@@ -653,7 +653,7 @@ Submit your completed exercises through the [submission application](https://stu
 
 ## Summary ##
 
-In this part we learned about k8s, k3s and k3d. We learned about resources that are used in Kubernetes to run software as well as manage storage for some use cases, for example, caching and sharing data between Pods.
+In this part we learned about k8s, k3s and k3d. We learned about resources that are used in Kubernetes to run any software as well as resources to manage storage for some use cases, for example, caching and sharing data between Pods.
 
 By now we know what the following are and how to use them:
  - Pods
