@@ -8,7 +8,7 @@ order: 2
 
 In this part we'll learn more about management and maintenance as well as expand our knowledge on known features of Kubernetes. By the end of this part you will be able to
 
-- Organize your resources with label and namespaces.
+- Organize your resources using labels and namespaces.
 
 - Deploy stateful applications to Kubernetes
 
@@ -52,9 +52,9 @@ As you can imagine there may be a lot of resources inside a cluster. In fact, at
 
 ### Namespaces ###
 
-Namespaces are used to keep resources separated. A company which uses 1 cluster but has multiple projects can use namespaces to split the cluster into virtual clusters, one for each project. Most commonly they would be used to separate environments such as production, testing, staging. DNS entry for services includes the namespace so you can still have projects communicate with each other if needed through service.namespace address. e.g if the example-service from previous section was in a namespace "ns-test" it could be found from other namespaces via "http://example-service.ns-test".
+Namespaces are used to keep resources separated. A company which uses 1 cluster but has multiple projects can use namespaces to split the cluster into virtual clusters, one for each project. Most commonly they would be used to separate environments such as production, testing, staging. DNS entry for services includes the namespace so you can still have projects communicate with each other if needed through service.namespace address. e.g if the example-service from a previous section was in a namespace "ns-test" it could be found from other namespaces via "http://example-service.ns-test".
 
-Accessing namespaces with kubectl is by using `-n` flag. For example you can see what the namespace kube-system has with
+Accessing namespaces with kubectl is by using the `-n` flag. For example you can see what the namespace kube-system has with
 
 ```console
 $ kubectl get pods -n kube-system 
@@ -88,7 +88,7 @@ If you're using a namespace constantly you can set the namespace to be used by d
 
 Labels are used to separate an application from others inside a namespace. They make it possible for having multiple applications as you've used in this course already.
 
-Let's look at the labels in *Deployment* yamls. This is the first yaml we created and you've copy pasted something similar:
+Let's look at the labels in *Deployment* yamls. This is the first yaml we created and you've copy-pasted something similar:
 
 **deployment.yaml**
 
@@ -124,10 +124,10 @@ There are two resources for configuration management. *Secrets* are for sensitiv
 
 ### Secrets ###
 
-Let's use [pixabay](https://pixabay.com/) to display images on a simple web app. We will need to utilize authentication with api key.
-The api docs are good, we just need to log in to get ourselves a key here https://pixabay.com/api/docs/.
+Let's use [pixabay](https://pixabay.com/) to display images on a simple web app. We will need to utilize authentication with an API key.
+The API docs are good, we just need to log in to get ourselves a key here https://pixabay.com/api/docs/.
 
-Here's the app available. The application requires a API_KEY environment variable.
+Here's the app available. The application requires an API_KEY environment variable.
 
 ```console
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app4/manifests/deployment.yaml \
@@ -166,7 +166,7 @@ or if we wanted to remap the field, for example to use the same secret in multip
 
 The application won't run at first and we can see the reason with `kubectl get po` and a more detailed with `kubectl describe pod imageapi-dep-...`.
 
-Let's use secret to pass the api key environment variable to the application. 
+Let's use a secret to pass the API key environment variable to the application. 
 
 Secrets use base64 encoding to avoid having to deal with special characters. We would like to use encryption to avoid printing our API_KEY for the world to see but for the sake of testing create and apply a new file secret.yaml with the following:
 
@@ -229,7 +229,7 @@ data:
     difficulty=2
 ```
 
-Now the ConfigMap can be added into the container as a volume. By changing a value, like maxplayers in this case, and applying the ConfigMap the changes would be reflected in that volume.
+Now the ConfigMap can be added into the container as a volume. By changing a value, like "maxplayers" in this case, and applying the ConfigMap the changes would be reflected in that volume.
 
 {% include_relative exercises/2_05.html %}
 
@@ -237,13 +237,13 @@ Now the ConfigMap can be added into the container as a volume. By changing a val
 
 In part 1 we learned how volumes are used with PersistentVolumes and PersistentVolumeClaims. We used *Deployment* with them and everything worked well enough for our testing purposes. The problem is that *Deployment* creates and scales pods that are *replicas* - they are a new copy of the same thing. With PersistentVolumeClaims, the method through which a pod reserves persistent storage, this creates a possibly non-desired effect as the claims are **not** pod specific. The claim is shared by all pods in that deployment.
 
-*StatefulSets* are like *Deployments* except it makes sure that if a pod dies the replacement is identical, with the same network identity and name. In addition if the pod is scaled the copies will have their own storage. StatefulSets are for stateful applications. You could use StatefulSets to scale video game servers that require state, such as a Minecraft server. Or run a database. For data safety when deleted or scaled down StatefulSets will not delete the volumes they are associated with.
+*StatefulSets* are like *Deployments* except it makes sure that if a pod dies the replacement is identical, with the same network identity and name. In addition if the pod is scaled the copies will have their own storage. StatefulSets are for stateful applications. You could use StatefulSets to scale video game servers that require state, such as a Minecraft server. Or run a database. For data safety when deleted StatefulSets will not delete the volumes they are associated with.
 
 > Deployment creates pods using a Resource called "ReplicaSet". We're using ReplicaSets through Deployments.
 
-Let's run redis and save some information there. We're going to need a PersistentVolume as well as an application that utilizes the redis. In part 1 we jumped through a few hurdles to get ourselves a storage but k3s includes a helpful storageclass that will streamline local testing.
+Let's run Redis and save some information there. We're going to need a PersistentVolume as well as an application that utilizes the Redis. In part 1 we jumped through a few hurdles to get ourselves storage but k3s includes a helpful _storageclass_ that will streamline local testing.
 
-You can apply the statefulset from `https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app5/manifests/statefulset.yaml`
+You can apply the _StatefulSet_ from `https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app5/manifests/statefulset.yaml`
 
 **statefulset.yaml**
 
@@ -301,7 +301,7 @@ spec:
 
 Looks a lot like *Deployment* but uses volumeClaimTemplate to claim a volume for each pod. StatefulSets require a "Headless Service" to be responsible for the network identity. We define a "Headless Service" with `clusterIP: None` - this will instruct Kubernetes to not do proxying or load balancing and instead to allow access straight to the Pods.
 
-You can now open two terminals and run `$ kubectl logs -f redis-ss-X redisfiller` where X is 0 or 1. To confirm it's working we can delete a pod and it will restart and continue right where you left off. In addition we can delete the statefulset and the volume will stay and bind back when you apply the statefulset back.
+You can now open two terminals and run `$ kubectl logs -f redis-ss-X redisfiller` where X is 0 or 1. To confirm it's working we can delete a pod and it will restart and continue right where you left off. In addition we can delete the StatefulSet and the volume will stay and bind back when you apply the StatefulSet back.
 
 {% include_relative exercises/2_06.html %}
 
@@ -309,15 +309,15 @@ You can now open two terminals and run `$ kubectl logs -f redis-ss-X redisfiller
 
 ## DaemonSets ##
 
-DaemonSets, like Deployments, define how to run Pods. DaemonSets differ from the other methods we're now used to by enabling us to run Pods based on Node statuses specifically. A default use case for DaemonSet is to run a single pod on every node of the cluster. With _nodeSelector_ proprety a DaemonSet can be targeted to specific nodes or ignore some nodes.
+DaemonSets, like Deployments, define how to run Pods. DaemonSets differ from the other methods we're now used to by enabling us to run Pods based on Node statuses specifically. A default use case for DaemonSet is to run a single pod on every node of the cluster. With a _nodeSelector_ property a DaemonSet can be targeted to specific nodes or ignore some nodes.
 
-If you ever have a requirement to have a single pod on every node specifically you may need DaemonSets. Otherwise you would almost always use a Deployments instead. Due to this behavior a basic use case for DaemonSets is in monitoring and logging.
+If you ever have a requirement to have a single pod on every node specifically you may need DaemonSets. Otherwise you would almost always use a Deployment resource instead. Due to this behavior a basic use case for DaemonSets is in monitoring and logging.
 
 ## Monitoring ##
 
-Our cluster and the apps in in have been pretty much a black box. We've thrown stuff in and then hoped that everything works all right. We're going to use [Prometheus](https://prometheus.io/) to monitor the cluster and [Grafana](https://grafana.com/) to view the data.
+Our cluster and the apps in it have been pretty much a black box. We've thrown stuff in and then hoped that everything works all right. We're going to use [Prometheus](https://prometheus.io/) to monitor the cluster and [Grafana](https://grafana.com/) to view the data.
 
-Before we can get started let's look into how Kubernetes applications are managed more easily. [Helm](https://helm.sh/) uses packaging format called charts to define the dependencies of an application. Among other things Helm Charts include information for the version of the chart, the requirements of the application such as the Kubernetes version as well as other charts that it may depend on.
+Before we can get started let's look into how Kubernetes applications are managed more easily. [Helm](https://helm.sh/) uses a packaging format called charts to define the dependencies of an application. Among other things Helm Charts include information for the version of the chart, the requirements of the application such as the Kubernetes version as well as other charts that it may depend on.
 
 Installation instructions are [here](https://helm.sh/docs/intro/install/). After that we can add the official charts repository:
 
@@ -332,7 +332,7 @@ $ kubectl create namespace prometheus
 $ helm install stable/prometheus-operator --generate-name --namespace prometheus
 ```
 
-This added a lot of stuff to our cluster. You can remove almost everything with `helm delete [name]` with the name found via `helm list`. Custom resource definitions are left and have to be manually removed if the need arises.
+This added a lot of stuff to our cluster. You can remove almost everything with `helm delete [name]` with the name found via the `helm list` command. Custom resource definitions are left and have to be manually removed if the need arises.
 
 Lets open a way into Grafana so we can see the data.
 
@@ -357,7 +357,7 @@ Access [http://localhost:3000](http://localhost:3000) with browser and use the c
 
 The dashboards are nice but we'd like to know more about the apps we're running as well. Let's add [Loki](https://grafana.com/oss/loki/) so that we can see logs. To confirm everything works for us let's create a simple application that'll output something to stdout.
 
-Let's run the redisapp from previously `https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app5/manifests/statefulset.yaml`. We can keep it running as it'll generate a good amount of log output for us.
+Let's run the Redis application from previously `https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app5/manifests/statefulset.yaml`. We can keep it running as it'll generate a good amount of log output for us.
 
 The [Loki Chart](https://github.com/grafana/loki/tree/master/production/helm) includes almost everything:
 
@@ -387,7 +387,7 @@ $ kubectl get all -n loki-stack
   statefulset.apps/loki   1/1     18m
 ```
 
-Here we see that Loki is running in port 3100. Open Grafana and go to settings and "Add data source". Choose Loki and then insert the correct URL. From the output above we can guess that the port should be 3100, namespace is loki-stack and the service is loki. So the answer would be: http://loki.loki-stack:3100. No other fields need to be changed.
+Here we see that Loki is running in port 3100. Open Grafana and go to settings and "Add data source". Choose Loki and then insert the correct URL. From the output above we can guess that the port should be 3100, the namespace is loki-stack and the name of the service is loki. So the answer would be: http://loki.loki-stack:3100. No other fields need to be changed.
 
 Now we can use the Explore tab (compass) to explore the data.
 
@@ -399,4 +399,4 @@ Submit your completed exercises through the [submission application](https://stu
 
 ## Summary ##
 
-We're now at the state where we have the knowledge to deploy most software we'd develop into a Kubernetes cluster. Googling and reading documentation will still be necessary, as always, but we can confidently move from our own local Kubernetes cluster and start using Google Kubernetes Engine. [Part 3](/part3)
+We're now at the state where we have the knowledge to deploy most software we'd develop into a Kubernetes cluster. Googling and reading the documentation will still be necessary, as always, but we can confidently move from our own local Kubernetes cluster and start using Google Kubernetes Engine. [Part 3](/part3)
