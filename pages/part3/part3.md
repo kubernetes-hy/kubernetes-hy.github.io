@@ -99,7 +99,7 @@ spec:
       targetPort: 3000
 ```
 
-A load balancer service asks for google services to provision us a load balancer. We can wait until the service gets an external ip:
+A load balancer service asks for google services to provision us a load balancer. We can wait until the service gets an external IP:
 
 ```console
 $ kubectl get svc --watch
@@ -122,7 +122,7 @@ And when resuming progress create the cluster back.
 $ gcloud container clusters create dwk-cluster --zone=europe-north1-b
 ```
 
-Closing the cluster will also remove everything you've deployed on the cluster. If you decide to take a break during an example you may have to redo it. Thankfully we have used declarative approach so continuing progress will only require you to apply the yamls.
+Closing the cluster will also remove everything you've deployed on the cluster. If you decide to take a break during an example you may have to redo it. Thankfully we have used a declarative approach so continuing progress will only require you to apply the yamls.
 </div>
 
 ### Persisting data in GKE ###
@@ -135,7 +135,7 @@ Google Kubernetes Engine will automatically provision a persistent disk for your
 
 Services are quite simple, but as ingresses offer us additional tools, in exchange for complexity. We're no longer using traefik but instead "GKE Ingress".
 
-*NodePort* type service is required with Ingresses in GKE. Even though it is NodePort GKE does not expose it outside cluster. Let's test this by continuing with the previous example.
+*NodePort* type service is required with Ingresses in GKE. Even though it is NodePort GKE does not expose it outside the cluster. Let's test this by continuing with the previous example.
 
 **service.yaml**
 
@@ -171,7 +171,7 @@ spec:
           servicePort: 80
 ```
 
-This takes a while to deploy, responses may be 404 and 502 as it becomes available. The Ingress performs health checks by GET requesting / and expects a HTTP 200 response.
+This takes a while to deploy, responses may be 404 and 502 as it becomes available. The Ingress performs health checks by GET requesting / and expects an HTTP 200 response.
 
 {% include_relative exercises/3_02.html %}
 
@@ -187,7 +187,7 @@ FROM nginx:1.19-alpine
 COPY index.html /usr/share/nginx/html
 ```
 
-and a index.html with the following content
+and add index.html with the following content
 
 ```html
 <!DOCTYPE html>
@@ -200,7 +200,7 @@ and a index.html with the following content
 </html>
 ```
 
-Let's make sure that everything works with `docker build . -t colorcontent && docker run -p 3000:80 colorcontent` and accessing it through [http://localhost:3000](http://localhost:3000). Next is the addition of manifests for our website.
+Let's make sure that everything works by doing `docker build . -t colorcontent && docker run -p 3000:80 colorcontent` to build and run it and then accessing it through [http://localhost:3000](http://localhost:3000). Next is the addition of manifests for our website.
 
 **manifests/service.yaml**
 
@@ -250,7 +250,7 @@ $ kubectl apply -f manifests/deployment.yaml
 
 ### Kustomize ###
 
-As you may've noticed applying multiple files like this gets bothersome.
+Applying multiple files like this gets bothersome. We can of course point it at a directory like so: `kubectl apply -f manifests/`, but this is an excellent moment to turn our attention to Kustomize.
 
 [Kustomize](https://github.com/kubernetes-sigs/kustomize) is a tool that helps with configuration customization and is baked into kubectl. In this case we'll use it to define which files are meaningful for Kubernetes.
 
@@ -266,9 +266,9 @@ resources:
 - manifests/service.yaml
 ```
 
-Now we can deploy this using -k flag identifying that we want to use Kustomize.
+Now we can deploy this using the `-k` flag identifying that we want to use Kustomize.
 
-```
+```console
 $ kubectl apply -k .
 ```
 
@@ -283,7 +283,7 @@ images:
   newName: jakousa/colorcontent
 ```
 
-This will replace the image "IMAGE:TAG" with the one defined in newName. Next setting a placeholder value inside the deployment.yaml for the image:
+This will replace the image "IMAGE:TAG" with the one defined in _newName_. Next setting a placeholder value inside the deployment.yaml for the image:
 
 **deployment.yaml**
 
@@ -309,7 +309,7 @@ Kustomize has a few additional tools you can test out if you want to install it 
 
 ### Github Actions ###
 
-Github Actions will be the CI/CD tool of choice for this course. The behavior is similar to CircleCI or even travis which you may have used previously. Google also offers [Cloud Build](https://cloud.google.com/cloud-build), and a [step-by-step guide to deploying to GKE](https://cloud.google.com/cloud-build/docs/deploying-builds/deploy-gke) with it. You can return here to implement deployment with Cloud Build if you have credits left over after the course!
+Github Actions will be the CI/CD tool of choice for this course. The behavior is similar to CircleCI or even Travis which you may have used previously. Google also offers [Cloud Build](https://cloud.google.com/cloud-build), and a [step-by-step guide to deploying to GKE](https://cloud.google.com/cloud-build/docs/deploying-builds/deploy-gke) with it. You can return here to implement deployment with Cloud Build if you have credits left over after the course!
 
 Create a file .github/workflows/main.yaml. We'll want the workflow to do 3 things:
 
@@ -363,7 +363,7 @@ Next we'll use some additional actions, mainly from [GoogleCloudPlatform](https:
 
 The secrets here are not from the environment variables but are included into the project from Github. Read their guide [here](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets). The *GKE_SA_KEY* is a service account key that is required to access the google cloud services - read their guide for it [here](https://cloud.google.com/iam/docs/creating-managing-service-account-keys).
 
-Next use gcloud to configure Docker and this will enable us to push to Google Container Registry, which we'll use for no particular reason. Read more about it here <https://cloud.google.com/container-registry/>. If we wanted we could use Docker Hub instead. Note that the registry is [not free](https://cloud.google.com/container-registry/pricing) and you'll probably want to delete the images from there during and after this course.
+Next use _gcloud_ commands to configure Docker and this will enable us to push to Google Container Registry, which we'll use for no particular reason. Read more about it here <https://cloud.google.com/container-registry/>. If we wanted we could use Docker Hub instead. Note that the registry is [not free](https://cloud.google.com/container-registry/pricing) and you'll probably want to delete the images from there during and after this course.
 
 ```yaml
 ...
@@ -567,9 +567,10 @@ spec:
               cpu: "150m"
               memory: "100Mi"
 ```
-The suffix of the CPU limit `m` stands for "thousandth of a core". Thus `150m` equals 15% of a single CPU core (`150/1000=0,15`).
 
-Note that finally we have set the resource limits for a Deployment as well
+Note that finally we have set the resource limits for a Deployment as well. The suffix of the CPU limit "m" stands for "thousandth of a core". Thus `150m` equals 15% of a single CPU core (`150/1000=0,15`).
+
+The service looks completely familiar by now.
 
 **service.yaml**
 
@@ -588,9 +589,9 @@ spec:
       targetPort: 3001
 ```
 
-Service looks completely familiar by now.
+Next we have _HorizontalPodAutoscaler_. This is an exciting new Resource for us to work with.
 
-**horiziontalpodautoscaler.yaml**
+**horizontalpodautoscaler.yaml**
 
 ```yaml
 apiVersion: autoscaling/v1
@@ -662,7 +663,7 @@ For a more robust cluster see examples on creation here: <https://cloud.google.c
 
 ![]({{ "/images/part3/gke_scaling.png" | absolute_url }})
 
-Cluster autoscaling may disrupt pods by moving them around as the number of nodes increases or decreases. To solve possible issues with this the resource [PodDisruptionBudget](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#how-disruption-budgets-work) with which the requirements for a pod can be defined via two of the fields: *minAvailable* and *maxUnavailable*.
+Cluster autoscaling may disrupt pods by moving them around as the number of nodes increases or decreases. To solve possible issues with this the resource [PodDisruptionBudget](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#how-disruption-budgets-work) with which the requirements for a pod can be defined via two of the fields: _minAvailable_ and _maxUnavailable_.
 
 **poddisruptionbudget.yaml**
 
@@ -680,7 +681,7 @@ spec:
 
 This would ensure that no more than half of the pods can be unavailable at. The Kubernetes documentation states "The budget can only protect against voluntary evictions, not all causes of unavailability."
 
-_Side note:_ Kubernetes also offers the possibility to limit resources per namespace. This can prevent apps in a development namespace from consuming too many resources. Google has [created a nice video](https://www.youtube.com/watch?v=xjpHggHKm78) that explains the possibilities of the `ResourceQuota` object.
+_Side note:_ Kubernetes also offers the possibility to limit resources per namespace. This can prevent apps in the development namespace from consuming too many resources. Google has [created a nice video](https://www.youtube.com/watch?v=xjpHggHKm78) that explains the possibilities of the `ResourceQuota` object.
 
 {% include_relative exercises/3_10.html %}
 
