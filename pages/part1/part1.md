@@ -261,7 +261,7 @@ Woah! The fact that you can apply manifest from the internet just like that will
 
 {% include_relative exercises/1_04.html %}
 
-## Debugging and self-healing ##
+## Debugging ##
 
 Kubernetes is a "self-healing" system, and we'll get back to what Kubernetes consists of and how it actually works in part 5. But at this stage "self-healing" is an excellent concept: Often you (the maintainer or developer) don't have not have to do anything in case something goes wrong with a pod or a container.
 
