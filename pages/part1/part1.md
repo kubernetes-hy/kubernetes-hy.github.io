@@ -321,7 +321,7 @@ $ kubectl describe deployment hashgenerator-dep
 
 There's a lot of information we are not ready to evaluate yet. But take a moment to read through everything. There's at least a few key information pieces we know, mostly because we defined them earlier in the yaml. The events is often the place to look for errors.
 
-Deployment isn't the only thing that can be `described`. Let's see the pod next:
+The command `describe` can be used for other resources as well. Let's see the pod next:
 
 ```console
 $ kubectl describe pod hashgenerator-dep-75bdcc94c-whwsm
@@ -350,11 +350,22 @@ $ kubectl logs hashgenerator-dep-75bdcc94c-whwsm
 
 Everything seems to be in order. However, wouldn't it be great if there was a dashboard to see everything going on? Let's see what the Lens can do.
 
-First you'll need to add the cluster to lens. If the config is not available in the dropdown you can get the kubeconfig for custom with `k3d kubeconfig get k3s-default`.
-
-// TODO CONTINUE HERE
+First you'll need to add the cluster to Lens. If the config is not available in the dropdown you can get the kubeconfig for custom with `kubectl config view --minify --raw`. After you've added the cluster open Workloads/Overview tab. A view similar to the following should open up
 
 ![]({{ "/images/part1/lens_during_deploy.png" | absolute_url }})
+
+At the bottom we can see every event, and at the top we can see the status of different resources in our cluster. Try deleting and reapplying the deployment and you should see events in the dashboard. Next let's navigate to the tab Workloads/Pods and click our pod with name "hashgenerator-dep-...".
+
+![]({{ "/images/part1/lens_pod.png" | absolute_url }})
+
+The view shows us the same information as was in the describe. But the GUI offers us actions as well. The three numbered in the top right corner are:
+1. Open terminal into a container in the pod
+2. Show logs
+3. Delete the resource
+
+In addition at the bottom you can open a terminal with the correct context.
+
+"The best feature in my opinion is that when I do kubectl get pod in the terminal, the dashboard you are looking at is always in the right context. Additionally, I don't need to worry about working with stale information because everything is real time." - [Matti Paksula](http://github.com/matti)
 
 ## Networking Part 1 ##
 
