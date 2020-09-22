@@ -84,11 +84,15 @@ If you're using a namespace constantly you can set the namespace to be used by d
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/xpnZX3if9Tc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+{% include_relative exercises/2_03.html %}
+
+{% include_relative exercises/2_04.html %}
+
 ### Labels ###
 
-Labels are used to separate an application from others inside a namespace. They make it possible for having multiple applications as you've used in this course already.
+Labels are used to separate an application from others inside a namespace and to group different resources together. Labels are key/value pairs and they can be modified, added or removed at any time. Labels are identifying and you can query resources that have a certain label.
 
-Let's look at the labels in *Deployment* yamls. This is the first yaml we created and you've copy-pasted something similar:
+Let's look at the labels in *Deployment* yamls. This is the first yaml we created:
 
 **deployment.yaml**
 
@@ -112,11 +116,62 @@ spec:
           image: jakousa/dwk-app1:78031863af07c4c4cc3c96d07af68e8ce6e3afba
 ```
 
-The *selector* and *matchLabels* reveal that the instructions of the deployment are directed to pods with the following label. *matchLabels* is a key-value pair but we could've used *matchExpressions* instead. While the template metadata includes a label with key-value pair app and hashgenerator. We can use the same label on multiple namespaces and the namespace would keep them from interfering with each other.
+The _selector_ and _matchLabels_ reveal that the instructions of the deployment are directed to pods with the following label. _matchLabels_ is a key-value pair but we could've used _matchExpressions_ instead. While the template metadata includes a label with key-value pair app and hashgenerator. We can use the same label on multiple namespaces and the namespace would keep them from interfering with each other.
 
-{% include_relative exercises/2_03.html %}
+Grouping is simple. Either add the label into the file or if you've already deployed the hashgenerator above add the label and you can query with `-l`.
 
-{% include_relative exercises/2_04.html %}
+```console
+$ kubectl label po hashgenerator-dep-7b9b88f8bf-lvcv4 examplelabel=smart
+  pod/hashgenerator-dep-7b9b88f8bf-lvcv4 labeled
+
+$ kubectl get po -l examplelabel=smart
+  NAME                                 READY   STATUS    RESTARTS   AGE
+  hashgenerator-dep-7b9b88f8bf-lvcv4   1/1     Running   0          17m
+```
+
+With labels we can even move pods to labeled nodes. Let's say we have a few nodes which have qualities that we wish to avoid. For example they might have a slower network. With labels and _nodeSelector_ configured to deployment we can do just that. First add _nodeSelector_ to the deployment and then label the node(s):
+
+**deployment.yaml**
+
+```yaml
+    ...
+    spec:
+      containers:
+        - name: hashgenerator
+          image: jakousa/dwk-app1:78031863af07c4c4cc3c96d07af68e8ce6e3afba
+      nodeSelector:
+        networkquality: excellent
+```
+
+If you already had it running it won't move the pod to avoid unwanted changes in the system. We'll delete the pod so that Kubernetes will move the new version to the correct node.
+
+```console
+$ kubectl delete po hashgenerator-dep-7b9b88f8bf-tnvfg
+  pod "hashgenerator-dep-7b9b88f8bf-tnvfg" deleted
+
+$ kubectl get po
+  NAME                                 READY   STATUS    RESTARTS   AGE
+  hashgenerator-dep-7b9b88f8bf-lvcv4   0/1     Pending   0          4s
+```
+
+Now the status is "Pending" as there are no nodes with an excellent networkquality. Next label the agent-1 as being one with excellent networkquality and Kubernetes will know where the pod is able to run .
+
+```
+$ kubectl label nodes k3d-k3s-default-agent-1 networkquality=excellent
+  node/k3d-k3s-default-agent-1 labeled
+
+$ kubectl get po
+  NAME                                 READY   STATUS    RESTARTS   AGE
+  hashgenerator-dep-7b9b88f8bf-lvcv4   1/1     Running   0          5m30s
+```
+
+_nodeSelector_ is a blunt tool. Let's say you have a cluster of various machines, ranging from a [fighter jet](https://gcn.com/articles/2020/01/07/af-kubernetes-f16.aspx) to a toaster to a supercomputer. Kubernetes can use _affinity_ and _anti-affinity_ to select which nodes are prioritized for which applications and _taints_ with _tolerances_ so that a pod can avoid certain nodes.
+
+TODO: continue
+
+See [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)
+See [taints and tolerances](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+
 
 ## Configuring your application ##
 
@@ -313,6 +368,16 @@ DaemonSets, like Deployments, define how to run Pods. DaemonSets differ from the
 
 If you ever have a requirement to have a single pod on every node specifically you may need DaemonSets. Otherwise you would almost always use a Deployment resource instead. Due to this behavior a basic use case for DaemonSets is in monitoring and logging.
 
+## Jobs and CronJobs ##
+
+_Job_ resource is used to run a container that has an end state once. The status of a job is saved so that they can be monitored after the execution has ended. Jobs can be configured so that it runs multiple instances of the same task in concurrently, sequentially and until a set number of successful completions have been achieved.
+
+TODO: Run jobs example
+
+_CronJobs_ run a _Job_ on schedule. You may have used cron before, these are essentially the same.
+
+// TODO exercise: create a CronJob that POSTs a new todo every day ???
+
 ## Monitoring ##
 
 Our cluster and the apps in it have been pretty much a black box. We've thrown stuff in and then hoped that everything works all right. We're going to use [Prometheus](https://prometheus.io/) to monitor the cluster and [Grafana](https://grafana.com/) to view the data.
@@ -395,8 +460,18 @@ Now we can use the Explore tab (compass) to explore the data.
 
 {% include_relative exercises/2_08.html %}
 
-Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
+### The easy way out ###
+
+There was an easier way for us to install Prometheus with a few clicks. If you have to install it again you can try this:
+
+1. Open Lens
+2. Right click the cluster icon in the top left and choose "Settings"
+3. Scroll down and under "Features" under "Metrics" you can press "Install"
+
+A great option especially for your local cluster or hobby cluster.
 
 ## Summary ##
+
+Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
 
 We're now at the state where we have the knowledge to deploy most software we'd develop into a Kubernetes cluster. Googling and reading the documentation will still be necessary, as always, but we can confidently move from our own local Kubernetes cluster and start using Google Kubernetes Engine. [Part 3](/part3)

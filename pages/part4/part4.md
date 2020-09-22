@@ -554,9 +554,9 @@ This is now the final configuration:
 
 {% include_relative exercises/4_07.html %}
 
-Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
-
 ## Summary ##
+
+Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
 
 By this point you have a grasp on the variety of decisions that are made during application development and how it may affect the operations side.
 

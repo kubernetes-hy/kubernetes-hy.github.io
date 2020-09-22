@@ -124,6 +124,57 @@ $ kubectl -n kube-system get all
 
 To get a complete picture of how each part communicates with each other "[what happens when k8s](https://github.com/jamiehannaford/what-happens-when-k8s)" explores what happens when you do `kubectl run nginx --image=nginx --replicas=3` shedding some more light on the magic that happens behind the scenes.
 
+## Self-healing ##
+
+Back in part 1 we talked a little about the "self-healing" nature of Kubernetes and how pods can be deleted and they're automatically recreated. 
+
+Let's see what happens if we delete a node that has a pod in it. Let's first deploy the pod, a web application with ingress from part 1, confirm that it's running and then see which pod has it running.
+
+```
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app2/manifests/deployment.yaml \
+                -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app2/manifests/ingress.yaml \
+                -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app2/manifests/service.yaml
+  deployment.apps/hashresponse-dep created
+  ingress.extensions/dwk-material-ingress created
+  service/hashresponse-svc created
+
+$ curl localhost:8081
+9eaxf3: 8k2deb
+
+$ kubectl describe po hashresponse-dep-57bcc888d7-5gkc9 | grep 'Node:'
+  Node:         k3d-k3s-default-agent-1/172.30.0.2
+```
+
+In this case it's in agent-1. Let's make the node go "offline" with pause:
+
+```
+$ docker ps
+  CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS              PORTS                                           NAMES
+  5c43fe0a936e        rancher/k3d-proxy:v3.0.0   "/bin/sh -c nginx-pr…"   10 days ago         Up 2 hours          0.0.0.0:8081->80/tcp, 0.0.0.0:50207->6443/tcp   k3d-k3s-default-serverlb
+  fea775395132        rancher/k3s:latest         "/bin/k3s agent"         10 days ago         Up 2 hours                                                          k3d-k3s-default-agent-1
+  70b68b040360        rancher/k3s:latest         "/bin/k3s agent"         10 days ago         Up 2 hours          0.0.0.0:8082->30080/tcp                         k3d-k3s-default-agent-0
+  28cc6cef76ee        rancher/k3s:latest         "/bin/k3s server --t…"   10 days ago         Up 2 hours                                                          k3d-k3s-default-server-0
+
+$ docker pause k3d-k3s-default-agent-1
+k3d-k3s-default-agent-1
+```
+
+Now wait for a while and this should be the new state:
+
+```
+$ kubectl get po
+NAME                                READY   STATUS        RESTARTS   AGE
+hashresponse-dep-57bcc888d7-5gkc9   1/1     Terminating   0          15m
+hashresponse-dep-57bcc888d7-4klvg   1/1     Running       0          30s
+
+$ curl localhost:8081
+6xluh2: ta0ztp
+```
+
+What did just happen? Read [this explanation on how kubernetes handles offline nodes](https://duske.me/how-kubernetes-handles-offline-nodes/)
+
+Well then, what happens if you delete the only control-plane node? Nothing good. In our local cluster it's our single point of failure. See Kubernetes documentation for "[Options for Highly Available topology](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/ha-topology/)" to avoid getting the whole cluster crippled by a single faulty hardware.
+
 ## Custom Resource Definitions ##
 
 We've used a number of CRDs, Custom Resource Definitions, previously. They are a way to extend Kubernetes with our own Resources. So let us do just that and extend Kubernetes! There's another option for [API Aggregation](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/apiserver-aggregation/) but that's left outside of the course. 
@@ -584,3 +635,8 @@ $ curl -H "Host: tester-route.default.example.com" http://localhost:8081
 ```
 
 {% include_relative exercises/5_02.html %}
+
+
+## Summary ##
+
+Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)

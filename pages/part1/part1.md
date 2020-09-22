@@ -735,9 +735,9 @@ If you are interested in learning more about running your own storage you can ch
 
 {% include_relative exercises/1_13.html %}
 
-Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
-
 ## Summary ##
+
+Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
 
 In this part we learned about k8s, k3s and k3d. We learned about resources that are used in Kubernetes to run any software as well as resources to manage storage for some use cases, for example, caching and sharing data between Pods.
 
