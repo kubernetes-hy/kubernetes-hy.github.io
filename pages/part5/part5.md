@@ -378,11 +378,31 @@ $ kubectl logs countdown-controller-dep-7ff598ffbf-q2rp5
 
 {% include_relative exercises/5_01.html %}
 
+## Service Meshes ##
+
+Very often you'll hear about a concept "Service Mesh". Service meshes are quite complex and have a large feature set. We could have started using one multiple times before to implement features we've implemented without it. The following video by Microsoft Developer is an excellent walkthrough of all of the features a service mesh has.
+
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=izVWk7rYqWI" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+For traffic incoming, outgoing and between services it can:
+
+- Secure the communication
+- Manage traffic
+- Monitor traffic, sending logs and metrics to e.g. Prometheus
+
+So a service mesh is an **extremely** powerful tool. If we started using service mesh like Istio in part 1 we may have been able to skip using traefik, skip some of our DIY monitoring solutions, and achieved canary releases without Argo Rollouts. On the other hand, we did do all that without a service meshes.
+
+Let's install a service mesh and test the features
+
+// TODO install service mesh
+
+// TODO exercise
+
 ## Beyond Kubernetes ##
 
 Finally as Kubernetes is a platform we'll go over a few popular building blocks that use Kubernetes.
 
-[OpenShift](https://en.wikipedia.org/wiki/OpenShift) is an "enterprise" Kubernetes ([Red Hat OpenShift Overview](https://developers.redhat.com/products/openshift/overview)). Claiming that you don't have Kubernetes because you have OpenShift would be equal to claiming ["I don't have an engine. I have a car!"](https://www.openshift.com/blog/enterprise-kubernetes-with-openshift-part-one). For other options for production-ready Kubernetes see [Rancher](https://rancher.com/), which you might have seen before in this url [https://github.com/rancher/k3d](https://github.com/rancher/k3d), and [Anthos GKE](https://cloud.google.com/anthos/gke), which might also sound familiar. They are all options when you're making the crucial decision between which Kubernetes distribution you want or would you like to use a managed service.
+[OpenShift](https://en.wikipedia.org/wiki/OpenShift) is an "enterprise" Kubernetes ([Red Hat OpenShift Overview](https://developers.redhat.com/products/openshift/overview)). Claiming that you don't have Kubernetes because you have OpenShift would be equal to claiming ["I don't have an engine. I have a car!"](https://www.openshift.com/blog/enterprise-kubernetes-with-openshift-part-one). For other options for production-ready Kubernetes see [Rancher](https://rancher.com/), which you might have seen before in this page [https://github.com/rancher/k3d](https://github.com/rancher/k3d), and [Anthos GKE](https://cloud.google.com/anthos/gke), which might also sound familiar. They are all options when you're making the crucial decision between which Kubernetes distribution you want or would you like to use a managed service.
 
 TODO: Exercise for comparing platforms
 
@@ -392,90 +412,56 @@ TODO: Exercise for comparing platforms
 
 As this isn't a serverless course we won't go into depth about it but serverless sounds pretty dope. So next let's setup a serverless platform on our k3d because that's something we can do. For this let's choose [Knative](https://knative.dev/) for no particular reason other than that it sounds great.
 
-We will follow [this guide](https://knative.dev/docs/install/any-kubernetes-cluster/) to install "Serving" component of Knative. There's probably a Helm Chart for this but we'll meet another tool called Istio along the way. For Istio to work locally in k3d we'll need to create our cluster without the traefik ingress.
+We will follow [this guide](https://knative.dev/docs/install/any-kubernetes-cluster/) to install "Serving" component of Knative. This will require us to choose a networking layer from the 6 offered. We will choose Ambassador, for no particular reason. For Ambassador and Knative to work locally in k3d we'll need to create our cluster without the traefik ingress.
 
 ```console
 $ k3d cluster create --port '8082:30080@agent[0]' -p 8081:80@loadbalancer --agents 2 --k3s-server-arg '--no-deploy=traefik'
 ```
 
-Now Knative crds and core:
+Now installing Knative is pretty straight forward CRDs and core:
 
 ```console
-$ kubectl apply -f https://github.com/knative/serving/releases/download/v0.16.0/serving-crds.yaml
+$ kubectl apply -f https://github.com/knative/serving/releases/download/v0.17.0/serving-crds.yaml
   ...
 
-$ kubectl apply -f https://github.com/knative/serving/releases/download/v0.16.0/serving-core.yaml
+$ kubectl apply -f https://github.com/knative/serving/releases/download/v0.17.0/serving-core.yaml
   ...
 ```
 
-Next we'll install Istio.
+That's it. Well, if we wanted to run something that we'll never access that is it. Next we'll install Ambassador.
 
-### Istio ###
+## Ambassador ##
 
-Surprisingly we haven't met [Istio](https://istio.io/latest/) before now. Istio is a service mesh. Service mesh works as a layer facilitating communications between services. This means load-balancing, monitoring, encryption and traffic control. Full set of features of it can be found on their website ["What is Istio"](https://istio.io/latest/docs/concepts/what-is-istio/).
-
-> As Istio handles traffic control it could've handled the canary rollouts introduced in part 4
-
-Istio will require its own command-line tools. Let's install [istioctl](https://istio.io/latest/docs/ops/diagnostic-tools/istioctl/) and install the minimal operator with instructions from Knative guide with the following yaml:
-
-**istio-minimal-operator.yaml**
-
-```yaml
-apiVersion: install.istio.io/v1alpha1
-kind: IstioOperator
-spec:
-  values:
-    global:
-      proxy:
-        autoInject: disabled
-      useMCP: false
-      # The third-party-jwt is not enabled on all k8s.
-      # See: https://istio.io/docs/ops/best-practices/security/#configure-third-party-service-account-tokens
-      jwtPolicy: first-party-jwt
-
-  addonComponents:
-    pilot:
-      enabled: true
-    prometheus:
-      enabled: false
-
-  components:
-    ingressGateways:
-      - name: istio-ingressgateway
-        enabled: true
-      - name: cluster-local-gateway
-        enabled: true
-        label:
-          istio: cluster-local-gateway
-          app: cluster-local-gateway
-        k8s:
-          service:
-            type: ClusterIP
-            ports:
-            - port: 15020
-              name: status-port
-            - port: 80
-              name: http2
-            - port: 443
-              name: https
-```
-
-And install Istio with
+Ambassador is an API gateway. It is the first step inbound connections touch. Previously we used traefik for the job, but "[Traefik as Knative Ingress?](https://github.com/traefik/traefik/issues/5081)" is still an open issue. You can read more about API gateways from learnk8s [here](https://learnk8s.io/kubernetes-ingress-api-gateway) 
 
 ```console
-$ istioctl install -f istio-minimal-operator.yaml
-  ✔ Istio core installed
-  ✔ Istiod installed
-  ✔ Ingress gateways installed
-  ✔ Addons installed
-  ✔ Installation complete  
+$ kubectl create namespace ambassador
+
+$ kubectl apply --namespace ambassador \
+  --filename https://getambassador.io/yaml/ambassador/ambassador-crds.yaml \
+  --filename https://getambassador.io/yaml/ambassador/ambassador-rbac.yaml \
+  --filename https://getambassador.io/yaml/ambassador/ambassador-service.yaml
 ```
 
-Next we can install Knative Istio controller
+Give Ambassador required permissions
 
 ```console
-$ kubectl apply -f https://github.com/knative/net-istio/releases/download/v0.16.0/release.yaml
-  ...
+$ kubectl patch clusterrolebinding ambassador -p '{"subjects":[{"kind": "ServiceAccount", "name": "ambassador", "namespace": "ambassador"}]}'
+```
+
+Enable Knative support
+
+```console
+$ kubectl set env --namespace ambassador  deployments/ambassador AMBASSADOR_KNATIVE_SUPPORT=true
+```
+
+And configure Knative Serving to use Ambassador
+
+```console
+$ kubectl patch configmap/config-network \
+  --namespace knative-serving \
+  --type merge \
+  --patch '{"data":{"ingress.class":"ambassador.ingress.networking.knative.dev"}}'
 ```
 
 And that's it. We'll leave the step 4 for configuring DNS out.
@@ -582,7 +568,7 @@ $ curl -H "Host: helloworld-go.default.example.com" http://localhost:8081
   Hello DwK!
 ```
 
-Let's set the messages between v1 and v2 at 50% each and create a new revision with the best that'll be open at another host!
+Let's set the messages between v1 and v2 at 50% each and create a new revision with the best version!
 
 **knative-service.yaml**
 ```yaml
@@ -607,7 +593,7 @@ spec:
     percent: 50
 ```
 
-Now curling will result in 50% - 50% difference between the v1 and v2 messages. But accessing v3 is currently disabled. Let's add routing to v3 by defining a Route ourselves.
+Now curling will result in 50% - 50% chance between the v1 and v2 messages. But accessing v3 is currently disabled. Let's add routing to v3 by defining a Route ourselves.
 
 **route.yaml**
 ```yaml
