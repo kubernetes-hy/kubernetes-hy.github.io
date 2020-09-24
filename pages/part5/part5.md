@@ -130,7 +130,7 @@ Back in part 1 we talked a little about the "self-healing" nature of Kubernetes 
 
 Let's see what happens if we delete a node that has a pod in it. Let's first deploy the pod, a web application with ingress from part 1, confirm that it's running and then see which pod has it running.
 
-```
+```console
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app2/manifests/deployment.yaml \
                 -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app2/manifests/ingress.yaml \
                 -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app2/manifests/service.yaml
