@@ -491,7 +491,7 @@ There's one additional resource that will help us with serving the application, 
 
 #### What is an Ingress? ####
 
-Incoming Network Access resource *Ingress* is a completely different type of resource from *Services*. If you've got your OSI model memorized, it works in layer 7 while services work on layer 4. You could see these used together: first the aforementioned *LoadBalancer* and then Ingress to handle routing. In our case as we don't have a load balancer available we can use the Ingress as the first stop. If you're familiar with reverse proxies like Nginx, Ingress should seem familiar.
+Incoming Network Access resource *Ingress* is a completely different type of resource from *Services*. If you've got your OSI model memorized, it works in layer 7 while services work on layer 4. You could see these used together: first the aforementioned *LoadBalancer* and then Ingress to handle routing. In our case, as we don't have a load balancer available we can use the Ingress as the first stop. If you're familiar with reverse proxies like Nginx, Ingress should seem familiar.
 
 Ingresses are implemented by various different "controllers". This means that ingresses do not automatically work in a cluster, but gives you the freedom of choosing which ingress controller works for you the best. K3s has [Traefik](https://containo.us/traefik/) installed already. Other options include Istio and Nginx Ingress Controller, [more here](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/).
 
