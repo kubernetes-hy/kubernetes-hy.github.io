@@ -108,7 +108,7 @@ $ k3d cluster start
   INFO[0001] Starting Node 'k3d-k3s-default-serverlb'
 ```
 
-For now we're going to need the cluster but if we want to remove the cluster we can run `k3d cluster delete`.
+For now, we're going to need the cluster but if we want to remove the cluster we can run `k3d cluster delete`.
 
 ## First Deploy ##
 
