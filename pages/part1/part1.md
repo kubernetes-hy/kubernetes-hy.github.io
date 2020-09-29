@@ -401,7 +401,7 @@ Now we can view the response from http://localhost:3003 and confirm that it is w
 
 {% include_relative exercises/1_05.html %}
 
-External connections with docker used the flag -p `-p 3003:3000` or in docker-compose ports declaration. Unfortunately Kubernetes isn't as simple. We're going to use either a *Service* resource or an *Ingress* resource.
+External connections with docker used the flag -p `-p 3003:3000` or in docker-compose ports declaration. Unfortunately, Kubernetes isn't as simple. We're going to use either a *Service* resource or an *Ingress* resource.
 
 #### Before anything else ####
 
