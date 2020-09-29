@@ -24,7 +24,7 @@ The misconception of microservices being a large number of extremely small servi
 
 - "Monoliths are the future" - Kelsey Hightower, Staff Developer Advocate at Google, ["Monoliths are the Future"](https://changelog.com/posts/monoliths-are-the-future)
 
-For the context of this unpopular opinion Kelsey Hightower points the fault at *Distributed Monoliths* where you have a large number of microservices without a good reason.
+For the context of this unpopular opinion, Kelsey Hightower points the fault at *Distributed Monoliths* where you have a large number of microservices without a good reason.
 
 - "Run a small team, not a tech behemoth? Embrace the monolith and make it majestic. You Deserve It!" - David Heinemeier Hansson, cofounder & CTO at Basecamp, ["The Majestic Monolith"](https://m.signalvnoise.com/the-majestic-monolith/)
 
