@@ -369,7 +369,7 @@ In addition, at the bottom, you can open a terminal with the correct context.
 
 ## Networking Part 1 ##
 
-Now back to development! Restarting and following logs has been a treat. Next we'll open an endpoint to the application and access it via HTTP.
+Now back to development! Restarting and following logs has been a treat. Next, we'll open an endpoint to the application and access it via HTTP.
 
 #### Simple networking application ####
 
