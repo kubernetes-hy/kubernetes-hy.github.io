@@ -168,7 +168,7 @@ $ kubectl get pods
   hashgenerator-dep-6965c5c7-2pkxc   1/1     Running   0          2m1s
 ```
 
-1/1 replicas are ready and it's status is Running! We will try multiple replicas later.
+1/1 replicas are ready and its status is Running! We will try multiple replicas later.
 
 To see the output we can run `kubectl logs -f hashgenerator-dep-6965c5c7-2pkxc`
 
