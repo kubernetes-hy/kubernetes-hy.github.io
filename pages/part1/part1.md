@@ -120,7 +120,7 @@ Let's create an application that generates and outputs a hash every 5 seconds or
 
 I've prepared one [here](https://github.com/kubernetes-hy/material-example/tree/master/app1) `docker run jakousa/dwk-app1`.
 
-To deploy we need the cluster to have an access to the image. By default Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but since that won't work when we go to non-k3d solutions we'll use the now very familiar registry *Docker Hub*.
+To deploy we need the cluster to have an access to the image. By default, Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but since that won't work when we go to non-k3d solutions we'll use the now very familiar registry *Docker Hub*.
 
 ```console
 $ docker tag _image_ _username_/_image_
