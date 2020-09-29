@@ -633,7 +633,7 @@ Note that all data is lost when the pod goes down.
 
 This type of storage is what you probably had in mind when we started talking about volumes. Unfortunately, we're quite limited with the options here and will return to *PersistentVolumes* briefly in Part 2 and again in Part 3 with GKE.
 
-The reason for the difficulty is because you should not store data with the application or create a dependency to the filesystem by the application. Kubernetes supports cloud providers very well and you can run your own storage system. During this course we are not going to run our own storage system as that would be a huge undertaking and most likely "in real life" you are going to use something hosted by a cloud provider. This topic would probably be a part of its own, but let's scratch the surface and try something you can use to run something at home.
+The reason for the difficulty is because you should not store data with the application or create a dependency on the filesystem by the application. Kubernetes supports cloud providers very well and you can run your own storage system. During this course we are not going to run our own storage system as that would be a huge undertaking and most likely "in real life" you are going to use something hosted by a cloud provider. This topic would probably be a part of its own, but let's scratch the surface and try something you can use to run something at home.
 
 A *local* volume is a *PersistentVolume* that binds a path from the node to use as a storage. This ties the volume to the node.
 
