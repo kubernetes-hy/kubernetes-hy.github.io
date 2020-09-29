@@ -319,7 +319,7 @@ $ kubectl describe deployment hashgenerator-dep
     Normal  ScalingReplicaSet  8m39s  deployment-controller  Scaled up replica set hashgenerator-dep-75bdcc94c to 1
 ```
 
-There's a lot of information we are not ready to evaluate yet. But take a moment to read through everything. There's at least a few key information pieces we know, mostly because we defined them earlier in the yaml. The events is often the place to look for errors.
+There's a lot of information we are not ready to evaluate yet. But take a moment to read through everything. There're at least a few key information pieces we know, mostly because we defined them earlier in the yaml. The events is often the place to look for errors.
 
 The command `describe` can be used for other resources as well. Let's see the pod next:
 
