@@ -336,7 +336,7 @@ $ kubectl describe pod hashgenerator-dep-75bdcc94c-whwsm
     Normal  Started    15m   kubelet, k3d-k3s-default-agent-0  Started container hashgenerator
 ```
 
-There's again a lot of information but let's focus on the events this time. Here we can see everything that happened. Scheduler put the pod to node with name "k3d-k3s-default-agent-0" successfully pulled the image and started the container. Everything is working as intended, excellent. The application is running.
+There's again a lot of information but let's focus on the events this time. Here we can see everything that happened. Scheduler put the pod to the node with the name "k3d-k3s-default-agent-0" successfully pulled the image and started the container. Everything is working as intended, excellent. The application is running.
 
 Next let's check that the application is actually doing what it should by reading the logs.
 
