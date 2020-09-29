@@ -14,7 +14,7 @@ In this part, we'll go over a lot of things you need to get yourself started wit
 
 ## What are microservices? ##
 
-On this course we'll talk about microservices and create microservices. Before we get started with anything else we'll need to define what a microservice is.
+In this course, we'll talk about microservices and create microservices. Before we get started with anything else we'll need to define what a microservice is.
 
 **A microservice is any service that is smaller than a monolith.**
 
