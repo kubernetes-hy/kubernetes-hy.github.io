@@ -375,7 +375,7 @@ Now back to development! Restarting and following logs has been a treat. Next, w
 
 Let's develop our application so that it has an HTTP server responding with two hashes: a hash that is stored until the process is exited and a hash that is request specific. The response body can be something like "Application abc123. Request 94k9m2". Choose any port to listen to.
 
-I've prepared one [here](https://github.com/kubernetes-hy/material-example/tree/master/app2). By default it will listen on port 3000.
+I've prepared one [here](https://github.com/kubernetes-hy/material-example/tree/master/app2). By default, it will listen on port 3000.
 
 ```console
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app2/manifests/deployment.yaml
