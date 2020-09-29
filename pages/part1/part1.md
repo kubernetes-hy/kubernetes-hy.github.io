@@ -358,7 +358,7 @@ At the bottom, we can see every event, and at the top, we can see the status of 
 
 ![]({{ "/images/part1/lens_pod.png" | absolute_url }})
 
-The view shows us the same information as was in the describe. But the GUI offers us actions as well. The three numbered in the top right corner are:
+The view shows us the same information as was in the description. But the GUI offers us actions as well. The three numbered in the top right corner are:
 1. Open terminal into a container in the pod
 2. Show logs
 3. Delete the resource
