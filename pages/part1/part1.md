@@ -363,7 +363,7 @@ The view shows us the same information as was in the description. But the GUI of
 2. Show logs
 3. Delete the resource
 
-In addition at the bottom you can open a terminal with the correct context.
+In addition, at the bottom, you can open a terminal with the correct context.
 
 "The best feature in my opinion is that when I do kubectl get pod in the terminal, the dashboard you are looking at is always in the right context. Additionally, I don't need to worry about working with stale information because everything is real time." - [Matti Paksula](http://github.com/matti)
 
