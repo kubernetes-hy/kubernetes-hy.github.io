@@ -350,7 +350,7 @@ $ kubectl logs hashgenerator-dep-75bdcc94c-whwsm
 
 Everything seems to be in order. However, wouldn't it be great if there was a dashboard to see everything going on? Let's see what the Lens can do.
 
-First you'll need to add the cluster to Lens. If the config is not available in the dropdown you can get the kubeconfig for custom with `kubectl config view --minify --raw`. After you've added the cluster open Workloads/Overview tab. A view similar to the following should open up
+First, you'll need to add the cluster to Lens. If the config is not available in the dropdown you can get the kubeconfig for custom with `kubectl config view --minify --raw`. After you've added the cluster open Workloads/Overview tab. A view similar to the following should open up
 
 ![]({{ "/images/part1/lens_during_deploy.png" | absolute_url }})
 
