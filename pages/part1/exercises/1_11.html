@@ -1,9 +1,9 @@
 <div class="exercise" markdown="1">
   <h1>Exercise 1.11: Persisting data</h1>
   
-  Let's share data between pingpong and main application using persistent volumes. Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment* to utilize it. As *PersistentVolume* is often maintained by cluster administrators rather than developers and are not application specific you should keep the definition for that separated. 
+  Let's share data between ping-pong and main application using persistent volumes. Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment* to utilize it. As *PersistentVolume* is often maintained by cluster administrators rather than developers and are not application specific you should keep the definition for that separated. 
   
-  Save the number of requests to ping / pong application into a file in the volume and output it with the timestamp and hash when sending a request to our main application. In the end the two pods should share a persistent volume between the two applications. So the browser should display the following when accessing the main application:
+  Save the number of requests to ping / pong application into a file in the volume and output it with the timestamp and hash when sending a request to our main application. In the end, the two pods should share a persistent volume between the two applications. So the browser should display the following when accessing the main application:
   
   ```plaintext
   2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.
