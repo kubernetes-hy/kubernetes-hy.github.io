@@ -273,7 +273,7 @@ The second is `kubectl logs` with which you can follow the logs of your possibly
 
 The third is `kubectl delete` which will simply delete the resource and in some cases, like with pods in deployment, a new one will be automatically released.
 
-Finally we have the overarching tool [Lens "The Kubernetes IDE"](https://k8slens.dev/). Which you should start using right now to familiarize yourself with the usage.
+Finally, we have the overarching tool [Lens "The Kubernetes IDE"](https://k8slens.dev/). Which you should start using right now to familiarize yourself with the usage.
 
 During exercises you also have our Telegram group available (which you joined in [part0](/part0)).
 
