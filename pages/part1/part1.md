@@ -127,7 +127,7 @@ $ docker tag _image_ _username_/_image_
 $ docker push _username_/_image_
 ```
 
-> In the future, the material will use the offered applications in the commands. Follow along by changing the image to your application
+> In the future, the material will use the offered applications in the commands. Follow along by changing the image to your application.
 
 Now we're finally ready to deploy our first app into Kubernetes!
 
