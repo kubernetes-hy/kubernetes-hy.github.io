@@ -739,7 +739,7 @@ If you are interested in learning more about running your own storage you can ch
 
 Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
 
-In this part we learned about k8s, k3s and k3d. We learned about resources that are used in Kubernetes to run any software as well as resources to manage storage for some use cases, for example, caching and sharing data between Pods.
+In this part, we learned about k8s, k3s, and k3d. We learned about resources that are used in Kubernetes to run any software as well as resources to manage storage for some use cases, for example, caching and sharing data between Pods.
 
 By now we know what the following are and how to use them:
  - Pods
@@ -748,4 +748,4 @@ By now we know what the following are and how to use them:
  - Ingress
  - Volume
 
-With them we're ready to deploy simple software to a Kubernetes cluster. In the next part we'll learn more about management as well as a number of cases where the tools we have acquired so far are not enough. [Part 2](/part2)
+With them, we're ready to deploy simple software to a Kubernetes cluster. In the next part we'll learn more about management as well as a number of cases where the tools we have acquired so far are not enough. [Part 2](/part2)
