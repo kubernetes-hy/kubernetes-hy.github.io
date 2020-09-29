@@ -144,7 +144,7 @@ This action created a few things for us to look at: a *Deployment* and a *Pod*.
 
 #### What is a Pod? ####
 
-*Pod* is an abstraction around one or more containers. Similarly as you've now used containers to define environments for a single process. Pods provide a context for 1..N containers so that they can share storage and a network. They can be thought of as a container of containers. *Most* of the same rules apply: it is deleted if the containers stop running and files will be lost with it.
+*Pod* is an abstraction around one or more containers. Similarly, as you've now used containers to define environments for a single process. Pods provide a context for 1..N containers so that they can share storage and a network. They can be thought of as a container of containers. *Most* of the same rules apply: it is deleted if the containers stop running and files will be lost with it.
 
 ![]({{ "/images/part1/pods.png" | absolute_url }})
 
