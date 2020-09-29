@@ -6,7 +6,7 @@ permalink: /part1/
 order: 1
 ---
 
-In this part we'll go over a lot of things you need to get yourself started with using Kubernetes. This includes terminology, your first deploy, a little bit of networking and an introduction to volumes. By the end of this part you will be able to
+In this part, we'll go over a lot of things you need to get yourself started with using Kubernetes. This includes terminology, your first deploy, a little bit of networking, and an introduction to volumes. By the end of this part, you will be able to
 
 - Create and run a Kubernetes cluster locally with k3d
 
