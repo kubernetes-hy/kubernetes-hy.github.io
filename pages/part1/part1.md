@@ -582,7 +582,7 @@ There are multiple types of volumes and we'll get started with two of them.
 
 Where in docker and docker-compose it would essentially mean that we had something persistent here that is not the case. There are multiple types of volumes *emptyDir* volumes are shared filesystems inside a pod, this means that their lifecycle is tied to a pod. When the pod is destroyed the data is lost.
 
-Before we can get started with this, we need an application that shares data with another application. In this case it will work as a method to share simple log files between each other. We'll need to develop the apps:
+Before we can get started with this, we need an application that shares data with another application. In this case, it will work as a method to share simple log files between each other. We'll need to develop the apps:
 
 App 1 will check if /usr/src/app/files/image.jpg exists and if not download a random image and save it as image.png. Any HTTP request will trigger a new image generation.
 
