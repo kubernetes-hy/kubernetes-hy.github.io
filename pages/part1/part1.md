@@ -354,7 +354,7 @@ First, you'll need to add the cluster to Lens. If the config is not available in
 
 ![]({{ "/images/part1/lens_during_deploy.png" | absolute_url }})
 
-At the bottom, we can see every event, and at the top, we can see the status of different resources in our cluster. Try deleting and reapplying the deployment and you should see events in the dashboard. Next, let's navigate to the tab Workloads/Pods and click our pod with name "hashgenerator-dep-...".
+At the bottom, we can see every event, and at the top, we can see the status of different resources in our cluster. Try deleting and reapplying the deployment and you should see events in the dashboard. Next, let's navigate to the tab Workloads/Pods and click our pod with the name "hashgenerator-dep-...".
 
 ![]({{ "/images/part1/lens_pod.png" | absolute_url }})
 
