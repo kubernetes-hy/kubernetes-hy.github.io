@@ -114,7 +114,7 @@ For now, we're going to need the cluster but if we want to remove the cluster we
 
 ### Preparing for first deploy ###
 
-Before we can deploy anything we'll need to do a small application to deploy. During the course you will develop your own application. The technologies used for the application do not matter - for the examples we're going to use [node.js](https://nodejs.org/en/) but the example application will be offered through GitHub as well as Docker Hub.
+Before we can deploy anything we'll need to do a small application to deploy. During the course, you will develop your own application. The technologies used for the application do not matter - for the examples we're going to use [node.js](https://nodejs.org/en/) but the example application will be offered through GitHub as well as Docker Hub.
 
 Let's create an application that generates and outputs a hash every 5 seconds or so.
 
