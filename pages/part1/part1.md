@@ -263,7 +263,7 @@ Woah! The fact that you can apply manifest from the internet just like that will
 
 ## Debugging ##
 
-Kubernetes is a "self-healing" system, and we'll get back to what Kubernetes consists of and how it actually works in part 5. But at this stage "self-healing" is an excellent concept: Often you (the maintainer or developer) don't have not have to do anything in case something goes wrong with a pod or a container.
+Kubernetes is a "self-healing" system, and we'll get back to what Kubernetes consists of and how it actually works in part 5. But at this stage "self-healing" is an excellent concept: Often you (the maintainer or developer) don't have to do anything in case something goes wrong with a pod or a container.
 
 Sometimes you need to interfere, or you might have problems with your own configuration. As you are trying to find bugs in your configuration start by eliminating all possibilities one by one. The key is to be systematic and **question everything**. Here are the preliminary tools to solve problems.
 
