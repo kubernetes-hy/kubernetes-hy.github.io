@@ -382,7 +382,7 @@ $ kubectl logs countdown-controller-dep-7ff598ffbf-q2rp5
 
 Very often you'll hear about a concept "Service Mesh". Service meshes are quite complex and have a large feature set. We could have started using one multiple times before to implement features we've implemented without it. The following video by Microsoft Developer is an excellent walkthrough of all of the features a service mesh has.
 
-<iframe width="560" height="315" src="https://www.youtube.com/watch?v=izVWk7rYqWI" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/izVWk7rYqWI" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 For traffic incoming, outgoing and between services it can:
 
