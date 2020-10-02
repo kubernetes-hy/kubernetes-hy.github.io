@@ -380,11 +380,11 @@ $ kubectl logs countdown-controller-dep-7ff598ffbf-q2rp5
 
 ## Service Meshes ##
 
-Very often you'll hear about a concept "Service Mesh". Service meshes are quite complex and have a large feature set. We could have started using one multiple times before to implement features we've implemented without it. The following video by Microsoft Developer is an excellent walkthrough of all of the features a service mesh has.
+Very often you'll hear about a concept "Service Mesh". Service meshes are quite complex and have a large feature set. During parts 1 to 4 we have implemented a few features that service meshes would have offered out of the box. The following video by Microsoft Developer is an excellent walkthrough of all of the features a service mesh has.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/izVWk7rYqWI" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-For traffic incoming, outgoing and between services it can:
+For incoming and outgoing traffic and for communication between services it can:
 
 - Secure the communication
 - Manage traffic
@@ -392,9 +392,9 @@ For traffic incoming, outgoing and between services it can:
 
 So a service mesh is an **extremely** powerful tool. If we started using service mesh like Istio in part 1 we may have been able to skip using traefik, skip some of our DIY monitoring solutions, and achieved canary releases without Argo Rollouts. On the other hand, we did do all that without a service meshes.
 
-Let's install a service mesh and test the features
+Let's install a service mesh and test the features. Our choice will be [Linkerd](https://linkerd.io/), mainly because it's lightweight compared to Istio. Once again they have their own CLI tool to help us, follow the [getting started](https://linkerd.io/2/getting-started/) guide until Step 4. 
 
-// TODO install service mesh
+
 
 // TODO exercise
 
@@ -622,6 +622,7 @@ $ curl -H "Host: tester-route.default.example.com" http://localhost:8081
 
 {% include_relative exercises/5_02.html %}
 
+{% include_relative exercises/5_03.html %}
 
 ## Summary ##
 
