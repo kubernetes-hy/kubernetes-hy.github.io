@@ -394,6 +394,23 @@ So a service mesh is an **extremely** powerful tool. If we started using service
 
 Let's install a service mesh and test the features. Our choice will be [Linkerd](https://linkerd.io/), mainly because it's lightweight compared to Istio. Once again they have their own CLI tool to help us, follow the [getting started](https://linkerd.io/2/getting-started/) guide until Step 4. 
 
+> We are actually following through the whole gettings started guide, so you can read through it if you wish.
+
+Let's look at our application, this time we'll use this microservice application for voting emojis: [https://github.com/BuoyantIO/emojivoto](https://github.com/BuoyantIO/emojivoto).
+
+```console
+$ kubectl apply -f https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/ns.yml \
+                -f https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/web.yml \
+                -f https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/emoji.yml \
+                -f https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/voting.yml \
+                -f https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/vote-bot.yml
+
+$ kubectl -n emojivoto get svc 
+  NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)             AGE
+  web-svc      ClusterIP   10.43.253.87    <none>        80/TCP              2m18s
+  emoji-svc    ClusterIP   10.43.161.108   <none>        8080/TCP,8801/TCP   2m17s
+  voting-svc   ClusterIP   10.43.105.220   <none>        8080/TCP,8801/TCP   2m16s
+```
 
 
 // TODO exercise
