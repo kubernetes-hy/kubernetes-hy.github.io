@@ -412,6 +412,24 @@ $ kubectl -n emojivoto get svc
   voting-svc   ClusterIP   10.43.105.220   <none>        8080/TCP,8801/TCP   2m16s
 ```
 
+Since it already has a service we're only missing an ingress.
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: web-ingress
+  namespace: emojivoto
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: web-svc
+          servicePort: 80
+```
+
+// TODO Doubt above
 
 // TODO exercise
 
