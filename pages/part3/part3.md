@@ -110,7 +110,7 @@ $ kubectl get svc --watch
 
 If we now access http://35.228.41.16 with our browser we'll see the application up and running. By refreshing the page we can also see that the load balancer sometimes offers us a different image.
 
-<div style="border: lightblue 0.2em outset; padding: 0.5em 1em 0 1em;" markdown="1">
+<div class="highlight-box" markdown="1">
 To avoid using up the credits delete the cluster whenever you do not need it
 
 ```console
