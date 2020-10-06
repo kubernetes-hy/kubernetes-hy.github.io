@@ -25,8 +25,8 @@ As the documentation can get only so far, if I had difficulties grasping a conce
 
 You can get Kubernetes Up and Running for free [from Microsoft](https://azure.microsoft.com/en-us/resources/kubernetes-up-and-running/) or [from VMWare](https://k8s.vmware.com/kubernetes-up-and-running/).
 
-I personally have a hobby cluster in [Hetzner](https://www.hetzner.com/) that I setup with [kubespray](https://github.com/kubernetes-sigs/kubespray) that is running multiple videogame servers and a few other things at the moment.
+I personally had a hobby cluster in [Hetzner](https://www.hetzner.com/) that I setup with [kubespray](https://github.com/kubernetes-sigs/kubespray) that was running multiple videogame servers. Now I have [k3s](https://github.com/rancher/k3s) there with knative and a single website for fun.
 
 ## How to get the DwK certificate? ##
 
-TODO. Submission application will have the certificate for you.
+Submission application will have the certificate for you when you have submitted all of the exercises.
