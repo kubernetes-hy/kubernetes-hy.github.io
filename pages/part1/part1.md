@@ -616,12 +616,12 @@ spec:
           emptyDir: {}
       containers:
         - name: image-finder
-          image: jakousa/dwk-app3-image-finder:a04092af0393067d08280db7a79057eaab67692b
+          image: jakousa/dwk-app3-image-finder:e11a700350aede132b62d3b5fd63c05d6b976394
           volumeMounts: # Mount volume
           - name: shared-image
             mountPath: /usr/src/app/files
         - name: image-response
-          image: jakousa/dwk-app3-image-response:31a78aec1090d7ea44446d2f9af621a2c59efe72
+          image: jakousa/dwk-app3-image-response:e11a700350aede132b62d3b5fd63c05d6b976394
           volumeMounts: # Mount volume
           - name: shared-image
             mountPath: /usr/src/app/files
@@ -701,12 +701,12 @@ Modify the previously introduced deployment to use it:
             claimName: image-claim
       containers:
         - name: image-finder
-          image: jakousa/dwk-app3-image-finder:a04092af0393067d08280db7a79057eaab67692b
+          image: jakousa/dwk-app3-image-finder:e11a700350aede132b62d3b5fd63c05d6b976394
           volumeMounts:
           - name: shared-image
             mountPath: /usr/src/app/files
         - name: image-response
-          image: jakousa/dwk-app3-image-response:31a78aec1090d7ea44446d2f9af621a2c59efe72
+          image: jakousa/dwk-app3-image-response:e11a700350aede132b62d3b5fd63c05d6b976394
           volumeMounts:
           - name: shared-image
             mountPath: /usr/src/app/files

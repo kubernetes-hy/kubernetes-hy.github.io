@@ -394,7 +394,7 @@ So a service mesh is an **extremely** powerful tool. If we started using service
 
 Let's install a service mesh and test the features. Our choice will be [Linkerd](https://linkerd.io/), mainly because it's lightweight compared to Istio. Once again they have their own CLI tool to help us, follow the [getting started](https://linkerd.io/2/getting-started/) guide until Step 4. 
 
-> We are actually following through the whole gettings started guide, so you can read through it if you wish.
+> We are actually simply following through the whole gettings started guide, so you can read through it if you wish.
 
 Let's look at our application, this time we'll use this microservice application for voting emojis: [https://github.com/BuoyantIO/emojivoto](https://github.com/BuoyantIO/emojivoto).
 
@@ -405,12 +405,26 @@ $ kubectl apply -f https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/ku
                 -f https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/voting.yml \
                 -f https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/vote-bot.yml
 
-$ kubectl -n emojivoto get svc 
-  NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)             AGE
-  web-svc      ClusterIP   10.43.253.87    <none>        80/TCP              2m18s
-  emoji-svc    ClusterIP   10.43.161.108   <none>        8080/TCP,8801/TCP   2m17s
-  voting-svc   ClusterIP   10.43.105.220   <none>        8080/TCP,8801/TCP   2m16s
+$ kubectl get all -n emojivoto
+  NAME                            READY   STATUS    RESTARTS   AGE
+  pod/web-7bcb54cb8b-cjw7d        1/1     Running   1          3d21h
+  pod/emoji-686f74d889-rcdsh      1/1     Running   1          3d21h
+  pod/vote-bot-74d97c76c6-pcsfl   1/1     Running   1          3d21h
+  pod/voting-56847f699b-2nzqn     1/1     Running   1          3d21h
+  
+  NAME                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)             AGE
+  service/web-svc      ClusterIP   10.43.248.111   <none>        80/TCP              3d21h
+  service/emoji-svc    ClusterIP   10.43.110.235   <none>        8080/TCP,8801/TCP   3d21h
+  service/voting-svc   ClusterIP   10.43.111.57    <none>        8080/TCP,8801/TCP   3d21h
+  
+  NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+  deployment.apps/emoji      1/1     1            1           3d21h
+  deployment.apps/vote-bot   1/1     1            1           3d21h
+  deployment.apps/web        1/1     1            1           3d21h
+  deployment.apps/voting     1/1     1            1           3d21h
 ```
+
+Here we see the "vote-bot" deployment that automatically generates traffic. The README tells us that it votes Donut 🍩 15% of the time and the rest randomly.
 
 Since it already has a service we're only missing an ingress.
 
@@ -429,21 +443,46 @@ spec:
           servicePort: 80
 ```
 
-// TODO Doubt above
+And it becomes available for us in [http://localhost:8081](http://localhost:8081). However, there's something strange going on! You can figure it out by watching the leaderboards and knowing where the votes are going, or by clicking every single emoji by yourself.
 
-// TODO exercise
+Let's see if there's a better way to detect the behavior and figure out what's wrong. Open linkerd with 
+
+```
+$ linkerd dashboard
+```
+
+it should open your browser window. Click the "emojivoto" namespace (to reach /namespaces/emojivoto) we'll notice that the resources in emojivoto namespace are not in the service mesh yet. This is due to the fact that they do not have the sidecar container in the pods. Let's add Linkerd with the following
+
+```
+$ kubectl get -n emojivoto deploy -o yaml \
+    | linkerd inject - \
+    | kubectl apply -f -
+```
+
+You can run the rows independently to see what they do. The first will output all deployments in emojivoto namespace. The `inject` on the second will add an annotation to instruct Linkerd to add the sidecar proxy container. Finally the kubectl apply will apply the modified deployments.
+
+If you now look at the dashboard you'll see a lot more information as the old deployments were replaced by the meshed ones. We also notice that success rate is less than stellar.
+
+Two services have success rate below 100%. As the _web_ is most likely just propagating the error from _voting_ we can click either of the services and you should quickly see which request is failing.
+
+There's a lot more service meshes offer.
+
+{% include_relative exercises/5_02.html %}
+
+{% include_relative exercises/5_03.html %}
+
 
 ## Beyond Kubernetes ##
 
 Finally as Kubernetes is a platform we'll go over a few popular building blocks that use Kubernetes.
 
-[OpenShift](https://en.wikipedia.org/wiki/OpenShift) is an "enterprise" Kubernetes ([Red Hat OpenShift Overview](https://developers.redhat.com/products/openshift/overview)). Claiming that you don't have Kubernetes because you have OpenShift would be equal to claiming ["I don't have an engine. I have a car!"](https://www.openshift.com/blog/enterprise-kubernetes-with-openshift-part-one). For other options for production-ready Kubernetes see [Rancher](https://rancher.com/), which you might have seen before in this page [https://github.com/rancher/k3d](https://github.com/rancher/k3d), and [Anthos GKE](https://cloud.google.com/anthos/gke), which might also sound familiar. They are all options when you're making the crucial decision between which Kubernetes distribution you want or would you like to use a managed service.
+[OpenShift](https://www.openshift.com/) is an "enterprise" Kubernetes ([Red Hat OpenShift Overview](https://developers.redhat.com/products/openshift/overview)). Claiming that you don't have Kubernetes because you have OpenShift would be equal to claiming ["I don't have an engine. I have a car!"](https://www.openshift.com/blog/enterprise-kubernetes-with-openshift-part-one). For other options for production-ready Kubernetes see [Rancher](https://rancher.com/), which you might have seen before in this page [https://github.com/rancher/k3d](https://github.com/rancher/k3d), and [Anthos GKE](https://cloud.google.com/anthos/gke), which might also sound familiar. They are all options when you're making the crucial decision between which Kubernetes distribution you want or would you like to use a managed service.
 
-TODO: Exercise for comparing platforms
+{% include_relative exercises/5_04.html %}
 
 ### Serverless ###
 
-[Serverless](https://en.wikipedia.org/wiki/Serverless_computing) has gained a lot of popularity and it's easy to see why. Be it Google Cloud Run, Knative, OpenFaaS, OpenWhisk, Fission or Kubeless they're running on top of Kubernetes, or atleast capable of doing so. The older the serverless platform the more likely it won't be running on Kubernetes. With this in light a discussions if Kubernetes is competing with serverless doesn't make much sense.
+[Serverless](https://en.wikipedia.org/wiki/Serverless_computing) has gained a lot of popularity and it's easy to see why. Be it Google Cloud Run, Knative, OpenFaaS, OpenWhisk, Fission or Kubeless they're running on top of Kubernetes, or atleast capable of doing so. The older the serverless platform the more likely it won't be running on Kubernetes. In the light of this a discussions if Kubernetes is competing with serverless doesn't make much sense.
 
 As this isn't a serverless course we won't go into depth about it but serverless sounds pretty dope. So next let's setup a serverless platform on our k3d because that's something we can do. For this let's choose [Knative](https://knative.dev/) for no particular reason other than that it sounds great.
 
@@ -655,9 +694,9 @@ $ curl -H "Host: tester-route.default.example.com" http://localhost:8081
   Hello DwK-but-extreme!
 ```
 
-{% include_relative exercises/5_02.html %}
+{% include_relative exercises/5_05.html %}
 
-{% include_relative exercises/5_03.html %}
+{% include_relative exercises/5_06.html %}
 
 ## Summary ##
 

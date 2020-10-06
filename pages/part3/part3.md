@@ -75,7 +75,7 @@ $ kubectl cluster-info
 The cluster we have now is *almost* like the one we had locally. Let's apply this application that creates a random string and then serves an image based on that random string. This will create 6 replicas of the process "seedimage".
 
 ```console
-$ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/e16301c4f223099e087cc010697250e584ac2022/app6/manifests/deployment.yaml
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/e11a700350aede132b62d3b5fd63c05d6b976394/app6/manifests/deployment.yaml
 ```
 
 Exposing the service is where the differences start. Instead of an ingress we'll use *LoadBalancer* service. Now as a warning the next step is going to add into the [cost of the cluster](https://cloud.google.com/compute/all-pricing#lb) as well.
@@ -540,7 +540,7 @@ Scaling can be either horizontal scaling or vertical scaling. Vertical scaling i
 
 There are multiple reasons for wanting to scale an application. The most common reason is that the number of requests an application receives exceeds the number of requests that can be processed. Limitations are often either the amount of requests that a framework is intended to handle or the actual CPU or RAM.
 
-I've prepared an application that uses up CPU resources here: `jakousa/dwk-app7:478244ce87503c4abab757b1d13db5aff10963c9`. The application accepts a query parameter to increase the time until freeing CPU via "?fibos=25", you should use values between 15 and 30.
+I've prepared an application that uses up CPU resources here: `jakousa/dwk-app7:e11a700350aede132b62d3b5fd63c05d6b976394`. The application accepts a query parameter to increase the time until freeing CPU via "?fibos=25", you should use values between 15 and 30.
 
 **deployment.yaml**
 
@@ -561,7 +561,7 @@ spec:
     spec:
       containers:
         - name: cpushredder
-          image: jakousa/dwk-app7:0653b8f5a41156a4e08185f7694120ee51ff2026
+          image: jakousa/dwk-app7:e11a700350aede132b62d3b5fd63c05d6b976394
           resources: 
             limits:
               cpu: "150m"
