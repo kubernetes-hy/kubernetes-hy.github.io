@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Part 2
-inheader: yes
+inheader: no
 permalink: /part2/
 order: 2
 ---
@@ -472,6 +472,6 @@ A great option especially for your local cluster or hobby cluster.
 
 ## Summary ##
 
-Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
+Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020)
 
 We're now at the state where we have the knowledge to deploy most software we'd develop into a Kubernetes cluster. Googling and reading the documentation will still be necessary, as always, but we can confidently move from our own local Kubernetes cluster and start using Google Kubernetes Engine. [Part 3](/part3)

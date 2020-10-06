@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Part 4
-inheader: yes
+inheader: no
 permalink: /part4/
 order: 4
 ---
@@ -556,7 +556,7 @@ This is now the final configuration:
 
 ## Summary ##
 
-Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
+Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020)
 
 By this point you have a grasp on the variety of decisions that are made during application development and how it may affect the operations side.
 

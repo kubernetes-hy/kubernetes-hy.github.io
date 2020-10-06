@@ -1,14 +1,14 @@
 ---
 layout: page
-title: Completion
+title: Registration
 inheader: no
-permalink: /completion/
+permalink: /registration/
 order: 0
 ---
 
 # Certificate #
 
-For certificate just mark the course as finished in the submission software and the certificate link will appear into the submission software after your exercises have been reviewed.
+For certificate just mark the course as finished in the submission software and the certificate link will appear in the submission software.
 
 ### Completing the course for credits ###
 
