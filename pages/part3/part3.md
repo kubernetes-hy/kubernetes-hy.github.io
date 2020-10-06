@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Part 3
-inheader: yes
+inheader: no
 permalink: /part3/
 order: 3
 ---
@@ -689,7 +689,7 @@ _Side note:_ Kubernetes also offers the possibility to limit resources per names
 
 ## Summary ##
 
-Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
+Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020)
 
 When deploying running software in a maintained Kubernetes service it really does get that easy. Vendor lock-in is a term commonly heard when talking about the cloud. In this section we dived into GKE and the services Google offered us. As we saw here we could migrate almost everything to Google Cloud with Cloud SQL and monitoring as the prime examples.
 

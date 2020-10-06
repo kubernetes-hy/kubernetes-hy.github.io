@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Part 5
-inheader: yes
+inheader: no
 permalink: /part5/
 order: 5
 ---
@@ -661,4 +661,4 @@ $ curl -H "Host: tester-route.default.example.com" http://localhost:8081
 
 ## Summary ##
 
-Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/)
+Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020)
