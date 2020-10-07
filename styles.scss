@@ -20,10 +20,16 @@ h3 {
   padding: 0.5em 1em 0 1em;
 }
 
+.centered-image {
+  display: flex;
+  justify-content: center;
+}
+
 .exercise {
   h1 {
     padding: 0;
   }
+
   border: 0.15rem solid gray;
   background-color: whitesmoke;
   margin-bottom: 1em;

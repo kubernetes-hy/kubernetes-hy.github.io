@@ -6,8 +6,6 @@ permalink: /part5/
 order: 5
 ---
 
-**HERE BE DRAGONS**
-
 Kubernetes is defined as a "container-orchestration system"  and "portable, extensible platform". In this part we'll focus on how and why its built and how to leverage the extensibility of Kubernetes. After this part you will be able to
 
 - Create your own Custom Resource Definitions (CRDs)
