@@ -592,7 +592,7 @@ Where in docker and docker-compose it would essentially mean that we had somethi
 
 Before we can get started with this, we need an application that shares data with another application. In this case, it will work as a method to share simple log files with each other. We'll need to develop the apps:
 
-App 1 will check if /usr/src/app/files/image.jpg exists and if not download a random image and save it as image.png. Any HTTP request will trigger a new image generation.
+App 1 will check if /usr/src/app/files/image.jpg exists and if not download a random image and save it as image.jpg. Any HTTP request will trigger a new image generation.
 
 App 2 will check for /usr/src/app/files/image.jpg and show it if it is available.
 
