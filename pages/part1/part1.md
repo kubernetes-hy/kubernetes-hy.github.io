@@ -421,7 +421,9 @@ $ docker ps
   a34e49184d37        rancher/k3s:latest         "/bin/k3s server --t…"   2 hours ago         Up 2 hours                                            k3d-k3s-default-server-0
 ```
 
-K3d has helpfully prepared us a port to access the API in 6443 and, in addition, has opened a port to 80. All requests to the load balancer here will be proxied to the same ports of all server nodes of the cluster. However, for testing purposes, we'll want an individual port open for a single node. Let's delete our old cluster and create a new one with port 8082 open:
+K3d has helpfully prepared us a port to access the API in 6443 and, in addition, has opened a port to 80. All requests to the load balancer here will be proxied to the same ports of all server nodes of the cluster. However, for testing purposes, we'll want an individual port open for a single node. Let's delete our old cluster and create a new one with port some ports open.
+
+K3d documentation tells us how the ports are opened, we'll open local 8081 to 80 in k3d-k3s-default-serverlb and local 8082 to 30080 in k3d-k3s-default-agent-0. The 30080 is chosen almost completely randomly, but needs to be a value between 30000-32767 for the next step:
 
 ```console
 $ k3d cluster delete
@@ -439,6 +441,8 @@ $ k3d cluster create --port '8082:30080@agent[0]' -p 8081:80@loadbalancer --agen
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app2/manifests/deployment.yaml
   deployment.apps/hashresponse-dep created
 ```
+
+Above the "agent[0]" and "loadbalancer" are based on k3d [documentation](https://github.com/rancher/k3d/blob/main/docs/usage/guides/exposing_services.md) and reading code from [here](https://github.com/rancher/k3d/blob/11cc7979228f304025d61254eb0c0cb2745b9444/cmd/util/filter.go#L119) and [here](https://github.com/rancher/k3d/blob/main/pkg/types/types.go#L65)
 
 Now we have access through port 8081 to our server node (actually all nodes) and 8082 to one of our agent nodes port 30080. They will be used to showcase different methods of communicating with the servers.
 
