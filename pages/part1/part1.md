@@ -72,16 +72,6 @@ We'll use K3d to create a group of docker containers that run k3s. Thus creating
 $ k3d cluster create -a 2
 ```
 
-If you are getting an error message saying as below,
-```console
-ERRO[0006] Failed to get HostIP
-```
-
-Run the command with the below flag
-```console
-k3d cluster create -a 2 --no-hostip
-```
-
 This created a Kubernetes cluster with 2 agent nodes. As they're in docker you can confirm that they exist with `docker ps`.
 
 ```console
