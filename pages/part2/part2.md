@@ -255,7 +255,7 @@ $ kubectl get secrets
   pixabay-apikey        Opaque                                1      2s
 ```
 
-To confirm everything is working we can delete the pod and let it restart with the new environment variable `kubectl delete po imageapi-dep-...`. Using *SealedSecret* was our first time using a custom resource - you can design your own with the help of the Kubernetes [documentation](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/).
+To confirm everything is working we can delete the pod and let it restart with the new environment variable `kubectl delete po imageapi-dep-...`. Using *SealedSecret* was our first time using a custom resource. We will be designing our own custom resources in [part 5](https://devopswithkubernetes.com/part5/).
 
 ### ConfigMaps ###
 
