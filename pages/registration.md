@@ -12,33 +12,31 @@ For certificate just mark the course as finished in the submission software and 
 
 ### Completing the course for credits ###
 
+To have access to an University of Helsinki email address.
+
 Next you will continue to work on the course in the Moodle online learning platform. Please follow the instructions below to gain access to the course’s Moodle space:
 
-1. **Enrollment*.** Enroll yourself on the course through the Open University <https://www.avoin.helsinki.fi/palvelut/esittely.aspx?o=135660523>
+1. **Enrollment***. Enroll yourself on the course through the Open University [https://www.avoin.helsinki.fi/palvelut/esittely.aspx?o=135660523](https://www.avoin.helsinki.fi/palvelut/esittely.aspx?o=135660523)
 
-2. **Link and key.** You will receive the Moodle-link and the course key through email within 24 hours after course enrollment.
+2. **Activate user account**. Wait for 24 hours and activate your University of Helsinki user ID. You will receive instructions on the activation process the following day.
 
-3. **User ID.** Do you study at University of Helsinki or other HAKA member institution?
-    
-   A. If yes, use your username and password to log in to Moodle.
-    
-   B. If no, please activate your University of Helsinki user ID to access Moodle: You will receive instructions on the activation process the **following day** through email.
+3. **Request Google Cloud Platform Education Grant from the teacher**. Send an email to the teacher of the course (jami.kousa@helsinki.fi) from **your @helsinki.fi email address**. Title your email: Google Cloud Coupon. The reply will include link to redeem the Student Coupon.
 
-4. **Access Moodle.** Sign into the Moodle space with your University of Helsinki / HAKA user ID and the enrolment key.
+**Moodle link and key**. You will also receive the Moodle-link and the course key through email within 24 hours after course enrollment. You will need to access Moodle at the end of course to complete the course exam.
 
 Please note!
 
-- Enrollment on the course through the Open University is possible until July 11, 2021.
+· Enrollment on the course through the Open University is possible until July 11, 2021.
 
-- Credits for the course are only available to those students who have successfully enrolled on the course through the Open University and have completed the course according to the instructions.
+· Credits for the course are only available to those students who have successfully enrolled on the course through the Open University and have completed the course according to the instructions.
 
-\* Electronic enrollment is available if you meet one of the following criteria:
+*Electronic enrollment is available if you meet one of the following criteria:
 
-- You have a Finnish personal identity number (format: xxxxxxxx-xxxx), or an online banking ID, or
+· You have a Finnish personal identity number (format: xxxxxxxx-xxxx), or or an online banking ID, or
 
-- you are a student at the University of Helsinki, or
+· you are a student at the University of Helsinki, or 
 
-- you are a student at a HAKA member institution.
+· you are a student at a [HAKA member institution](https://wiki.eduuni.fi/display/CSCHAKA/Members+and+partners)
 
 ### If you are not a student in Finland and want to enroll on the course and receive ECTS credits. ###
 
