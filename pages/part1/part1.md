@@ -473,7 +473,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app: hashresponse
+    app: hashresponse # This is the app as declared in the deployment.
   ports:
     - name: http
       nodePort: 30080 # This is the port that is available outside. Value for nodePort can be between 30000-32767
