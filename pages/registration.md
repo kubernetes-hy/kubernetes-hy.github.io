@@ -14,7 +14,7 @@ For certificate just mark the course as finished in the submission software and 
 
 To have access to an University of Helsinki email address.
 
-Next you will continue to work on the course in the Moodle online learning platform. Please follow the instructions below to gain access to the course’s Moodle space:
+Complete this guide after you've submitted exercises for part 2. Please follow the instructions below to gain access to @helsinki.fi address, Google Cloud Credits and the course’s Moodle space:
 
 1. **Enrollment***. Enroll yourself on the course through the Open University [https://www.avoin.helsinki.fi/palvelut/esittely.aspx?o=135660523](https://www.avoin.helsinki.fi/palvelut/esittely.aspx?o=135660523)
 
