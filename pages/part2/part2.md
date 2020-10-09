@@ -292,7 +292,7 @@ In part 1 we learned how volumes are used with PersistentVolumes and PersistentV
 
 > Deployment creates pods using a Resource called "ReplicaSet". We're using ReplicaSets through Deployments.
 
-Let's run Redis and save some information there. We're going to need a PersistentVolume as well as an application that utilizes the Redis. In part 1 we jumped through a few hurdles to get ourselves storage but k3s includes a helpful _storageclass_ that will streamline local testing.
+Let's run [Redis](https://redis.io) and save some information there. We're going to need a PersistentVolume as well as an application that utilizes the Redis. In part 1 we jumped through a few hurdles to get ourselves storage but k3s includes a helpful _storageclass_ that will streamline local testing.
 
 You can apply the _StatefulSet_ from `https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app5/manifests/statefulset.yaml`
 
