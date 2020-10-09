@@ -7,17 +7,17 @@
 
 ```console
 $ kubectl -n prometheus get pods
-  NAME                                                              READY   STATUS    RESTARTS   AGE
-  prometheus-operator-159525-operator-7ccb8df999-cnx2g              2/2     Running   0          2m30s
-  prometheus-operator-1595250757-prometheus-node-exporter-n69gb     1/1     Running   0          2m30s
-  prometheus-operator-1595250757-prometheus-node-exporter-m6fq9     1/1     Running   0          2m30s
-  prometheus-operator-1595250757-prometheus-node-exporter-xbl4h     1/1     Running   0          2m30s
-  prometheus-operator-1595250757-kube-state-metrics-679fc685x2gkq   1/1     Running   0          2m30s
-  alertmanager-prometheus-operator-159525-alertmanager-0            2/2     Running   0          2m19s
-  prometheus-operator-1595250757-grafana-598f6dbbdf-28l6z           2/2     Running   0          2m30s
-  prometheus-prometheus-operator-159525-prometheus-0                3/3     Running   0          2m7s 
+ NAME                                                              READY   STATUS    RESTARTS   AGE
+ kube-prometheus-stack-1602-operator-557c9c4f5-wbsqc               2/2     Running   0          17h
+ kube-prometheus-stack-1602180058-prometheus-node-exporter-tr7ns   1/1     Running   0          17h
+ kube-prometheus-stack-1602180058-grafana-59cd48d794-4459m         2/2     Running   0          17h
+ prometheus-kube-prometheus-stack-1602-prometheus-0                3/3     Running   1          17h
+ kube-prometheus-stack-1602180058-prometheus-node-exporter-ft7dg   1/1     Running   0          17h
+ kube-prometheus-stack-1602180058-prometheus-node-exporter-nt8cp   1/1     Running   0          17h
+ kube-prometheus-stack-1602180058-kube-state-metrics-55dccdkkz6w   1/1     Running   0          17h
+ alertmanager-kube-prometheus-stack-1602-alertmanager-0            2/2     Running   0          17h
 
-$ kubectl -n prometheus port-forward prometheus-prometheus-operator-159525-prometheus-0 9090
+$ kubectl -n prometheus port-forward prometheus-kube-prometheus-stack-1602-prometheus-0 9090:9090 
   Forwarding from 127.0.0.1:9090 -> 9090
   Forwarding from [::1]:9090 -> 9090
 ```
