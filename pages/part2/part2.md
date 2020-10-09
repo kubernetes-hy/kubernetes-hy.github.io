@@ -383,14 +383,15 @@ Before we can get started let's look into how Kubernetes applications are manage
 Installation instructions are [here](https://helm.sh/docs/intro/install/). After that we can add the official charts repository:
 
 ```console
+$ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 $ helm repo add stable https://kubernetes-charts.storage.googleapis.com/
 ```
 
-And after that we can install [prometheus-operator](https://hub.helm.sh/charts/stable/prometheus-operator/5.0.6). By default this would put everything to the default namespace.
+And after that we can install [kube-prometheus-stack](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack). By default this would put everything to the default namespace.
 
 ```console
 $ kubectl create namespace prometheus
-$ helm install stable/prometheus-operator --generate-name --namespace prometheus
+$ helm install prometheus-community/kube-prometheus-stack --generate-name --namespace prometheus
 ```
 
 This added a lot of stuff to our cluster. You can remove almost everything with `helm delete [name]` with the name found via the `helm list` command. Custom resource definitions are left and have to be manually removed if the need arises.
@@ -399,17 +400,17 @@ Lets open a way into Grafana so we can see the data.
 
 ```console
 $ kubectl get po -n prometheus
-  NAME                                                              READY   STATUS    RESTARTS   AGE
-  prometheus-operator-1587733290-kube-state-metrics-78dc98dc295tn   1/1     Running   0          53s
-  prometheus-operator-1587733290-prometheus-node-exporter-ztsz8     1/1     Running   0          53s
-  prometheus-operator-1587733290-prometheus-node-exporter-grpth     1/1     Running   0          53s
-  prometheus-operator-1587733290-prometheus-node-exporter-sdc8b     1/1     Running   0          53s
-  prometheus-operator-158773-operator-64dcc96864-c9svm              2/2     Running   0          53s
-  alertmanager-prometheus-operator-158773-alertmanager-0            2/2     Running   0          34s
-  prometheus-prometheus-operator-158773-prometheus-0                3/3     Running   1          23s
-  prometheus-operator-1587733290-grafana-668cf4f5bb-k8xk7           1/2     Running   0          53s
+ NAME                                                              READY   STATUS    RESTARTS   AGE
+ kube-prometheus-stack-1602180058-prometheus-node-exporter-nt8cp   1/1     Running   0          53s
+ kube-prometheus-stack-1602180058-prometheus-node-exporter-ft7dg   1/1     Running   0          53s
+ kube-prometheus-stack-1602-operator-557c9c4f5-wbsqc               2/2     Running   0          53s
+ kube-prometheus-stack-1602180058-prometheus-node-exporter-tr7ns   1/1     Running   0          53s
+ kube-prometheus-stack-1602180058-kube-state-metrics-55dccdkkz6w   1/1     Running   0          53s
+ alertmanager-kube-prometheus-stack-1602-alertmanager-0            2/2     Running   0          35s
+ kube-prometheus-stack-1602180058-grafana-59cd48d794-4459m         2/2     Running   0          53s
+ prometheus-kube-prometheus-stack-1602-prometheus-0                3/3     Running   1          23s
 
-$ kubectl -n prometheus port-forward prometheus-operator-1587733290-grafana-668cf4f5bb-k8xk7 3000
+$ kubectl -n prometheus port-forward kube-prometheus-stack-1602180058-grafana-59cd48d794-4459m  3000
   Forwarding from 127.0.0.1:3000 -> 3000
   Forwarding from [::1]:3000 -> 3000
 ```
