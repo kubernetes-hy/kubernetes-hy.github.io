@@ -368,7 +368,7 @@ If you ever have a requirement to have a single pod on every node specifically y
 
 _Job_ resource is used to run a container that has an end state once. The status of a job is saved so that they can be monitored after the execution has ended. Jobs can be configured so that it runs multiple instances of the same task in concurrently, sequentially and until a set number of successful completions have been achieved.
 
-Let's create a simple job that will create a backup of a postgres the database and then send the backup to another endpoint. We'll need to do some coding but let's keep it simple so a bash script will do just fine. It'll take env value URL as a database url where the dump is taken and passes it along to a storage server.
+Let's create a simple job that will create a backup of a postgres database and then send the backup to another endpoint. We'll need to do some coding but let's keep it simple so a bash script will do just fine. It'll take env value URL as a database url where the dump is taken and passes it along to a storage server.
 
 ```bash
 #!/bin/bash
