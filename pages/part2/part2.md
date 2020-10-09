@@ -368,11 +368,121 @@ If you ever have a requirement to have a single pod on every node specifically y
 
 _Job_ resource is used to run a container that has an end state once. The status of a job is saved so that they can be monitored after the execution has ended. Jobs can be configured so that it runs multiple instances of the same task in concurrently, sequentially and until a set number of successful completions have been achieved.
 
-TODO: Run jobs example
+Let's create a simple job that will create a backup of a postgres the database and then send the backup to another endpoint. We'll need to do some coding but let's keep it simple so a bash script will do just fine. It'll take env value URL as a database url where the dump is taken and passes it along to a storage server.
+
+```bash
+#!/bin/bash
+
+if [ $URL ]
+then
+  pg_dump -v $URL > /usr/src/app/backup.sql
+  
+  echo "Not sending the dump actually anywhere"
+  # curl -F ‘data=@/usr/src/app/backup.sql’ https://somewhere
+fi
+```
+
+I have the above image ready in `jakousa/simple-backup-example`. Since we don't have any postgres available to us yet let's deploy one first:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-svc
+  labels:
+    app: postgres
+spec:
+  ports:
+  - port: 5432
+    name: web
+  clusterIP: None
+  selector:
+    app: postgres
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-ss
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:13.0
+          ports:
+            - name: postgres
+              containerPort: 5432
+          env:
+          - name: POSTGRES_PASSWORD
+            value: "example"
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 100Mi
+```
+
+Apply the above and check it's running:
+
+```console
+$ kubectl get po
+  NAME                                READY   STATUS    RESTARTS   AGE
+  postgres-ss-0                       1/1     Running   0          65s
+```
+
+Now if we apply the following job that uses the image
+
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: backup
+spec:
+  template:
+    spec:
+      containers:
+      - name: backup
+        image: jakousa/simple-backup-example
+        env:
+          - name: URL
+            value: "postgres://postgres:example@postgres-svc.default:5432/postgres"
+      restartPolicy: Never # This time we'll run it only once
+```
+
+Pods have a few avilable configurations. For example we can force it to retry for a number of times by defining `backoffLimit`.
+
+```console
+$ kubectl get jobs
+  NAME     COMPLETIONS   DURATION   AGE
+  backup   1/1           7s         35s
+
+$ kubectl logs backup-wj9r5 
+  ...
+  pg_dump: saving encoding = UTF8
+  pg_dump: saving standard_conforming_strings = on
+  pg_dump: saving search_path = 
+  pg_dump: implied data-only restore
+  Not sending the dump actually anywhere
+```
 
 _CronJobs_ run a _Job_ on schedule. You may have used cron before, these are essentially the same.
 
-// TODO exercise: create a CronJob that POSTs a new todo every day ???
+{% include_relative exercises/2_08.html %}
 
 ## Monitoring ##
 
@@ -455,7 +565,7 @@ Now we can use the Explore tab (compass) to explore the data.
 
 ![]({{ "/images/part2/loki_app_redisapp.png" | absolute_url }})
 
-{% include_relative exercises/2_08.html %}
+{% include_relative exercises/2_09.html %}
 
 ### The easy way out ###
 
