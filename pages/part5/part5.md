@@ -145,7 +145,7 @@ $ kubectl describe po hashresponse-dep-57bcc888d7-5gkc9 | grep 'Node:'
 
 In this case it's in agent-1. Let's make the node go "offline" with pause:
 
-```
+```console
 $ docker ps
   CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS              PORTS                                           NAMES
   5c43fe0a936e        rancher/k3d-proxy:v3.0.0   "/bin/sh -c nginx-pr…"   10 days ago         Up 2 hours          0.0.0.0:8081->80/tcp, 0.0.0.0:50207->6443/tcp   k3d-k3s-default-serverlb
@@ -159,7 +159,7 @@ k3d-k3s-default-agent-1
 
 Now wait for a while and this should be the new state:
 
-```
+```console
 $ kubectl get po
 NAME                                READY   STATUS        RESTARTS   AGE
 hashresponse-dep-57bcc888d7-5gkc9   1/1     Terminating   0          15m
