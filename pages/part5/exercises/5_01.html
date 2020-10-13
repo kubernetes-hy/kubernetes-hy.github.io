@@ -3,6 +3,8 @@
   
   This exercise doesn't rely on previous exercises. You may again choose which ever technologies you want for the implementation.
 
+  <p style="color:firebrick;">This exercise is difficult!</p>
+
   We need a *DummySite* resource that can be used to create a html page from any url.
 
   1. Create a "DummySite" resource that has a string property called "website_url".
@@ -18,4 +20,9 @@
   Test that creating a DummySite resource with website_url "[https://example.com/](https://example.com/)" should create a copy of the website.
 
   <p style="color:firebrick;">The controller doesn't have to work perfectly in all circumstances. The following workflow should succeed: 1. apply role, account and binding. 2. apply deployment. 3. apply DummySite</p>
+
+  Tips:
+
+  If you're using Go I recommend using [kubebuilder](https://github.com/kubernetes-sigs/kubebuilder) to generate your boilerplate. Reading [https://stackoverflow.com/questions/49953980/watch-customresourcedefinitions-crd-with-client-go](https://stackoverflow.com/questions/49953980/watch-customresourcedefinitions-crd-with-client-go) may possibly help.
+
 </div>
