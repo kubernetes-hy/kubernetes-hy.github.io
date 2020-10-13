@@ -473,17 +473,17 @@ Let's fill in the missing data with a bit of detective work. Let's use the label
 ```console
 $ kubectl -n prometheus get prometheus
   NAME                                    VERSION   REPLICAS   AGE
-  prometheus-operator-159378-prometheus   v2.18.1   1          110s
+  kube-prometheus-stack-1602-prometheus   v2.18.2   1          39h
 
-$ kubectl describe prometheus prometheus-operator-159378-prometheus
+$ kubectl describe prometheus kube-prometheus-stack-1602-prometheus
 ...
-  Service Monitor Selector:
+ Service Monitor Selector:
     Match Labels:
-      Release:  prometheus-operator-1593782473
+      Release:  kube-prometheus-stack-1602180058
 ...
 ```
 
-So the label needs to be "release: prometheus-operator-1593782473" unless we'd like to define a new Prometheus resource. The port has been set by my-nats so we can find out the name with 
+So the label needs to be "release: kube-prometheus-stack-1602180058" unless we'd like to define a new Prometheus resource. The port has been set by my-nats so we can find out the name with 
 
 ```console
 $ kubectl describe svc my-nats
@@ -501,7 +501,7 @@ metadata:
   name: monitoring-nats
   namespace: prometheus
   labels:
-    release: prometheus-operator-1593782473
+    release: kube-prometheus-stack-1602180058
 spec:
   selector:
     matchLabels:
@@ -518,7 +518,7 @@ spec:
 And now Prometheus has access to the new data. Let's check Prometheus:
 
 ```console
-$ kubectl -n prometheus port-forward prometheus-prometheus-operator-159378-prometheus-0 9090
+$ kubectl -n prometheus port-forward prometheus-kube-prometheus-stack-1602-prometheus-0 9090
 Forwarding from 127.0.0.1:9090 -> 9090
 Forwarding from [::1]:9090 -> 9090
 ```
@@ -532,10 +532,10 @@ $ curl 'http://localhost:9090/api/v1/query?query=nats_varz_cpu'
 
 If the result here is empty then something is wrong, the result may be a success even if the query doesn't make sense.
 
-Now we just need to add a Grafana dashboard for the data. Let's import a dashboard from [here](https://raw.githubusercontent.com/nats-io/prometheus-nats-exporter/5084a32850823b59069f21f3a7dde7e488fef1c6/walkthrough/grafana-nats-dash.json) instead of configuring our own. Note that the dashboard resources are defined as "gnatsd_XXXX" whereas our resources as seen from the Prometheus Exporter `kubectl port-forward my-nats-0 7777:7777` in [http://127.0.0.1:7777/metrics](http://127.0.0.1:7777/metrics) are "nats_XXXX". Quick replace all later we can paste it into Grafana.
+Now we just need to add a Grafana dashboard for the data. Let's import a dashboard from [here](https://raw.githubusercontent.com/nats-io/prometheus-nats-exporter/5084a32850823b59069f21f3a7dde7e488fef1c6/walkthrough/grafana-nats-dash.json) instead of configuring our own. Note that the dashboard resources are defined as "gnatsd_XXXX" whereas our resources as seen from the Prometheus Exporter `kubectl port-forward my-nats-0 7777:7777` in [http://127.0.0.1:7777/metrics](http://127.0.0.1:7777/metrics) are "nats_XXXX" - so we need to search and replace all "gnatsd_XXXX" with "nats_XXXX" in the dashboard for the data to pass correctly from prometheus.
 
 ```console
-$ kubectl -n prometheus port-forward prometheus-operator-1593782473-grafana-7d457dff56-m2r6d 3000
+$ kubectl -n prometheus port-forward kube-prometheus-stack-1602180058-grafana-59cd48d794-4459m 3000 
 ```
 
 Here we can paste the JSON to "import via panel json" and then choose Prometheus as the source on the following page.
