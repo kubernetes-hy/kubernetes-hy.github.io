@@ -596,9 +596,16 @@ $ kubectl get po
 
 it works and there are almost instantly pods ready.
 
-If we wanted another service to access helloworld-go we would use the address `helloworld-go.default.svc.cluster.local`. Let's test this quickly with busybox `kubectl apply -f https://raw.githubusercontent.com/kubernetes/kubernetes/master/hack/testdata/recursive/pod/pod/busybox.yaml` and then send a request from the busybox pod to our serverless helloworld: `kubectl exec -it busybox1 -- wget -qO - helloworld-go.default.svc.cluster.local`.
+If we wanted another service to access helloworld-go we would use the address `helloworld-go.default.svc.cluster.local`. Let's test this quickly with busybox by send a request from a busybox pod to our serverless helloworld:
 
-Let's test the revisions by changing the contents of the yaml and applying it.
+```console
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/kubernetes/master/hack/testdata/recursive/pod/pod/busybox.yaml
+
+$ kubectl exec -it busybox1 -- wget -qO - helloworld-go.default.svc.cluster.local
+  Hello DwK!
+```
+
+Next let's test the revisions by changing the contents of the yaml and applying it.
 
 **knative-service.yaml**
 ```yaml
