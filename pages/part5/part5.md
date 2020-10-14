@@ -484,6 +484,8 @@ Finally as Kubernetes is a platform we'll go over a few popular building blocks 
 
 As this isn't a serverless course we won't go into depth about it but serverless sounds pretty dope. So next let's setup a serverless platform on our k3d because that's something we can do. For this let's choose [Knative](https://knative.dev/) for no particular reason other than that it sounds great.
 
+Knative has its own community-backed [runtime contract](https://github.com/knative/serving/blob/master/docs/runtime-contract.md). It describes what kind of features an application must and should have to run correctly as a FaaS. An essential requirement is that the app itself must be stateless and configurable with environmental variables. This kind of open-source specification helps a project gain wider adoption. For instance, [Google Cloud Run implemented](https://ahmet.im/blog/cloud-run-is-a-knative/) the same contract. 
+
 We will follow [this guide](https://knative.dev/docs/install/any-kubernetes-cluster/) to install "Serving" component of Knative. This will require us to choose a networking layer from the 6 offered. We will choose Ambassador, for no particular reason. For Ambassador and Knative to work locally in k3d we'll need to create our cluster without the traefik ingress.
 
 ```console
