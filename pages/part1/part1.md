@@ -579,10 +579,11 @@ We can see that the ingress is listening on port 80. As we already opened port t
 
 {% include_relative exercises/1_09.html %}
 
-
 ## Volumes Part 1 ##
 
-Storage in Kubernetes is **hard**. In part 1 we will look into a very basic method of using storage and return to this topic later. Where almost everything else in Kubernetes is very much dynamic, moving between nodes and replicating with ease, storage does not have the same possibilities.
+There are two things that are known to be difficult with Kubernetes. First is networking. Thankfully we can avoid most of the networking difficulties unless we were going to setup our own cluster. If you're interested you can watch this Webinar on "[Kubernetes and Networks: Why is This So Dang Hard?](https://www.youtube.com/watch?v=GgCA2USI5iQ)" but we'll skip most of the topics discussed in the video. The other of the most difficult things is **storage**.
+
+In part 1 we will look into a very basic method of using storage and return to this topic later. Where almost everything else in Kubernetes is very much dynamic, moving between nodes and replicating with ease, storage does not have the same possibilities. "[Why Is Storage On Kubernetes So Hard?](https://softwareengineeringdaily.com/2019/01/11/why-is-storage-on-kubernetes-is-so-hard/)" provides us a wide angle on the difficulties and the different options we have to overcome them.
 
 There are multiple types of volumes and we'll get started with two of them.
 
@@ -735,7 +736,13 @@ And the same file is available again.
 
 If you are interested in learning more about running your own storage you can check out.
 
-[StorageOS](https://storageos.com/)
+* [Rook](https://rook.io/)
+
+* [OpenEBS](https://openebs.io/)
+
+* [StorageOS](https://storageos.com/)
+
+* [Longhorn](https://longhorn.io/)
 
 {% include_relative exercises/1_11.html %}
 
