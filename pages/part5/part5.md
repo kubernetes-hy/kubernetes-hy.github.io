@@ -486,7 +486,7 @@ As this isn't a serverless course we won't go into depth about it but serverless
 
 Knative has its own community-backed [runtime contract](https://github.com/knative/serving/blob/master/docs/runtime-contract.md). It describes what kind of features an application must and should have to run correctly as a FaaS. An essential requirement is that the app itself must be stateless and configurable with environmental variables. This kind of open-source specification helps a project gain wider adoption. For instance, [Google Cloud Run implemented](https://ahmet.im/blog/cloud-run-is-a-knative/) the same contract. 
 
-We will follow [this guide](https://knative.dev/docs/install/any-kubernetes-cluster/) to install "Serving" component of Knative. This will require us to choose a networking layer from the 6 offered. We will choose Ambassador, for no particular reason. For Ambassador and Knative to work locally in k3d we'll need to create our cluster without the traefik ingress.
+We will follow [this guide](https://knative.dev/docs/install/any-kubernetes-cluster/) to install "Serving" component of Knative. This will require us to choose a networking layer from the 6 offered. We will choose [Contour](https://projectcontour.io/) since it's listed as being in `Stable` state and the other Stable, Istio, has resource requirements that are quite large. For Contour and Knative to work locally in k3d we'll need to create our cluster without the traefik ingress.
 
 ```console
 $ k3d cluster create --port '8082:30080@agent[0]' -p 8081:80@loadbalancer --agents 2 --k3s-server-arg '--no-deploy=traefik'
@@ -495,47 +495,31 @@ $ k3d cluster create --port '8082:30080@agent[0]' -p 8081:80@loadbalancer --agen
 Now installing Knative is pretty straight forward CRDs and core:
 
 ```console
-$ kubectl apply -f https://github.com/knative/serving/releases/download/v0.17.0/serving-crds.yaml
+$ kubectl apply -f https://github.com/knative/serving/releases/download/v0.18.0/serving-crds.yaml
   ...
 
-$ kubectl apply -f https://github.com/knative/serving/releases/download/v0.17.0/serving-core.yaml
+$ kubectl apply -f https://github.com/knative/serving/releases/download/v0.18.0/serving-core.yaml
   ...
 ```
 
-That's it. Well, if we wanted to run something that we'll never access that is it. Next we'll install Ambassador.
+That's it. Well, if we wanted to run something that we would never access that is it. Next we'll install Contour.
 
-## Ambassador ##
+## Contour ##
 
-Ambassador is an API gateway. It is the first step inbound connections touch. Previously we used traefik for the job, but "[Traefik as Knative Ingress?](https://github.com/traefik/traefik/issues/5081)" is still an open issue. You can read more about API gateways from learnk8s [here](https://learnk8s.io/kubernetes-ingress-api-gateway) 
-
-```console
-$ kubectl create namespace ambassador
-
-$ kubectl apply --namespace ambassador \
-  --filename https://getambassador.io/yaml/ambassador/ambassador-crds.yaml \
-  --filename https://getambassador.io/yaml/ambassador/ambassador-rbac.yaml \
-  --filename https://getambassador.io/yaml/ambassador/ambassador-service.yaml
-```
-
-Give Ambassador required permissions
+Previously we used traefik for the job, but "[Traefik as Knative Ingress?](https://github.com/traefik/traefik/issues/5081)" is still an open issue.
 
 ```console
-$ kubectl patch clusterrolebinding ambassador -p '{"subjects":[{"kind": "ServiceAccount", "name": "ambassador", "namespace": "ambassador"}]}'
+$ kubectl apply -f https://github.com/knative/net-contour/releases/download/v0.18.0/contour.yaml \
+                -f https://github.com/knative/net-contour/releases/download/v0.18.0/net-contour.yaml
 ```
 
-Enable Knative support
-
-```console
-$ kubectl set env --namespace ambassador  deployments/ambassador AMBASSADOR_KNATIVE_SUPPORT=true
-```
-
-And configure Knative Serving to use Ambassador
+And configure Knative Serving to use Contour
 
 ```console
 $ kubectl patch configmap/config-network \
   --namespace knative-serving \
   --type merge \
-  --patch '{"data":{"ingress.class":"ambassador.ingress.networking.knative.dev"}}'
+  --patch '{"data":{"ingress.class":"contour.ingress.networking.knative.dev"}}'
 ```
 
 And that's it. We'll leave the step 4 for configuring DNS out.
