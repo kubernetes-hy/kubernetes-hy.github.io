@@ -165,9 +165,9 @@ $ kubectl get po
   hashgenerator-dep-7b9b88f8bf-lvcv4   1/1     Running   0          5m30s
 ```
 
-_nodeSelector_ is a blunt tool. Let's say you have a cluster of various machines, ranging from a [fighter jet](https://gcn.com/articles/2020/01/07/af-kubernetes-f16.aspx) to a toaster to a supercomputer. Kubernetes can use _affinity_ and _anti-affinity_ to select which nodes are prioritized for which applications and _taints_ with _tolerances_ so that a pod can avoid certain nodes.
+_nodeSelector_ is a blunt tool. Let's say you have a cluster of various machines, ranging from a [fighter jet](https://gcn.com/articles/2020/01/07/af-kubernetes-f16.aspx) to a toaster to a supercomputer. Kubernetes can use _affinity_ and _anti-affinity_ to select which nodes are prioritized for which applications and _taints_ with _tolerances_ so that a pod can avoid certain nodes. For example, if a machine has a high network latency and we wouldn't want it to do some latency critical tasks.
 
-See [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) and [taints and tolerances](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for detailed information.
+See [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) and [taints and tolerances](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for detailed information. We will not assing pods to specific nodes on this course as we have a homogeneous cluster.
 
 ## Configuring your application ##
 
@@ -257,6 +257,8 @@ $ kubectl get secrets
 
 To confirm everything is working we can delete the pod and let it restart with the new environment variable `kubectl delete po imageapi-dep-...`. Using *SealedSecret* was our first time using a custom resource. We will be designing our own custom resources in [part 5](https://devopswithkubernetes.com/part5/).
 
+{% include_relative exercises/2_05.html %}
+
 ### ConfigMaps ###
 
 ConfigMaps are similar but the data doesn't have to be encoded and is not encrypted. Let's say you have a videogame server that takes a "serverconfig.txt" which looks like this:
@@ -282,7 +284,7 @@ data:
 
 Now the ConfigMap can be added into the container as a volume. By changing a value, like "maxplayers" in this case, and applying the ConfigMap the changes would be reflected in that volume.
 
-{% include_relative exercises/2_05.html %}
+{% include_relative exercises/2_06.html %}
 
 ## StatefulSets ##
 
@@ -354,9 +356,9 @@ Looks a lot like *Deployment* but uses volumeClaimTemplate to claim a volume for
 
 You can now open two terminals and run `$ kubectl logs -f redis-ss-X redisfiller` where X is 0 or 1. To confirm it's working we can delete a pod and it will restart and continue right where you left off. In addition we can delete the StatefulSet and the volume will stay and bind back when you apply the StatefulSet back.
 
-{% include_relative exercises/2_06.html %}
-
 {% include_relative exercises/2_07.html %}
+
+{% include_relative exercises/2_08.html %}
 
 ## DaemonSets ##
 
@@ -482,7 +484,7 @@ $ kubectl logs backup-wj9r5
 
 _CronJobs_ run a _Job_ on schedule. You may have used cron before, these are essentially the same.
 
-{% include_relative exercises/2_08.html %}
+{% include_relative exercises/2_09.html %}
 
 ## Monitoring ##
 
@@ -565,7 +567,7 @@ Now we can use the Explore tab (compass) to explore the data.
 
 ![]({{ "/images/part2/loki_app_redisapp.png" | absolute_url }})
 
-{% include_relative exercises/2_09.html %}
+{% include_relative exercises/2_10.html %}
 
 ### The easy way out ###
 

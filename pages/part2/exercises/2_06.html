@@ -1,5 +1,14 @@
 <div class="exercise" markdown="1">
-  <h1>Exercise 2.06: Stateful applications</h1>
+  <h1>Exercise 2.06: Documentation and ConfigMaps</h1>
   
-  Let's run a postgres database and save the ping/pong application counter into the database. The postgres database and ping/pong application should not be in the same pod. A single postgres database is enough and it may disappear with the cluster but it should survive even if all pods are taken down.
-</div>
+  Use the official Kubernetes documentation for this exercise. [https://kubernetes.io/docs/concepts/configuration/configmap/](https://kubernetes.io/docs/concepts/configuration/configmap/) and [https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) should contain everything you need.
+  
+  Create a ConfigMap for a "dotenv file". A file where you define environment variables that are loaded by the application.
+  For this use an environment variable "MESSAGE" with value "Hello" to test and print the value. The values from ConfigMap can be either saved to a file and read by the application, or set as environment variables and used by the application through that. Implementation is up to you but the output should look like this:
+  
+  ```plaintext
+  Hello
+  2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.
+  Ping / Pongs: 3
+  ```
+  </div>

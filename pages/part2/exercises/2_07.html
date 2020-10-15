@@ -1,8 +1,10 @@
 <div class="exercise" markdown="1">
-  <h1>Exercise 2.07: Project v1.2</h1>
+  <h1>Exercise 2.07: Stateful applications</h1>
 
-  Create a database and save the todos there.
+  Run a postgres database and save the ping/pong application counter into the database. 
   
-  Use Secrets and/or ConfigMaps to have the backend access the database.
-  </div>
-  
+  The postgres database and ping/pong application should not be in the same pod. 
+  A single postgres database is enough and it may disappear with the cluster but it should survive even if all pods are taken down.
+
+  You should not write the database password in plain text.
+</div>
