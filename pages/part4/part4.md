@@ -552,8 +552,6 @@ This is now the final configuration:
 
 {% include_relative exercises/4_06.html %}
 
-{% include_relative exercises/4_07.html %}
-
 ## Summary ##
 
 Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020)
