@@ -17,6 +17,8 @@ The course material is meant to be read part by part from start to finish. To ge
 
 The course material is written for Mac, so some instructions may lack platform specific details. Please make a pull request to the course material in case you find any mistakes or wish to add something. You can also add an "issue" through GitHub in case you find any issues with the course material. @jakousa in the telegram group also works in some quick-fix cases.
 
+The course material is also changing be it by pull requests or large scale changes such as new sections. Check the [news and upcoming](/news-and-upcoming) page for information, upcoming changes and news.
+
 ## Completing course ##
 
 To complete the course you will need to do and submit all exercises in parts 1-5. There is no exam.

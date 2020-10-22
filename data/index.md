@@ -16,7 +16,7 @@ Course details and starting instructions can be found in [part 0](/part-0).
 
 Registration is only required for ECTS credits. The certificate does not require registration or separate sign up. For ECTS credits (Finnish / Open Universitstudents) the registration is after you've completed part 2 and there will be a link at the end of the part.
 
-You should also read the [courses.helsinki.fi page](https://courses.helsinki.fi/en/aytkt21027en/135660523). This page also includes information aboutarget group, enrolment instructions, recommended reading and most importantly **deadlines**.
+You should also read the [courses.helsinki.fi page](https://courses.helsinki.fi/en/aytkt21027en/135660523). This page also includes information about target group, enrolment instructions, recommended reading and most importantly **deadlines**.
 
 #### DEFA-students ####
 

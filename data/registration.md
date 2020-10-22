@@ -3,8 +3,6 @@ path: "/registration-and-completion"
 title: "Registration and Completion"
 hidden: false
 information_page: true
-order: 0
-separator_after: "Material"
 ---
 
 # Certificate #

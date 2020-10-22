@@ -3,6 +3,8 @@ path: "/faq"
 title: "FAQ"
 hidden: false
 information_page: true
+sidebar_priority: -1000
+separator_after: "Material"
 ---
 
 <table-of-contents></table-of-contents>
