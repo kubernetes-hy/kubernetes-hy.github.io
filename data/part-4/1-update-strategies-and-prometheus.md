@@ -6,7 +6,7 @@ hidden: false
 
 <text-box variant='learningObjectives' name='Learning Objectives'>
 
-After this part you can
+After this section you can
 
 - Compare update strategies
 

@@ -4,6 +4,14 @@ title: 'Kubernetes Internals'
 hidden: false
 ---
 
+<text-box variant='learningObjectives' name='Learning Objectives'>
+
+After this section you
+
+- can explain in broad terms how Kubernetes operates
+
+</text-box>
+
 Instead of thinking about Kubernetes as something completely new I've found that comparing it to an operating system helps. I'm not an expert in operating systems but we've all used them.
 
 Kubernetes is a layer on top of which we run our applications. It takes the resources that are accessible from the layers below and manages our applications and resources. And it provides services, such as the DNS, for the applications. With this OS mindset we can also try to go the other way: You may have used a [cron](https://en.wikipedia.org/wiki/Cron) (or windows' [task scheduler](https://en.wikipedia.org/wiki/Windows_Task_Scheduler)) for saving long term backups of some applications. Here's the same thing in Kubernetes with [CronJobs](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/).

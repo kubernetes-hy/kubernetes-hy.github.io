@@ -6,11 +6,11 @@ hidden: false
 
 <text-box variant='learningObjectives' name='Learning Objectives'>
 
-After this part you know how to
+After this section you
 
-- Start debugging when something doesn't work stuck
+- can start debugging when something doesn't work
 
-- Use Lens to explore Kubernetes resources
+- know to use Lens to explore Kubernetes resources
 
 </text-box>
 

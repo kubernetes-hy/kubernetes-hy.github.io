@@ -4,6 +4,15 @@ title: 'Configuring applications'
 hidden: false
 ---
 
+<text-box variant='learningObjectives' name='Learning Objectives'>
+
+After this section you
+
+- know about CRDs
+
+- know how to pass variables in to your pods
+
+</text-box>
 
 There are two resources for configuration management. *Secrets* are for sensitive information that are given to containers on runtime. *ConfigMaps* are basically secrets but may contain any kinds of configuration. Use cases for ConfigMaps vary: you may have a ConfigMap mapped to a file with some values that the server reads during runtime and changing the ConfigMap will instantly change the behavior of the application. Both can be used to introduce environment variables.
 

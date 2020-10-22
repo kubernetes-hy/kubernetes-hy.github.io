@@ -6,11 +6,11 @@ hidden: false
 
 <text-box variant='learningObjectives' name='Learning Objectives'>
 
-After this part you know how to
+After this section you
 
-- Use Services to access applications from outside of the cluster
+- are able to use Services to access applications from outside of the cluster
 
-- Use Ingresses to access applications from outside of the cluster
+- are able to use Ingresses to access applications from outside of the cluster
 
 </text-box>
 

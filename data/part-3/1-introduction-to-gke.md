@@ -6,9 +6,9 @@ hidden: false
 
 <text-box variant='learningObjectives' name='Learning Objectives'>
 
-After this part you can
+After this section you can
 
-- Create your own cluster
+- Create your own cluster in GKE
 
 - Deploy applications to Google Kubernetes Engine
 

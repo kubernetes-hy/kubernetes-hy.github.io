@@ -6,7 +6,7 @@ hidden: false
 
 <text-box variant='learningObjectives' name='Learning Objectives'>
 
-After this part
+After this section
 
 - You know about Kubernetes DNS
 

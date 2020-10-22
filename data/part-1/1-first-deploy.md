@@ -6,11 +6,11 @@ hidden: false
 
 <text-box variant='learningObjectives' name='Learning Objectives'>
 
-After this part you know how to
+After this section you
 
-- Create and run a Kubernetes cluster locally with k3d
+- are able to create and run a Kubernetes cluster locally with k3d
 
-- Deploy a command line application to Kubernetes
+- can deploy a simple application to Kubernetes
 
 </text-box>
 

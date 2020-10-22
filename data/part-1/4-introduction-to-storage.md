@@ -6,11 +6,11 @@ hidden: false
 
 <text-box variant='learningObjectives' name='Learning Objectives'>
 
-After this part you know how to
+After this section you
 
-- Use volumes to share data between two containers in a pod
+- are able to use volumes to share data between two containers in a pod
 
-- Use persistent volumes to store data on the disk of a node
+- know about persistent volumes to store data on the disk of a node
 
 </text-box>
 

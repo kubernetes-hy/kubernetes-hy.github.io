@@ -4,6 +4,16 @@ title: 'StatefulSets and Jobs'
 hidden: false
 ---
 
+<text-box variant='learningObjectives' name='Learning Objectives'>
+
+After this section you
+
+- can deploy a stateful application, such as a database, to Kubernetes
+
+- know how to use jobs and cronjobs to execute periodic or single-time tasks
+
+</text-box>
+
 ## StatefulSets ##
 
 In part 1 we learned how volumes are used with PersistentVolumes and PersistentVolumeClaims. We used *Deployment* with them and everything worked well enough for our testing purposes. The problem is that *Deployment* creates and scales pods that are *replicas* - they are a new copy of the same thing. With PersistentVolumeClaims, the method through which a pod reserves persistent storage, this creates a possibly non-desired effect as the claims are **not** pod specific. The claim is shared by all pods in that deployment.

@@ -4,6 +4,15 @@ title: 'Monitoring'
 hidden: false
 ---
 
+<text-box variant='learningObjectives' name='Learning Objectives'>
+
+After this section you
+
+- know of the wide array of tools used for monitoring and can implement simple logging
+
+- know about Helm, the package manager for Kubernetes
+
+</text-box>
 
 Our cluster and the apps in it have been pretty much a black box. We've thrown stuff in and then hoped that everything works all right. We're going to use [Prometheus](https://prometheus.io/) to monitor the cluster and [Grafana](https://grafana.com/) to view the data.
 

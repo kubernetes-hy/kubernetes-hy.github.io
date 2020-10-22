@@ -4,6 +4,16 @@ title: 'Organizing a cluster'
 hidden: false
 ---
 
+<text-box variant='learningObjectives' name='Learning Objectives'>
+
+After this section you
+
+- know the methods for organizing a cluster
+
+- know about constraining pods to specific nodes
+
+</text-box>
+
 As you can imagine there may be a lot of resources inside a cluster. In fact, at the moment of writing this Kubernetes supports over 100 000 pods in a single cluster.
 
 ### Namespaces ###
