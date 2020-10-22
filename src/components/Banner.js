@@ -2,7 +2,7 @@ import React from "react"
 import styled from "styled-components"
 import CourseSettings from "../../course-settings"
 
-import BannerImage from "../../banner.svg"
+import BannerImage from "../../banner.jpeg"
 import withSimpleErrorBoundary from "../util/withSimpleErrorBoundary"
 
 const BannerWrapper = styled.header`
@@ -15,6 +15,7 @@ const BannerWrapper = styled.header`
   margin-bottom: 2rem;
   background-color: #c0392b;
   background-image: url(${BannerImage});
+  background-position-y: -100px;
   text-align: center;
   h1 {
   }
