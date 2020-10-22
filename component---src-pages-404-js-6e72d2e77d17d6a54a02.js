@@ -1,0 +1,2 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[15],{w2l6:function(e,t,n){"use strict";n.r(t);var a=n("q1tI"),l=n.n(a),c=n("RJaA"),o=n("VUD3"),r=n("eczs"),s=n("qhky");t.default=Object(r.c)((function(){return l.a.createElement(c.a,null,l.a.createElement(o.a,null,l.a.createElement(s.b,{title:"404"}),l.a.createElement("h1",null,"Ei löytynyt"),l.a.createElement("p",null,"Olet päätynyt osoitteeseen, jota ei ole olemassa.")))}))}}]);
+//# sourceMappingURL=component---src-pages-404-js-6e72d2e77d17d6a54a02.js.map
