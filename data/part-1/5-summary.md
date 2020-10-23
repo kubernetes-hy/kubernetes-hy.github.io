@@ -17,4 +17,6 @@ By now we know what the following are and how to use them:
 
 With them, we're ready to deploy simple software to a Kubernetes cluster. In the next part we'll learn more about management as well as a number of cases where the tools we have acquired so far are not enough.
 
-<quiz id="6413e87d-4a89-41ea-b184-a2c216d9cccd">
+<quiz id="6413e87d-4a89-41ea-b184-a2c216d9cccd"></quiz>
+
+<quiz id="aedb03cb-ef01-4a6b-a5fe-75b5c4e2bf4d"></quiz>

@@ -41,6 +41,14 @@ There are multiple exercises in each part. After you've completed all of the exe
 
 Course size is 5 ECTS credits. Pass/Fail grading, simply complete all exercises.
 
+### Quizzes ###
+
+The material includes Quizzes that look like this:
+
+<quiz id="467fa274-1e29-4a46-b7ea-c9238fe1612c"></quiz>
+
+They are optional part of the course and do not affect your grading. If you wish to complete the quizzes you have to register a "TMC" account, buttons at the top of the page. Quizzes work as an easy way for us to gather feedback and improve the course.
+
 ## Google Cloud Credits ##
 
 In part 3 we'll use Google Kubernetes Engine. It's not free.
@@ -78,3 +86,12 @@ Since the course is open source you can fork, edit and send a pull request. If y
 If you feel like you don’t want to be part of the list of contributors you can also add an issue. Guide for making an issue in github is [here](https://help.github.com/en/articles/creating-an-issue).
 
 Here is a link to the repository to find the tabs for issues and pull requests: [https://github.com/kubernetes-hy/kubernetes-hy.github.io](https://github.com/kubernetes-hy/kubernetes-hy.github.io)
+
+
+## Experience quizz ##
+
+Thank you for answering. My PhD depends on this.
+
+<quiz id="b728269b-89d0-4a37-a163-fd882c3059ba" /></quiz>
+
+<quiz id="455d9346-9b79-4a01-8bf8-aca584c383b6" /></quiz>
