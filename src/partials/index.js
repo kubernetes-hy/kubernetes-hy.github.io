@@ -77,7 +77,7 @@ const mapping = {
   test: Test,
   "pages-in-this-section": PagesInThisSection,
   "programming-exercise": ProgrammingExercise,
-  "exercise": Exercise,
+  exercise: Exercise,
   "text-box": TextBox,
   "sample-data": SampleData,
   "sample-output": SampleOutput,

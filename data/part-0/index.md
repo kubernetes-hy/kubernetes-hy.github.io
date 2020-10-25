@@ -51,11 +51,9 @@ They are optional part of the course and do not affect your grading. If you wish
 
 ## Google Cloud Credits ##
 
-In part 3 we'll use Google Kubernetes Engine. It's not free.
+In part 3 we'll use Google Kubernetes Engine. It's not free, but everyone starting with Google Cloud has $300 worth of free credits, see your options [here](https://cloud.google.com/free).
 
-Google has offered students with @helsinki.fi email addresses some Google Cloud Credits and everyone starting with Google Cloud has $300 worth of free credits.
-
-Finnish/Open University students, you will be given a @helsinki.fi address when you register to an Open University course, this will be a task for you at the end of part 2.
+Google has offered students with @helsinki.fi email addresses some Google Cloud Credits. Finnish/Open University students, you will be given a @helsinki.fi address when you register to an Open University course, this will be a task for you at the end of part 2.
 
 If you are not eligible for a @helsinki.fi email address and you have used all $300 credits there is nothing I can do. You can complete parts 1-2 and most likely 4-5, but part 3 is required for course completion and the certificate. For the eligibility for credits check the list and link at the bottom of [registration page](/registration).
 

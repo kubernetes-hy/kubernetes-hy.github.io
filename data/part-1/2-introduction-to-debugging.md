@@ -105,11 +105,14 @@ First, you'll need to add the cluster to Lens. If the config is not available in
 
 <img src="../img/lens_during_deploy.png">
 
-At the bottom, we can see every event, and at the top, we can see the status of different resources in our cluster. Try deleting and reapplying the deployment and you should see events in the dashboard. Next, let's navigate to the tab Workloads/Pods and click our pod with the name "hashgenerator-dep-...".
+At the bottom, we can see every event, and at the top, we can see the status of different resources in our cluster. Try deleting and reapplying the deployment and you should see events in the dashboard. This is the same output that you would see from `kubectl get events`
+
+Next, let's navigate to the tab Workloads/Pods and click our pod with the name "hashgenerator-dep-...".
 
 <img src="../img/lens_pod.png">
 
 The view shows us the same information as was in the description. But the GUI offers us actions as well. The three numbered in the top right corner are:
+
 1. Open terminal into a container in the pod
 2. Show logs
 3. Delete the resource
