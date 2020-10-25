@@ -87,7 +87,7 @@ $ docker ps
 
 Here we also see that port 6443 is opened to "k3d-k3s-default-serverlb", a useful "load balancer" proxy, that'll redirect a connection to 6443 into the server node, and that's how we can access the contents of the cluster. The port on our machine, above 57734, is randomly chosen. We could have opted out of the load balancer with `k3d cluster create -a 2 --no-lb` and the port would be open straight to the server node but having a load balancer will offer us a few features we wouldn't otherwise have.
 
-K3d helpfully also set up a *kubeconfig*, the contents of which is output by `k3d kubeconfig get k3s-default`. Kubectl will read kubeconfig from the location in KUBECONFIG environment value or by default from `~/.kube/config` and use the information to connect to the cluster. The contents include certificates, passwords and the address in which the cluster API. You can manually set the config with `k3d kubeconfig merge k3d-default --switch-context`.
+K3d helpfully also set up a *kubeconfig*, the contents of which is output by `k3d kubeconfig get k3s-default`. Kubectl will read kubeconfig from the location in KUBECONFIG environment value or by default from `~/.kube/config` and use the information to connect to the cluster. The contents include certificates, passwords and the address in which the cluster API. You can manually set the config with `k3d kubeconfig merge k3s-default --switch-context`.
 
 Now kubectl will be able to access the cluster
 
