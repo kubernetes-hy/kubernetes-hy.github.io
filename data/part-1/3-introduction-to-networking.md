@@ -93,9 +93,13 @@ Above the "agent[0]" and "loadbalancer" are based on k3d [documentation](https:/
 
 Now we have access through port 8081 to our server node (actually all nodes) and 8082 to one of our agent nodes port 30080. They will be used to showcase different methods of communicating with the servers.
 
-> We will have a limited amount of ports available in the future but that's ok for your own machine.
+<text-box name="Limitations of local environment" variant="hint">
 
-> Your OS may support using the host network so no ports need to be opened.
+The setup isn't perfect, we will have a limited amount of ports available in the future. This will be sufficient for our use cases.
+
+Your OS may support using the host network so no ports need to be opened. However, I have no experience with this.
+
+</text-box>
 
 #### What is a Service? ####
 

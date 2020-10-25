@@ -20,7 +20,9 @@ In part 1 we learned how volumes are used with PersistentVolumes and PersistentV
 
 *StatefulSets* are like *Deployments* except it makes sure that if a pod dies the replacement is identical, with the same network identity and name. In addition if the pod is scaled the copies will have their own storage. StatefulSets are for stateful applications. You could use StatefulSets to scale video game servers that require state, such as a Minecraft server. Or run a database. For data safety when deleted StatefulSets will not delete the volumes they are associated with.
 
-> Deployment creates pods using a Resource called "ReplicaSet". We're using ReplicaSets through Deployments.
+<text-box name="ReplicaSets" variant="hint">
+Deployment creates pods using a Resource called "ReplicaSet". We're using ReplicaSets through Deployments so we haven't really had to talk about them.
+</text-box>
 
 Let's run [Redis](https://redis.io) and save some information there. We're going to need a PersistentVolume as well as an application that utilizes the Redis. In part 1 we jumped through a few hurdles to get ourselves storage but k3s includes a helpful _storageclass_ that will streamline local testing.
 

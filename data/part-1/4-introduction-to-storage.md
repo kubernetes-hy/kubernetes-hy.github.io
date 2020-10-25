@@ -114,7 +114,7 @@ spec:
           - k3d-k3s-default-agent-0
 ```
 
-> As this is bound into that node avoid using this in production.
+As this is bound into that node avoid using this in production.
 
 The type of *local* we're using now can not be dynamically provisioned. A new *PersistentVolume* needs to be defined only rarely, for example to your personal cluster once a new physical disk is added. After that, a *PersistentVolumeClaim* is used to claim a part of the storage for an application. If we create multiple *PersistentVolumeClaims* the rest will stay in Pending state, waiting for a suitable *PersistentVolume*.
 

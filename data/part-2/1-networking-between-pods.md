@@ -39,7 +39,7 @@ spec:
       targetPort: 8080
 ```
 
-> Alternatively each Pod has an IP created by Kubernetes
+Alternatively each Pod has an IP created by Kubernetes.
 
 <exercise name='Exercise 2.01: Connecting pods'>
 

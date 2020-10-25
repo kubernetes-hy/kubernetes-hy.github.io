@@ -133,7 +133,9 @@ $ docker tag _image_ _username_/_image_
 $ docker push _username_/_image_
 ```
 
-> In the future, the material will use the offered applications in the commands. Follow along by changing the image to your application.
+<text-box name="Example applications" variant="hint">
+In the future, the material will use the offered applications in the commands. You may follow along by changing the image to your application. Almost everything is found in the same repository <a href="https://github.com/kubernetes-hy/material-example">https://github.com/kubernetes-hy/material-example</a>.
+</text-box>
 
 Now we're finally ready to deploy our first app into Kubernetes!
 
@@ -178,7 +180,9 @@ $ kubectl get pods
 
 To see the output we can run `kubectl logs -f hashgenerator-dep-6965c5c7-2pkxc`
 
-> Use `source <(kubectl completion bash)` to save yourself from a lot of headaches. Add it to .bashrc for an automatic load. (Also available for zsh)
+<text-box name="Automatic completion:" variant="hint">
+You can use `source <(kubectl completion bash)` to save yourself from a lot of headaches. Add it to .bashrc for an automatic load. (Also available for zsh)
+</text-box>
 
 A helpful list for other commands from docker-cli translated to kubectl is available here [https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/](https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/)
 
@@ -268,7 +272,9 @@ spec:
           image: jakousa/dwk-app1:78031863af07c4c4cc3c96d07af68e8ce6e3afba
 ```
 
-> I personally use vscode to create these yaml files. It has helpful autofill, definitions and syntax check for Kubernetes with the extension Kubernetes by Microsoft. Even now it helpfully warns us that we haven't defined resource limitations.
+<text-box name="Text editor of choice" variant="hint">
+  I personally use vscode to create these yaml files. It has helpful autofill, definitions and syntax check for Kubernetes with the extension Kubernetes by Microsoft. Even now it helpfully warns us that we haven't defined resource limitations.
+</text-box>
 
 This looks a lot like the docker-compose.yamls we have previously written. Let's ignore what we don't know for now, which is mainly labels, and focus on the things that we know:
 

@@ -27,7 +27,9 @@ So a service mesh is an **extremely** powerful tool. If we started using service
 
 Let's install a service mesh and test the features. Our choice will be [Linkerd](https://linkerd.io/), mainly because it's lightweight compared to Istio. Once again they have their own CLI tool to help us, follow the [getting started](https://linkerd.io/2/getting-started/) guide until Step 4.
 
-> We are actually simply following through the whole gettings started guide, so you can read through it if you wish.
+<text-box name="Alternate sources" variant="hint">
+ We are actually simply following through the whole gettings started guide, so you can read through it if you wish.
+</text-box>
 
 Let's look at our application, this time we'll use this microservice application for voting emojis: [https://github.com/BuoyantIO/emojivoto](https://github.com/BuoyantIO/emojivoto).
 
