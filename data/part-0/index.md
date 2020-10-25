@@ -15,7 +15,7 @@ To complete the exercises and examples in material attendees are required to hav
 
 The course material is meant to be read part by part from start to finish. To get a passing grade you have to do every exercise. There are exercises in the material placed so that you will have learned needed skills in the material before it. You should do the exercises as you go through the material. However, note that as we progress further into the course the exercises will require more googling and you should supplement your knowledge with official documentation!
 
-The course material is written for Mac, so some instructions may lack platform specific details. Please make a pull request to the course material in case you find any mistakes or wish to add something. You can also add an "issue" through GitHub in case you find any issues with the course material. @jakousa in the telegram group also works in some quick-fix cases.
+The course material is written using Mac, so some instructions may lack platform specific details. Please make a pull request to the course material in case you find any mistakes or wish to add something. You can also add an "issue" through GitHub in case you find any issues with the course material. @jakousa in the telegram group also works in some quick-fix cases.
 
 The course material is also changing be it by pull requests or large scale changes such as new sections. Check the [news and upcoming](/news-and-upcoming) page for information, upcoming changes and news.
 
