@@ -254,3 +254,5 @@ metadata:
   ```
 
 </exercise>
+
+<quiz id="3ac75f4c-037e-4319-b581-0545bd3b76d9"></quiz>

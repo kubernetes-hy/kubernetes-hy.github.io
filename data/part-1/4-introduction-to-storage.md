@@ -218,3 +218,5 @@ If you are interested in learning more about running your own storage you can ch
   3. Add a list for the existing todos with some hardcoded todos.
 
 </exercise>
+
+<quiz id="23c1e0c1-debe-4c86-9bf8-5f0786b0118e"></quiz>

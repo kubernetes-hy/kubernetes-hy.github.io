@@ -330,3 +330,5 @@ Woah! The fact that you can apply manifest from the internet just like that will
   You won't have access to the port yet but that'll come soon.
 
 </exercise>
+
+<quiz id="7671ddcf-3b5c-4b83-a705-b3b7bb665baf"></quiz>
