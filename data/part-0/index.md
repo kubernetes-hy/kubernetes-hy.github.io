@@ -33,6 +33,8 @@ Make a repository to github and publish your solutions there in clearly ordered 
 
 Most of the exercises will require you to write code and / or publish something to docker hub.
 
+A system for detecting plagiarism is used to check exercises submitted to GitHub. If multiple students hand in the same code, the situation is handled according to the [policy on plagiarism](https://guide.student.helsinki.fi/en/article/what-cheating-and-plagiarism) of the University of Helsinki.
+
 When you have completed a part, use the submission application to mark your exercises. You can not edit a submission so make sure you have completed enough exercises for a part before submitting.
 
 There are multiple exercises in each part. After you've completed all of the exercises for a part, use the [submission application](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020). Note that you can **not** edit a submission so mark all exercises as completed.
