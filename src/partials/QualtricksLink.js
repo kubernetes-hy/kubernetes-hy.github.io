@@ -22,7 +22,7 @@ const P = styled.p`
   margin-bottom: 1rem !important;
 `
 
-const QualtricksLink = ({ children, href, t, emailfieldname }) => {
+const QualtricksLink = ({ children, href, t }) => {
   const { loggedIn } = useContext(LoginStateContext)
   const userDetails = useAsync(getCachedUserDetails)
 
@@ -46,14 +46,10 @@ const QualtricksLink = ({ children, href, t, emailfieldname }) => {
     return <div>Error while loading user information.</div>
   }
 
-  const email = userDetails.value.email
+  const username = userDetails.value.username
 
-  let link = href
-  if (emailfieldname) {
-    link = `${link}&${encodeURIComponent(emailfieldname)}=${encodeURIComponent(
-      email,
-    )}`
-  }
+  const link = `${href}?User=${encodeURIComponent(username)}`
+
   return (
     <OutboundLink href={link} target="_blank" rel="noopener noreferrer">
       {children}
