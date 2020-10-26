@@ -12,9 +12,13 @@ After this section you can
 
 </text-box>
 
-We've used a number of CRDs, Custom Resource Definitions, previously. They are a way to extend Kubernetes with our own Resources. So let us do just that and extend Kubernetes! There's another option for [API Aggregation](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/apiserver-aggregation/) but that's left outside of the course.
+We've used a number of CRDs, Custom Resource Definitions, previously. They are a way to extend Kubernetes with our own Resources. So let us do just that and extend Kubernetes!
 
-We'll want a resource that counts down to 0. So let's start by defining a resource called "Countdown" - as a template I'll use one provided by the [docs](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/).
+Custom Resource Definitions are used to extend Kubernetes and we've used a large number of them already. They're so integral part of using Kubernetes that it's a good idea to learn how to make one ourselves.
+
+Before we can get started we need to figure out what we want to create. So let's create a resource that can be used to create countdowns. The resource will be called "Countdown". It will have some *length* and some *delay* between executions. The execution - what happens each the time set by *delay* is passed - is left up to an image. So that someone using our CRD can create a countdown that posts a message to twitter each time it's ticking down.
+
+As a template I'll use one provided by the [docs](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/).
 
 **resourcedefinition.yaml**
 ```yaml
