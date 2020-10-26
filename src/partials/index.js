@@ -65,6 +65,7 @@ import RegistrationLink2 from "./RegistrationLink2"
 import OnlyForCourseVariant from "./OnlyForCourseVariant"
 import OnlyForNotLoggedIn from "./OnlyForNotLoggedIn"
 import Points from "./Points"
+import QualtricksLink from "./QualtricksLink"
 import GoogleFormLink from "./GoogleFormLink"
 import InBrowserProgrammingExercise from "./InBrowserProgrammingExercise"
 import WorkshopSchedule from "./WorkshopSchedule"
@@ -95,6 +96,7 @@ const mapping = {
   "registration-link-ohja": RegistrationLink2,
   "moodle-exercise": MoodleExercise,
   "sqltrainer-exercise": SqlTrainerExercise,
+  "qualtricks-link": QualtricksLink,
   "google-form-link": GoogleFormLink,
   "in-browser-programming-exercise": InBrowserProgrammingExercise,
   "workshop-schedule": WorkshopSchedule,
