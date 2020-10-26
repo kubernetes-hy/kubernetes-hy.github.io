@@ -48,7 +48,7 @@ If you're using a namespace constantly you can set the namespace to be used by d
 
 **Kubernetes Best Practices - Organizing Kubernetes with Namespaces**
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/xpnZX3if9Tc" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/xpnZX3if9Tc" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <exercise name='Exercise 2.03: Keep them separated'>
 

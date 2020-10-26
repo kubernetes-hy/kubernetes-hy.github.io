@@ -15,7 +15,7 @@ After this section you can
 
 Very often you'll hear about a concept "Service Mesh". Service meshes are quite complex and have a large feature set. During parts 1 to 4 we have implemented a few features that service meshes would have offered out of the box. The following video by Microsoft Developer is an excellent walkthrough of all of the features a service mesh has.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/izVWk7rYqWI" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/izVWk7rYqWI" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 For incoming and outgoing traffic and for communication between services it can:
 
