@@ -81,7 +81,7 @@ We will use the term "server node" to refer to nodes with control-plane and "age
 
 #### Starting a cluster with k3d ####
 
-We'll use K3d to create a group of docker containers that run k3s. Thus creating our very own Kubernetes cluster.
+We'll use k3d to create a group of docker containers that run k3s. The installation instructions, or at least a link to them, are in [part 0](/part-0#installing-k3d). Creating our very own Kubernetes cluster is a single command.
 
 ```console
 $ k3d cluster create -a 2
@@ -189,7 +189,7 @@ $ kubectl get pods
   hashgenerator-dep-6965c5c7-2pkxc   1/1     Running   0          2m1s
 ```
 
-1/1 replicas are ready and its status is Running! We will try multiple replicas later.
+1/1 replicas are ready and its status is Running! We will try multiple replicas later. If your status doesn't look like this check [this page](/known-problems-solutions#first-deployment).
 
 To see the output we can run `kubectl logs -f hashgenerator-dep-6965c5c7-2pkxc`
 

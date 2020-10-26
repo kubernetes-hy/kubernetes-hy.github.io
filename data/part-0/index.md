@@ -73,7 +73,7 @@ Kubectl is a command line tool that we'll use to communicate with our Kubernetes
 
 ### Installing k3d ###
 
-We'll use k3d for practice. [Install instructions](https://github.com/rancher/k3d)
+We'll use k3d for practice. [Install instructions](https://github.com/rancher/k3d#get)
 
 ## Mistakes ##
 
