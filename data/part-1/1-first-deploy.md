@@ -16,23 +16,36 @@ After this section you
 
 ## What are microservices? ##
 
-In this course, we'll talk about microservices and create microservices. Before we get started with anything else we'll need to define what a microservice is.
+In this course, we'll talk about microservices and create microservices. Before we get started with anything else we'll need to define what a microservice is. Currently there are a many different definitions for microservices.
 
-**A microservice is any service that is smaller than a monolith.**
-
-As such the easiest method to achieve microservice architecture is by splitting off a single piece out of a monolith - they are then both less than a monolith. Why would you do this? For example, to scale a piece of the application separately or to have a separate team that works on a piece of the application.
+For this course we'll choose the definition set by Sam Newman in [Building Microservices](https://www.oreilly.com/library/view/building-microservices/9781491950340/): "**Microservices are small, autonomous services that work together**". The opposite of a microservice is a service that is self-contained and independent called a [Monolith](https://en.wikipedia.org/wiki/Monolithic_application).
 
 The misconception of microservices being a large number of extremely small services is proliferated by large enterprises. If you have an extremely large enterprise where teams don't even know the existence of other teams you may have an unconventionally large number of microservices. Due to the insanity of a large number of small services without any good reasoning we're witnessing the term monolith trending in 2020.
 
 - "Monoliths are the future" - Kelsey Hightower, Staff Developer Advocate at Google, ["Monoliths are the Future"](https://changelog.com/posts/monoliths-are-the-future)
 
-For the context of this unpopular opinion, Kelsey Hightower points the fault at *Distributed Monoliths* where you have a large number of microservices without a good reason.
+For the context of this unpopular opinion, Kelsey Hightower points out at "The problem people try to solve with microservices doesn't really line up with reality", leading to *Distributed Monoliths* where you have a large number of microservices without a good reason.
 
 - "Run a small team, not a tech behemoth? Embrace the monolith and make it majestic. You Deserve It!" - David Heinemeier Hansson, cofounder & CTO at Basecamp, ["The Majestic Monolith"](https://m.signalvnoise.com/the-majestic-monolith/)
 
 And this evolves into ["The Majestic Monolith can become The Citadel"](https://m.signalvnoise.com/the-majestic-monolith-can-become-the-citadel/) with the following: "next step is The Citadel, which keeps the Majestic Monolith at the center, but supports it with a set of Outposts, each extracting a small subset of application responsibilities."
 
-Sometimes during this course we'll do **arbitrary** splits to our services just to show the features of Kubernetes. We will also see at least one actual use case for [microservices](https://www.youtube.com/watch?v=y8OnoxKotPQ).
+When to use microservices? In the following video where Sam Newman and Martin Fowler discuss microservices, the answer is: "When you've got a really good reason".
+
+It also includes the top 3 reasons for using microservices:
+* Zero-downtime independent deployability
+* Isolation of data and of processing around that data
+* Use microservices to reflect the organizational structure
+
+**When To Use Microservices (And When Not To!)**
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/GBTdnfD6s5Q" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+A big topic in the video was also the *Distributed Monolith*, where the services are not independently deployable. This is possibly part of the reason why microservices are so hard to define. A simple definition such as "A microservice is any service that is smaller than a monolith", can be used to claim that a Distributed Monolith is a microservice. So a seemingly microservice architecture that does not have the benefits of a microservice architecture may actually be a disguised monolith.
+
+Since it is so hard to define rather than going first into microservices we should listen to the first two takeaways from the video that are "One should use microservices as a means to obtain a desired outcome rather than for the sake of using a new technology" and "Microservices shouldn't be the default option. If you think a service architecture could help, try it with one of the modules from a very simple monolith typology and let it evolve from there".
+
+However, sometimes during this course we'll do **arbitrary** splits to our services just to show the features of Kubernetes. So even though we are doing "[microservices](https://www.youtube.com/watch?v=y8OnoxKotPQ)" in this course, a healthy amount of scepticism is required around microservices in the real world. We will see at least one actual and well-justified use case for microservices with service scaling during the course.
 
 ## What is Kubernetes? ##
 
