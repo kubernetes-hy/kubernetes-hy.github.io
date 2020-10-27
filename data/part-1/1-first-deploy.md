@@ -139,7 +139,7 @@ Let's create an application that generates and outputs a hash every 5 seconds or
 
 I've prepared one [here](https://github.com/kubernetes-hy/material-example/tree/master/app1) `docker run jakousa/dwk-app1`.
 
-To deploy we need the cluster to have an access to the image. By default, Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but since that won't work when we go to non-k3d solutions we'll use the now very familiar registry *Docker Hub*.
+To deploy we need the cluster to have an access to the image. By default, Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but since that won't work when we go to non-k3d solutions we'll use the now possibly very familiar registry *Docker Hub*, we used that in [DevOps with Docker](http://devopswithdocker.com/). If you've never used Docker Hub, it's the place where docker client defaults to, so when you run "docker pull nginx" the nginx comes from Docker Hub. You'll need to register an account there and after that you can use `docker login` to authenticate yourself. If you don't wish to use Docker Hub you can also use local registry: follow the [tutorial here](https://k3d.io/usage/guides/registries/#using-a-local-registry) to set one up.
 
 ```console
 $ docker tag _image_ _username_/_image_
