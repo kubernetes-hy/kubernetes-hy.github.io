@@ -31,7 +31,7 @@ Please note!
 
 *Electronic enrollment is available if you meet one of the following criteria:
 
-· You have a Finnish personal identity number (format: xxxxxxxx-xxxx), or or an online banking ID, or
+· You have a Finnish personal identity number (format: xxxxxxxx-xxxx), or an online banking ID, or
 
 · you are a student at the University of Helsinki, or
 
