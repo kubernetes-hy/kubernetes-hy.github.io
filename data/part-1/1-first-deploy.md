@@ -315,6 +315,8 @@ $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-exam
 
 Woah! The fact that you can apply manifest from the internet just like that will come in handy.
 
+Instead of deleting the deployment we could just apply a modified deployment on top of what we already have. Kubernetes will take care of rolling out a new version. By using tags (e.g. `dwk/image:tag`) with the deployments each time we update the image we can modify and apply the new deployment yaml. Previously you may have always used the 'latest' tag, or not thought about tags at all. From the tag Kubernetes will know that the image is a new one and pulls it.
+
 <exercise name='Exercise 1.03: Declarative approach'>
 
   In your main application project create the folder for manifests and move your deployment into a declarative file.
