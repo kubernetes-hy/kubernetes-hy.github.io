@@ -22,7 +22,7 @@ There are multiple types of volumes and we'll get started with two of them.
 
 ### Simple Volume ###
 
-Where in docker and docker-compose it would essentially mean that we had something persistent here that is not the case. There are multiple types of volumes *emptyDir* volumes are shared filesystems inside a pod, this means that their lifecycle is tied to a pod. When the pod is destroyed the data is lost.
+Where in docker and docker-compose it would essentially mean that we had something persistent, here that is not the case. *emptyDir* volumes are shared filesystems inside a pod, this means that their lifecycle is tied to a pod. When the pod is destroyed the data is lost. In addition, simply moving the pod from another node will destroy the contents of the volume as the space is reserved from the node the pod is running on. Even with the limitations it may be used as a cache as it persists between container restarts or it can be used to share files between two containers in a pod.
 
 Before we can get started with this, we need an application that shares data with another application. In this case, it will work as a method to share simple log files with each other. We'll need to develop the apps:
 
