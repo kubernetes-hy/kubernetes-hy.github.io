@@ -248,9 +248,9 @@ We can see that the ingress is listening on port 80. As we already opened port t
   This is not required, but you can add the following annotation to your ingress so that the path in ingress is stripped from the request. This'll allow you to use "/pingpong" path whilst the ping-pong application listens on "/":
 
   ```yaml
-metadata:
-  annotations:
-    traefik.ingress.kubernetes.io/rule-type: "PathPrefixStrip"
+  metadata:
+    annotations:
+      traefik.ingress.kubernetes.io/rule-type: "PathPrefixStrip"
   ```
 
 </exercise>
