@@ -71,7 +71,7 @@ Note that all data is lost when the pod goes down.
 
 <exercise name='Exercise 1.10: Even more services'>
 
-  Split the main application into two different containers:
+  Split the main application into two different containers within a single pod:
 
   One generates a new timestamp every 5 seconds and saves it into a file.
   The other reads that file and outputs it with its hash for the user to see.
@@ -209,13 +209,16 @@ If you are interested in learning more about running your own storage you can ch
 
 <exercise name='Exercise 1.13: Project v0.7'>
 
-  We'll need to do some coding to start seeing results in the next part.
+  For the project we'll need to do some coding to start seeing results in the next part.
 
   1. Add an input field. The input should not take todos that are over 140 characters long.
 
   2. Add a send button. It does not have to send the todo yet.
 
   3. Add a list for the existing todos with some hardcoded todos.
+
+  Maybe something similar to this:
+  <img src="../img/project-ex-113.png">
 
 </exercise>
 

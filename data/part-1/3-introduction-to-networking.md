@@ -46,9 +46,9 @@ Now we can view the response from http://localhost:3003 and confirm that it is w
 
 <exercise name='Exercise 1.05: Project v0.3'>
 
-  Have the application return something to a GET request sent to the application. A simple html page is good or you can deploy something more complex like a single-page-application.
+  Have the project respond something to a GET request sent to the project. A simple html page is good or you can deploy something more complex like a single-page-application.
 
-  Use `kubectl port-forward` to confirm that the application is accessible and works in the cluster.
+  Use `kubectl port-forward` to confirm that the project is accessible and works in the cluster by using a browser to access the project.
 
 </exercise>
 
@@ -230,14 +230,16 @@ We can see that the ingress is listening on port 80. As we already opened port t
 
 <exercise name='Exercise 1.07: External access with Ingress'>
 
-  In addition to outputting the timestamp and hash, save it to memory and display it when accessing the main application via HTTP. Then use ingress to access it with a browser.
+  In addition to outputting the timestamp and hash, save it to memory and display it when accessing the "main application" via HTTP. Then use ingress to access it with a browser.
 
 </exercise>
+
 <exercise name='Exercise 1.08: Project v0.5'>
 
   Start using Ingress instead of NodePort to access the project.
 
 </exercise>
+
 <exercise name='Exercise 1.09: More services'>
 
   Develop a second application that simply responds with "pong 0" to a GET request and increases a counter (the 0) so that you can see how many requests have been sent. The counter should be in memory so it may reset at some point.

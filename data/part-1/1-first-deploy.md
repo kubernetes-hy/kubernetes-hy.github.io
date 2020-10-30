@@ -319,7 +319,7 @@ Instead of deleting the deployment we could just apply a modified deployment on 
 
 <exercise name='Exercise 1.03: Declarative approach'>
 
-  In your main application project create the folder for manifests and move your deployment into a declarative file.
+  In your "main application" create the folder for manifests and move your deployment into a declarative file.
 
   Make sure everything still works by restarting and following logs.
 
