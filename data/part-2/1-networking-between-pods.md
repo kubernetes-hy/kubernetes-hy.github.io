@@ -69,3 +69,5 @@ Alternatively each Pod has an IP created by Kubernetes.
   Frontend already has an input field. Connect it into our backend so that inputting data and pressing send will add a new todo into the list.
 
 </exercise>
+
+<quiz id="f898b7ea-47a3-49ec-aedf-eb126e8eccb6"></quiz>

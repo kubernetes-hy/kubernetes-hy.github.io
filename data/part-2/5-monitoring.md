@@ -112,3 +112,5 @@ There was an easier way for us to install Prometheus with a few clicks. If you h
 3. Scroll down and under "Features" under "Metrics" you can press "Install"
 
 A great option especially for your local cluster or hobby cluster.
+
+<quiz id="84aadc27-e1af-45aa-901d-9519613663d5"></quiz>

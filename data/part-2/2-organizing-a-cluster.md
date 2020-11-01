@@ -142,3 +142,5 @@ $ kubectl get po
 _nodeSelector_ is a blunt tool. Let's say you have a cluster of various machines, ranging from a [fighter jet](https://gcn.com/articles/2020/01/07/af-kubernetes-f16.aspx) to a toaster to a supercomputer. Kubernetes can use _affinity_ and _anti-affinity_ to select which nodes are prioritized for which applications and _taints_ with _tolerances_ so that a pod can avoid certain nodes. For example, if a machine has a high network latency and we wouldn't want it to do some latency critical tasks.
 
 See [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) and [taints and tolerances](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for detailed information. We will not assing pods to specific nodes on this course as we have a homogeneous cluster.
+
+<quiz id="7dff6967-da9e-492c-8c5a-fab605868215"></quiz>

@@ -147,3 +147,5 @@ Now the ConfigMap can be added into the container as a volume. By changing a val
   ```
 
 </exercise>
+
+<quiz id="66af1b78-c0b6-40b3-96eb-9264ada63190"></quiz>

@@ -232,3 +232,5 @@ _CronJobs_ run a _Job_ on schedule. You may have used cron before, these are ess
   https://en.wikipedia.org/wiki/Special:Random responds with a redirect to a random wikipedia page so you can ask it to provide a random article for you to read. TIP: Check location header
 
 </exercise>
+
+<quiz id="53e3f0c3-0e40-4c22-9efe-a5367bfb4f60"></quiz>
