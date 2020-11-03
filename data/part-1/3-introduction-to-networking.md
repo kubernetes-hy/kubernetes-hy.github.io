@@ -230,13 +230,17 @@ We can see that the ingress is listening on port 80. As we already opened port t
 
 <exercise name='Exercise 1.07: External access with Ingress'>
 
-  In addition to outputting the timestamp and hash, save it to memory and display it when accessing the "main application" via HTTP. Then use ingress to access it with a browser.
+  "Main application" has now only output a timestamp and hash to logs.
+
+  Add an endpoint to request the current status (timestamp and hash) and an ingress so that you can access it with a browser.
+
+  You can just store the hash and timestamp to memory.
 
 </exercise>
 
 <exercise name='Exercise 1.08: Project v0.5'>
 
-  Start using Ingress instead of NodePort to access the project.
+  Switch to using Ingress instead of NodePort to access the project. You can delete the ingress of the "main application" so they don't interfere with this exercise. We'll look more into paths and routing in the next exercise and at that point you can configure project to run with the main application side by side.
 
 </exercise>
 
