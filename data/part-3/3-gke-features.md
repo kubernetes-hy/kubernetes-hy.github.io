@@ -209,3 +209,5 @@ _Side note:_ Kubernetes also offers the possibility to limit resources per names
   Submit a picture of the logs when a new todo is created.
 
 </exercise>
+
+<quiz id="cdd5ff16-6883-403a-8eb7-2cab7b8aa364"></quiz>

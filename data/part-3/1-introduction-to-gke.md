@@ -206,3 +206,5 @@ This takes a while to deploy, responses may be 404 and 502 as it becomes availab
   Unfortunately since GKE Ingress does not have rewrites or rewrite policy like traefik had with "PathPrefixStrip" [yet](https://github.com/kubernetes/ingress-gce/issues/109) pingpong will have to respond from /pingpong path.
 
 </exercise>
+
+<quiz id="419b91fc-769c-4964-b679-e7790f70799b"></quiz>
