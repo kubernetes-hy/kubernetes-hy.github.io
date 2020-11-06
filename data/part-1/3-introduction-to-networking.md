@@ -247,7 +247,7 @@ We can see that the ingress is listening on port 80. As we already opened port t
 <exercise name='Exercise 1.09: More services'>
 
   Develop a second application that simply responds with "pong 0" to a GET request and increases a counter (the 0) so that you can see how many requests have been sent. The counter should be in memory so it may reset at some point.
-  Create a new deployment for it and use ingress to route requests directed '/pingpong' to it.
+  Create a new deployment for it and have it share ingress with "main application" just route requests directed '/pingpong' to it.
 
   In future exercises, this second application will be referred to as "ping/pong application"
 
