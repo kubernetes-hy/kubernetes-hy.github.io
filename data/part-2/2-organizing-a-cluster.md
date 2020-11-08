@@ -34,7 +34,7 @@ $ kubectl get all --all-namespaces
 
 Namespaces should be kept separate - you could run all of the examples and do the exercises of this course in a cluster that is shared with critical software. An administrator should set a *ResourceQuota* for that namespace so that you can safely run anything there. We'll look into resource limits and requests later.
 
-Defining a namespace is a oneliner, but requires the namespace to exist (`kubectl create namespace example-namespace`):
+Defining a namespace is a oneliner, but requires the namespace not to exist already (`kubectl create namespace example-namespace`):
 
 ```yaml
 ...
