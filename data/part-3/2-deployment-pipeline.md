@@ -197,9 +197,9 @@ Next we'll use some additional actions, mainly from [GoogleCloudPlatform](https:
         project_id: ${{ secrets.GKE_PROJECT }}
 ```
 
-The secrets here are not from the environment variables but are included into the project from Github. Read their guide [here](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets). The *GKE_SA_KEY* is a service account key that is required to access the google cloud services - read their guide for it [here](https://cloud.google.com/iam/docs/creating-managing-service-account-keys).
+The secrets here are not from the environment variables but are included into the project from Github. Read their guide [here](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets). The *GKE\_SA\_KEY* is a service account key that is required to access the google cloud services - read their guide for it [here](https://cloud.google.com/iam/docs/creating-managing-service-account-keys).
 
-Next use _gcloud_ commands to configure Docker and this will enable us to push to Google Container Registry, which we'll use for no particular reason. Read more about it here <https://cloud.google.com/container-registry/>. If we wanted we could use Docker Hub instead. Note that the registry is [not free](https://cloud.google.com/container-registry/pricing) and you'll probably want to delete the images from there during and after this course.
+Next use _gcloud_ commands to configure Docker and this will enable us to push to Google Container Registry, which we'll use instead of Docker Hub. We could use Docker Hub if we wanted to do so but GCR is an excellent option now that we have access to it. GCR is a lot more performant and has a low network latency. Cutting down on the time we spend moving images around will ensure our deployments are quick. Read more about it here <https://cloud.google.com/container-registry/>. Note that the registry is [not free](https://cloud.google.com/container-registry/pricing) and you'll probably want to delete the images from there during and after this course.
 
 ```yaml
 ...
