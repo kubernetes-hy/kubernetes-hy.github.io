@@ -317,6 +317,8 @@ Woah! The fact that you can apply manifest from the internet just like that will
 
 Instead of deleting the deployment we could just apply a modified deployment on top of what we already have. Kubernetes will take care of rolling out a new version. By using tags (e.g. `dwk/image:tag`) with the deployments each time we update the image we can modify and apply the new deployment yaml. Previously you may have always used the 'latest' tag, or not thought about tags at all. From the tag Kubernetes will know that the image is a new one and pulls it.
 
+When updating anything in Kubernetes the usage of delete is actually an anti-pattern and you should use it only as the last option. As long as you don't delete the resource Kubernetes will do a rolling update, ensuring minimum (or none) downtime for the application. On the topic of anti-patterns: you should also always avoid doing anything imperatively! If your files don't tell Kubernetes and your team what the state should be and instead you run commands that edit the state you are just lowering the [bus factor](https://en.wikipedia.org/wiki/Bus_factor) for your cluster and application.
+
 <exercise name='Exercise 1.03: Declarative approach'>
 
   In your "main application" create the folder for manifests and move your deployment into a declarative file.
@@ -332,5 +334,19 @@ Instead of deleting the deployment we could just apply a modified deployment on 
   You won't have access to the port yet but that'll come soon.
 
 </exercise>
+
+Your basic workflow may look something like this:
+
+```console
+$ docker build -t <image>:<new_tag>
+
+$ docker push <image>:<new_tag>
+```
+
+Then edit deployment.yaml so that the tag is updated to the \<new_tag\> and
+
+```console
+$ kubectl apply -f manifests/deployment.yaml
+```
 
 <quiz id="7671ddcf-3b5c-4b83-a705-b3b7bb665baf"></quiz>

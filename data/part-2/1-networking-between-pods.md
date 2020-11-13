@@ -41,6 +41,23 @@ spec:
 
 Alternatively each Pod has an IP created by Kubernetes.
 
+<text-box name="Debugging hint" variant="hint">
+
+Sometimes when you are lost the best choice is to manually test what is going on. So instead of deploying a new version while debugging just go inside a pod and/or send a request manually from a pod.
+
+For example you can use [busybox](https://en.wikipedia.org/wiki/BusyBox)
+
+Try [using this yaml here](https://raw.githubusercontent.com/kubernetes/kubernetes/master/hack/testdata/recursive/pod/pod/busybox.yaml)
+
+And then just exec the command like so:
+```
+$ kubectl exec -it busybox1 -- wget -qO - http://google.fi
+```
+
+Note that as the busybox yaml above is for a Pod, it will only ever create a single pod that you will have to manually destroy! Excellent for manual testing.
+
+</text-box>
+
 <exercise name='Exercise 2.01: Connecting pods'>
 
   Connect the main application and ping/pong application. Instead of sharing data via files use HTTP endpoints to respond with the number of pongs. Deprecate all the volume between the two applications for the time being.
