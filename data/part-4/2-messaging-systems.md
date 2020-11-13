@@ -279,7 +279,7 @@ This is now the final configuration:
   The broadcaster should be able to be scaled without sending the message multiple times. Test that it can run with 6 replicas without issues. The messages only have to be sent to the external service if all of the services are working correctly. So a randomly missing message is not an issue but a duplicate is.
 
   Example of a working broadcaster:
-  ![]({{ "/images/part4/ex406-solution.gif" | absolute_url }})
+  <img src="../img/ex406-solution.gif">
 
   You should not write the API key in plain text.
 
