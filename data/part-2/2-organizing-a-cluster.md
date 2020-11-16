@@ -14,13 +14,13 @@ After this section you
 
 </text-box>
 
-As you can imagine there may be a lot of resources inside a cluster. In fact, at the moment of writing this Kubernetes supports over 100 000 pods in a single cluster.
+As you can imagine, there may be a lot of resources inside a cluster. In fact, at the moment of writing this Kubernetes supports over 100 000 pods in a single cluster.
 
 ### Namespaces ###
 
 Namespaces are used to keep resources separated. A company which uses 1 cluster but has multiple projects can use namespaces to split the cluster into virtual clusters, one for each project. Most commonly they would be used to separate environments such as production, testing, staging. DNS entry for services includes the namespace so you can still have projects communicate with each other if needed through service.namespace address. e.g if the example-service from a previous section was in a namespace "ns-test" it could be found from other namespaces via "http://example-service.ns-test".
 
-Accessing namespaces with kubectl is by using the `-n` flag. For example you can see what the namespace kube-system has with
+Accessing namespaces with kubectl is achieved by using the `-n` flag. For example, you can see what the namespace kube-system has with
 
 ```console
 $ kubectl get pods -n kube-system
@@ -44,7 +44,7 @@ metadata:
 ...
 ```
 
-If you're using a namespace constantly you can set the namespace to be used by default with `kubectl config set-context --current --namespace=<name>`.
+If you're using a namespace constantly, you can set the namespace to be used by default with `kubectl config set-context --current --namespace=<name>`.
 
 **Kubernetes Best Practices - Organizing Kubernetes with Namespaces**
 
@@ -64,7 +64,7 @@ If you're using a namespace constantly you can set the namespace to be used by d
 
 ### Labels ###
 
-Labels are used to separate an application from others inside a namespace and to group different resources together. Labels are key/value pairs and they can be modified, added or removed at any time. Labels are identifying and you can query resources that have a certain label.
+Labels are used to separate an application from others inside a namespace and to group different resources together. Labels are key-value pairs and they can be modified, added or removed at any time. Labels are identifying and you can query resources that have a certain label.
 
 Let's look at the labels in *Deployment* yamls. This is the first yaml we created:
 
@@ -117,7 +117,7 @@ With labels we can even move pods to labeled nodes. Let's say we have a few node
         networkquality: excellent
 ```
 
-If you already had it running it won't move the pod to avoid unwanted changes in the system. We'll delete the pod so that Kubernetes will move the new version to the correct node.
+If you already had it running, it won't move the pod to avoid unwanted changes in the system. We'll delete the pod so that Kubernetes will move the new version to the correct node.
 
 ```console
 $ kubectl delete po hashgenerator-dep-7b9b88f8bf-tnvfg
@@ -128,7 +128,7 @@ $ kubectl get po
   hashgenerator-dep-7b9b88f8bf-lvcv4   0/1     Pending   0          4s
 ```
 
-Now the status is "Pending" as there are no nodes with an excellent networkquality. Next label the agent-1 as being one with excellent networkquality and Kubernetes will know where the pod is able to run .
+Now the status is "Pending" as there are no nodes with an excellent network quality. Next, label the agent-1 as being one with excellent network quality and Kubernetes will know where the pod is able to run .
 
 ```
 $ kubectl label nodes k3d-k3s-default-agent-1 networkquality=excellent
@@ -141,6 +141,6 @@ $ kubectl get po
 
 _nodeSelector_ is a blunt tool. Let's say you have a cluster of various machines, ranging from a [fighter jet](https://gcn.com/articles/2020/01/07/af-kubernetes-f16.aspx) to a toaster to a supercomputer. Kubernetes can use _affinity_ and _anti-affinity_ to select which nodes are prioritized for which applications and _taints_ with _tolerances_ so that a pod can avoid certain nodes. For example, if a machine has a high network latency and we wouldn't want it to do some latency critical tasks.
 
-See [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) and [taints and tolerances](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for detailed information. We will not assing pods to specific nodes on this course as we have a homogeneous cluster.
+See [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) and [taints and tolerances](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for detailed information. We will not be assigning pods to specific nodes on this course, as we have a homogeneous cluster.
 
 <quiz id="7dff6967-da9e-492c-8c5a-fab605868215"></quiz>
