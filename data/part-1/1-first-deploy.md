@@ -169,6 +169,12 @@ This action created a few things for us to look at: a *Deployment* and a *Pod*.
 
 <img src="../img/pods.png">
 
+Reading documentation or searching the internet are not the only ways to find information. In case of Kubernetes we get access to information straight from our command line using `kubectl explain RESOURCE` command. 
+For example to get information about Pod and its mandatory fields we can use the following command.
+```console
+$ kubectl explain pod
+```
+
 #### What is a Deployment? ####
 
 A *Deployment* takes care of deployment. It's a way to tell Kubernetes what container you want, how they should be running and how many of them should be running.
