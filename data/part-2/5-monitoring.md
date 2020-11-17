@@ -22,7 +22,7 @@ Installation instructions are [here](https://helm.sh/docs/intro/install/). After
 
 ```console
 $ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-$ helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+$ helm repo add stable https://charts.helm.sh/stable
 ```
 
 And after that we can install [kube-prometheus-stack](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack). By default this would put everything to the default namespace.

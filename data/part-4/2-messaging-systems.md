@@ -177,7 +177,7 @@ $ kubectl -n prometheus get prometheus
   NAME                                    VERSION   REPLICAS   AGE
   kube-prometheus-stack-1602-prometheus   v2.18.2   1          39h
 
-$ kubectl describe prometheus kube-prometheus-stack-1602-prometheus
+$ kubectl describe prometheus -n prometheus kube-prometheus-stack-1602-prometheus
 ...
  Service Monitor Selector:
     Match Labels:

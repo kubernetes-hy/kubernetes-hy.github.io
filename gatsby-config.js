@@ -163,6 +163,7 @@ module.exports = {
       resolve: "gatsby-transformer-vocabulary"
     },
     `gatsby-plugin-top-layout`,
+    `gatsby-plugin-twitter`,
     {
       resolve: 'gatsby-plugin-material-ui',
     },
