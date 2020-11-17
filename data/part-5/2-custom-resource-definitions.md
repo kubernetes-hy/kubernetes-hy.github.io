@@ -215,7 +215,17 @@ $ kubectl logs countdown-controller-dep-7ff598ffbf-q2rp5
   Doing cleanup
 ```
 
-<exercise name='Exercise 5.01: DIY CRD'>
+<text-box name="Choosing language for CRDs" variant="hint">
+
+  The countdown example controller is implemented in two ways: using [Golang](https://github.com/kubernetes-hy/material-example/tree/master/app10-go) and [Node](https://github.com/kubernetes-hy/material-example/tree/master/app10).
+
+  You should use Golang but this may not be the best place to learn a new language so this will just be a recommendation. The app10-go README has info for what to do to get started with own CRD in Golang!
+
+  "Should migrate to golang when dealing with kubernetes, all non-go k8s client libraries are abandonware/harmful" - Matti Paksula, in this courses Telegram channel
+
+</text-box>
+
+<exercise name='Exercise 5.01: DIY CRD & Controller'>
 
   This exercise doesn't rely on previous exercises. You may again choose which ever technologies you want for the implementation.
 
@@ -236,9 +246,5 @@ $ kubectl logs countdown-controller-dep-7ff598ffbf-q2rp5
   Test that creating a DummySite resource with website_url "[https://example.com/](https://example.com/)" should create a copy of the website.
 
   <p style="color:firebrick;">The controller doesn't have to work perfectly in all circumstances. The following workflow should succeed: 1. apply role, account and binding. 2. apply deployment. 3. apply DummySite</p>
-
-  Tips:
-
-  If you're using Go I recommend using [kubebuilder](https://github.com/kubernetes-sigs/kubebuilder) to generate your boilerplate. Reading [https://stackoverflow.com/questions/49953980/watch-customresourcedefinitions-crd-with-client-go](https://stackoverflow.com/questions/49953980/watch-customresourcedefinitions-crd-with-client-go) may possibly help.
 
 </exercise>
