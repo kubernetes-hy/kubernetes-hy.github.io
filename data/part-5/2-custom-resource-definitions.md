@@ -248,3 +248,5 @@ $ kubectl logs countdown-controller-dep-7ff598ffbf-q2rp5
   <p style="color:firebrick;">The controller doesn't have to work perfectly in all circumstances. The following workflow should succeed: 1. apply role, account and binding. 2. apply deployment. 3. apply DummySite</p>
 
 </exercise>
+
+<quiz id="73511574-ffe1-4a19-86fd-232a5159d3a2"></quiz>

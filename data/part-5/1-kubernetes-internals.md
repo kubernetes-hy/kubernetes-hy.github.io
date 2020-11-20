@@ -1,5 +1,5 @@
 ---
-path: '/osa-5/1-kubernetes-internals'
+path: '/part-5/1-kubernetes-internals'
 title: 'Kubernetes Internals'
 hidden: false
 ---
@@ -168,3 +168,5 @@ $ curl localhost:8081
 What did just happen? Read [this explanation on how kubernetes handles offline nodes](https://duske.me/how-kubernetes-handles-offline-nodes/)
 
 Well then, what happens if you delete the only control-plane node? Nothing good. In our local cluster it's our single point of failure. See Kubernetes documentation for "[Options for Highly Available topology](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/ha-topology/)" to avoid getting the whole cluster crippled by a single faulty hardware.
+
+<quiz id="f4ad98ef-f8de-448b-ac0f-1971374d5c05"></quiz>

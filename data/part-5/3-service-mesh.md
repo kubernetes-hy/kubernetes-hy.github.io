@@ -121,3 +121,5 @@ There's a lot more service meshes offer.
   Use <a href="https://man7.org/linux/man-pages/man1/script.1.html">script</a> command during the exercise to have something to submit. Or just take a screenshot at the end.
 
 </exercise>
+
+<quiz id="5094dd11-8c82-4b61-8083-967a1ea1a409"></quiz>

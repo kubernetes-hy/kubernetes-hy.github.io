@@ -262,3 +262,5 @@ $ curl -H "Host: tester-route.default.example.com" http://localhost:8081
   You can follow the indirect use as deep as you want, like in the k3d -> k3s -> flannel example, but use common sense to make the final image meaningful.
 
 </exercise>
+
+<quiz id="ee5f4303-5634-4157-b928-cd8e2014220b"></quiz>
