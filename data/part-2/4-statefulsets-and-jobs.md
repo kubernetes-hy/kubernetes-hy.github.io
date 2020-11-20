@@ -50,7 +50,7 @@ kind: StatefulSet
 metadata:
   name: redis-ss
 spec:
-  serviceName: redis
+  serviceName: redis-svc
   replicas: 2
   selector:
     matchLabels:
