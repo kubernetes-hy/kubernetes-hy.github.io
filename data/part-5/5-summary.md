@@ -12,7 +12,7 @@ After you've submitted all exercises to the submission application you should se
 
 Fill in your name by clicking your username in the navbar if you do not see the button.
 
-For students looking for the ECTS credits you have already registered by now and only need to access the Moodle space and complete the "Final Exercise".
+For students looking for the ECTS credits you have already registered by now and only need to access [the Moodle space](https://moodle.helsinki.fi/course/view.php?id=39026) and complete the "Final Exercise".
 During the final exercise you are asked to press the following button. It's right below the certificate button if you have filled your name and student number.
 
 <img src="../img/coursestats_credits_1.png">
