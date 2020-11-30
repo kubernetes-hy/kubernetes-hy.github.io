@@ -79,7 +79,7 @@ We'll use k3d for practice. [Install instructions](https://github.com/rancher/k3
 
 ## Mistakes ##
 
-You found a mistake, issue, typo or something missing? Maybe you just thought that something was not well written and you could do better? Maybe it’s hacktoberfest? Or you want to share a link to a great blog post? Make a contribution!
+Did you find a mistake, issue, typo or something missing? Maybe you just thought that something was not well written and you could do better? Maybe it’s hacktoberfest? Or you want to share a link to a great blog post? Make a contribution!
 
 Since the course is open source you can fork, edit and send a pull request. If you don’t know what forking is or how to make pull request consult the [github guides](https://guides.github.com/activities/hello-world/). It’s okay to practice here.
 
