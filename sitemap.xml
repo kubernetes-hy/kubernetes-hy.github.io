@@ -8,6 +8,7 @@
 <url> <loc>https://devopswithkubernetes.com/part-5/2-custom-resource-definitions</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://devopswithkubernetes.com/part-5/1-kubernetes-internals</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://devopswithkubernetes.com/part-5</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
+<url> <loc>https://devopswithkubernetes.com/part-4/extra-gitops</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://devopswithkubernetes.com/part-4/3-summary</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://devopswithkubernetes.com/part-4/2-messaging-systems</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://devopswithkubernetes.com/part-4/1-update-strategies-and-prometheus</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
