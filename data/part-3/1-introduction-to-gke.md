@@ -14,10 +14,13 @@ After this section you can
 
 </text-box>
 
-
 We have used Kubernetes distribution k3s using docker containers via k3d. In a production environment the task of maintaining a Kubernetes cluster is often left to third parties. A managed Kubernetes as a service is often the best choice as the additional work required in maintenance exceeds the benefits of a personal cluster. In some, somewhat rare, cases setting up and maintaining your own cluster is a reasonable option. A case for it would be that your company/organization already has the hardware and/or wants to stay independent from providers, one such example could be a University. Another primary reason for operating your own Kubernetes cluster is that regulations rule out all other choices.
 
 Even in Kubernetes then the cost for running software that is rarely used may be higher than the value it generates. In such cases using [Serverless](https://en.wikipedia.org/wiki/Serverless_computing) solutions could be more cost-efficient. Kubernetes can get really expensive really fast.
+
+<text-box variant='hint' name='Registration for Open University students'>
+  If you are student in Finland, a student with finnish social security number or a student at the University of Helsinki register for the course now. Follow the <a href="/registration-and-completion">instructions</a> to receive Google Cloud Platform Education Grant.
+</text-box>
 
 Let's focus on the Google Kubernetes Engine (GKE) costs for now. Note that the GKE costs a little bit more than its competitors.
 

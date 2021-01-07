@@ -42,6 +42,10 @@
    outline: 0 !important;
  }
 
+ li p {
+   margin-bottom: 0;
+ }
+
  hr {
    box-sizing: content-box;
    height: 0;
