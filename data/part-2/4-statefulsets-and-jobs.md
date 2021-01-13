@@ -43,7 +43,7 @@ spec:
     name: web
   clusterIP: None
   selector:
-    app: redis
+    app: redisapp
 ---
 apiVersion: apps/v1
 kind: StatefulSet
