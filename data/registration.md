@@ -21,7 +21,7 @@ Complete this guide after you've submitted exercises for part 2. If you have not
 
 2. **Activate user account**. Wait for 24 hours and activate your University of Helsinki user ID. You will receive instructions on the activation process the following day.
 
-3. **Request Google Cloud Platform Education Grant from the teacher**. Send an email to the teacher of the course (jami.kousa@helsinki.fi) from **your @helsinki.fi email address**. Title your email: Google Cloud Coupon. The reply will include link to redeem the Student Coupon.
+3. **Request Google Cloud Platform Education Grant from the teacher**. Send an email to the teacher of the course (jami.kousa@helsinki.fi) from **your @helsinki.fi email address**. Title your email: Google Cloud Coupon. The reply will include link to redeem the Student Coupon. University Email [Outlook Web App](http://www.helsinki.fi/office365)
 
 **Moodle link and key**. You will also receive the Moodle-link and the course key through email within 24 hours after course enrollment. You will need to access Moodle at the end of course to complete the course exam.
 
