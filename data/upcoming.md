@@ -22,10 +22,11 @@ While this page also works as a todo list for myself its most important function
 
 - The GitOps section to Part 4 is now available. It will be made mandatory on 01.02.2021 (1st of February). If you complete part 4 before that date the part is completed without gitops exercises.
 
+- We're working on a new certificate template. All of the old certificates will be changed to the new one in the API. If you complete the course *before* the new certificate is released you can fetch the new one from the certificate url.
+
 ## Upcoming ##
 
-- We're working on a new certificate template. All of the old certificates will be changed to the new one in the API. If you complete the course *before* the new certificate is released you can fetch the new one from the certificate url. - Completion date unknown
+- We're having an online workshop with Unity soon. - Details unknown.
 
 ## Early planning ##
 
-- We're having an online workshop in February. - Details unknown.
