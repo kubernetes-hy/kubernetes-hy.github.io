@@ -1,5 +1,5 @@
 ---
-path: '/part-4/3-summary'
+path: '/part-4/4-summary'
 title: 'Summary'
 hidden: false
 ---
