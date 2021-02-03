@@ -19,7 +19,7 @@ Google has offered students with @helsinki.fi email addresses some Google Cloud 
 
 Finnish/Open University students, you will be given a @helsinki.fi address when you register to an Open University course, this will be a task for you at the end of part 2.
 
-If you are not eligible for a @helsinki.fi email address and you have used all $300 credits there is nothing I can do. You can complete parts 1-2 and most likely 4-5, but part 3 is required for course completion and the certificate. For the eligibility for credits check the list and link at the bottom of [registration page](/registration).
+If you are not eligible for a @helsinki.fi email address and you have used all $300 credits there is nothing I can do. You can complete parts 1-2 and most likely 4-5, but part 3 is required for course completion and the certificate. For the eligibility for credits check the list and link at the bottom of [registration page](/registration-and-completion).
 
 ### CKAD or CKA ###
 
