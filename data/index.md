@@ -30,3 +30,22 @@ This course may be challenging as it expects that you
 - know basics of networking (probably from <a href="https://courses.helsinki.fi/en/aytkt200041">Introduction to Data Communication</a>).
 
 If you are joining and are not confident, contact me at jami.kousa@helsinki.fi.
+
+## We have partnered with Unity! ##
+
+<div style="width: 50%;">
+  <img src="./img/unity.png" alt="unity logo" />
+</div>
+
+<div class="unity-helsinki">
+  <p>
+    Unity Helsinki is home to our Monetization, Engineering and Data Science teams as well as R&D, Infrastructure, HR and Recruitment teams. Currently, we are roughly 200 employees strong with over 30 nationalities presented and we continue to grow!
+  </p>
+  <p>
+    Here in Helsinki we mostly build pretty cool things around machine learning, data, dashboards, ad targeting, graphics. The tech stack we mostly deal with are JavaScript, Python, Java, AWS, Tensorflow, Kubernetes etc.
+  </p>
+  <p>
+    Our values Users first, Best ideas win, In it together and Go bold guide our work. Our impact by the numbers is impressive and describes the level of the challenges we get to solve. Apps developed by Unity creators are downloaded 3 billion times per month, we have creators in 190+ countries and 50% of games are powered by Unity. Read more from here: <a href="https://findersseekers.io/en/software-engineer-5-reasons-to-join-unity-helsinki/">https://findersseekers.io/en/software-engineer-5-reasons-to-join-unity-helsinki/</a>
+  </p>
+  <h4>━ Unity</h4>
+<div>

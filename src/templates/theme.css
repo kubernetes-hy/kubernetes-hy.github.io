@@ -153,3 +153,9 @@ img {
   max-width: 100%;
   height: auto;
 }
+
+.unity-helsinki {
+  padding: 1em;
+  border: 4px #00cccc solid;
+  border-radius: 15px 50px 30px;
+}
