@@ -16,8 +16,8 @@ To have access to an University of Helsinki email address.
 Complete this guide after you've submitted exercises for part 2. If you have not submitted all of the exercises for parts 1 and 2 you should do that first. Please follow the instructions below to gain access to @helsinki.fi address, Google Cloud Credits and the course’s Moodle space:
 
 1. **Enrollment***. Enroll yourself on the course through the Open University
-    - 26.10.2020 - 26.2.2021: https://www.avoin.helsinki.fi/palvelut/esittely.aspx?o=135660523
-    - 15.3.2021 - 12.7.2021: https://www.avoin.helsinki.fi/palvelut/esittely.aspx?o=140854075
+    - 26.10.2020 - 14.5.2021: https://www.avoin.helsinki.fi/palvelut/esittely.aspx?o=135660523
+    - 31.5.2021 - 12.7.2021: https://www.avoin.helsinki.fi/palvelut/esittely.aspx?o=140854075
 
 2. **Activate user account**. Wait for 24 hours and activate your University of Helsinki user ID. You will receive instructions on the activation process the following day.
 
