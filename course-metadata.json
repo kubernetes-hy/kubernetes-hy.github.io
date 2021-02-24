@@ -1,7 +1,7 @@
 {
   "@context": "http://schema.org",
   "@type": "Course",
-  "name": "Ohjelmoinnin perusteet, kesä 2020",
+  "name": "DevOps with Kubernetes",
   "description": "",
   "provider": {
     "@type": "Organization",
@@ -16,7 +16,7 @@
   "hasCourseInstance": [
     {
       "@type": "CourseInstance",
-      "name": "Ohjelmoinnin perusteet, kesä 2020",
+      "name": "DevOps with Kubernetes",
       "courseMode": ["MOOC", "online"],
       "location": {
         "@type": "Place",

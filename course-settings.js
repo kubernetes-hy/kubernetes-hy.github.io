@@ -1,6 +1,6 @@
 const courseSettings = {
   language: "en",
-  name: "DevOps with Kubernetes 2020",
+  name: "DevOps with Kubernetes",
   siteUrl: "https://devopswithkubernetes.com",
   githubUrl: "https://github.com/kubernetes-hy/kubernetes-hy.github.io",
   subtitle: "Introduction to Kubernetes practices",
