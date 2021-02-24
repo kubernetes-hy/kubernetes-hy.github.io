@@ -64,7 +64,7 @@ $ flux check --pre
 
 Everything looks green. Now we'll configure our cluster and our GitOps repository. We will need the token for the next step. CLI will read it from the environment so run `export GITHUB_TOKEN=3dcb4daba731d77158cbac4dabe7ad1f2` with you own token now.
 
-Now is a good time to make sure we are pointed at the right cluster. Bootstrapping flux to a cluster will install a lot of things. Read the following command instead of copy-pasting it. In this case, we use GitHub, the owner is your username and repository to be created is "kube-cluster-dwk". The cluster is personal (if omitted, we can set owner as organisation) and we don't need a private repo. There is a lot to configure and you can run `flux boostrap github --help` if you're interested.
+Now is a good time to make sure we are pointed at the right cluster. Bootstrapping flux to a cluster will install a lot of things. Read the following command instead of copy-pasting it. In this case, we use GitHub, the owner is your username and repository to be created is "kube-cluster-dwk". The cluster is personal (if omitted, we can set owner as organisation) and we don't need a private repo. There is a lot to configure and you can run `flux bootstrap github --help` if you're interested.
 
 ```console
 $ flux bootstrap github \
