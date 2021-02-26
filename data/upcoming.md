@@ -26,7 +26,7 @@ While this page also works as a todo list for myself its most important function
 
 ## Soon ##
 
-- We're having an online workshop with Unity soon. - Details unknown.
+- We're having an online webinar with Unity 30th of March! Details in the [homepage](/)
 
 ## Later ##
 
