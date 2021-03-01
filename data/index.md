@@ -26,7 +26,7 @@ You should also read the [courses.helsinki.fi page](https://courses.helsinki.fi/
 
 Are you interested in learning what modern tools are used in production?
 
-**Unity** is holding a Kubernetes & SRE Webinar for the attendees of DevOps with Kubernetes where we get a chance to learn what Software Reliability Engineering (SRE) is, what tools they use for monitoring and how to apply the advanced tooling Unity uses in your own cluster.
+**Unity** is holding a Kubernetes & SRE Webinar for the attendees of DevOps with Kubernetes where we get a chance to learn what Site Reliability Engineering (SRE) is, what tools they use for monitoring and how to apply the advanced tooling Unity uses in your own cluster.
 
 Everyone is welcome, minimum requirement to get something out of the this is being interested! However, we recommend completing the Part 2 of the DevOps with Kubernetes course first to get everything out of the webinar.
 
@@ -34,7 +34,7 @@ If you have any questions send an email to jami.kousa@helsinki.fi or contact me 
 
 Join our DevOps with Kubernetes telegram group [here](https://t.me/joinchat/HIg2vlch4pqITxhshipuRQ).
 
-**When?** 30th of March at 6 PM, in Zoom.
+**When?** 30th of March at 4 PM, in Zoom.
 
 **Link?** Will be here when you need it!
 
