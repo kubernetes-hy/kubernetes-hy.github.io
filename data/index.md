@@ -34,7 +34,7 @@ If you have any questions send an email to jami.kousa@helsinki.fi or contact me 
 
 Join our DevOps with Kubernetes telegram group [here](https://t.me/joinchat/HIg2vlch4pqITxhshipuRQ).
 
-**When?** 30th of March at 4 PM, in Zoom.
+**When?** 30th of March at 4 PM (Finnish time, UTC+3), in Zoom.
 
 **Link?** Will be here when you need it!
 
