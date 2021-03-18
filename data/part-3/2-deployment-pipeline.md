@@ -282,6 +282,7 @@ env:
   GKE_CLUSTER: dwk-cluster
   GKE_ZONE: europe-north1-b
   IMAGE: dwk-environments
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 jobs:
   setup-build-publish-deploy:
