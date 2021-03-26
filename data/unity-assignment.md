@@ -22,7 +22,7 @@ In this helpful section from the kube-prometheus-stack [README](https://github.c
 helm upgrade --set prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues=false --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false prometheus prometheus-community/kube-prometheus-stack
 ```
 
-Also, you have already completed [/part-2/5-monitoring](/part-2/5-monitoring), which introduces you how to connect to grafana with kubectl port-forward.
+Also, you have already completed [/part-2/5-monitoring](/part-2/5-monitoring), which introduced you how to connect to grafana with kubectl port-forward.
 
 # Assignment #
 
