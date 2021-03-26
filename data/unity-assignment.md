@@ -58,7 +58,7 @@ Tip: Check the Recap section above.
 
 You will need a *PodMonitor* Custom Resource, [docs here](https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/design.md#podmonitor), [api doc here](https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#podmonitor) and an [example here](https://github.com/prometheus-operator/prometheus-operator/blob/master/example/user-guides/getting-started/example-app-pod-monitor.yaml)
 
-Interestingly, while according to API documentation, the PodMonitor only accepts the monitored port as a string value, so you will need to add a name to the port, e.g:
+Interestingly, according to API documentation, the PodMonitor only accepts the monitored port as a string value, so you will need to add a name to the port, e.g:
 
 **podmonitor.yaml**
 ```yaml
