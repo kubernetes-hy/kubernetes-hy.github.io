@@ -36,7 +36,7 @@ Join our DevOps with Kubernetes telegram group [here](https://t.me/joinchat/HIg2
 
 **When?** 30th of March at 4 PM (Finnish time, UTC+3), in Zoom.
 
-**Link?** Will be here when you need it!
+**Link?** https://helsinki.zoom.us/j/63688505445
 
 **Registration?** Zoom *should* support everyone so just hop on in.
 
