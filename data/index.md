@@ -34,11 +34,13 @@ If you have any questions send an email to jami.kousa@helsinki.fi or contact me 
 
 Join our DevOps with Kubernetes telegram group [here](https://t.me/joinchat/HIg2vlch4pqITxhshipuRQ).
 
-**When?** 30th of March at 4 PM (Finnish time, UTC+3), in Zoom.
+**When?** ongoing in Zoom.
 
 **Link?** https://helsinki.zoom.us/j/63688505445
 
 **Registration?** Zoom *should* support everyone so just hop on in.
+
+**Assignment?** The 1 extra credit assignment and details are [here](/unity-assignment)
 
 </text-box>
 
