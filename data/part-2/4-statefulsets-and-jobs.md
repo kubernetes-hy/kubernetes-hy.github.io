@@ -112,7 +112,8 @@ _Job_ resource is used to run a container that has an end state once. The status
 An example use case for jobs would be creating backups from a database. Our _Job_ will use environment value URL as the url from which the dump is created and pass it along to a storage server. Our database will be postgres and the tool for creating a backup is pg_dump. Now we just need to do the coding. A simple bash script should be enough.
 
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
+set -e
 
 if [ $URL ]
 then
