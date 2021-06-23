@@ -24,10 +24,9 @@ While this page also works as a todo list for myself its most important function
 
 - Unity parnership and a new certificate! All of the old certificates have been changed to the new one in the API. If you completed the course *before* the new certificate was released you can fetch the new one from the certificate url.
 
-## Soon ##
+- We had an online webinar with Unity 30th of March! Details in the [homepage](/). An extra ECTS credit available through the exercise
 
-- We're having an online webinar with Unity 30th of March! Details in the [homepage](/)
 
-## Later ##
+## Upcoming ##
 
-- Nothing planned yet!
+- Next iteration of the course is coming, check the details here <https://studies.helsinki.fi/courses/cur/otm-0bd9249b-cd12-46eb-b095-a471cc0cd5e9>
