@@ -213,7 +213,7 @@ And then we'll set the kubectl access to the right cluster, as defined in the en
     - run: gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
 ```
 
-And finally let's write out the desired image with a tag. The image in this case will be `gcr.io/PROJECT_ID/IMAGE:GITHUB_BRANCH-GITHUB_SHA` and stored to the environment value IMAGE_WITH_TAG.
+And finally let's write out the desired image with a tag. The image in this case will be `gcr.io/PROJECT_ID/IMAGE:GITHUB_BRANCH-GITHUB_SHA` and stored to the environment value `IMAGE_WITH_TAG`.
 
 ```yaml
 ...
