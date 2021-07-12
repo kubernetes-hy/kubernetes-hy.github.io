@@ -51,7 +51,7 @@ Try [using this yaml here](https://raw.githubusercontent.com/kubernetes/kubernet
 
 And then just exec the command like so:
 ```
-$ kubectl exec -it busybox1 -- wget -qO - http://google.fi
+$ kubectl exec -it busybox1 -- wget -q -O - http://google.fi
 ```
 
 Note that as the busybox yaml above is for a Pod, it will only ever create a single pod that you will have to manually destroy! Excellent for manual testing.
