@@ -165,7 +165,7 @@ $ curl localhost:8081
 6xluh2: ta0ztp
 ```
 
-What did just happen? Read [this explanation on how kubernetes handles offline nodes](https://duske.me/how-kubernetes-handles-offline-nodes/)
+What did just happen? Read [this explanation on how kubernetes handles offline nodes](https://dev.to/duske/how-kubernetes-handles-offline-nodes-53b5)
 
 Well then, what happens if you delete the only control-plane node? Nothing good. In our local cluster it's our single point of failure. See Kubernetes documentation for "[Options for Highly Available topology](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/ha-topology/)" to avoid getting the whole cluster crippled by a single faulty hardware.
 
