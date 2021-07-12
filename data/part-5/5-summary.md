@@ -6,7 +6,7 @@ hidden: false
 
 Thank you for completing the course!
 
-After you've submitted all exercises to the submission application you should see a link to the certificate in the submission application!
+After you've submitted all exercises to the [submission application](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020) you should see a link to the certificate in the submission application!
 
 <img src="../img/coursestats_certificate.png">
 
