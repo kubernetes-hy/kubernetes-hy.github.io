@@ -20,19 +20,7 @@ Course details and starting instructions can be found in [part 0](/part-0).
 
 Registration is only required for ECTS credits. The certificate does not require registration or separate sign up. For ECTS credits (Finnish / Open University students) the registration is after you've completed part 2 and there will be a link at the end of the part.
 
-You should also read the [courses.helsinki.fi page](https://courses.helsinki.fi/en/aytkt21027en/135660523). This page also includes information about target group, enrolment instructions, recommended reading and most importantly **deadlines**.
-
-<text-box name="Webinar from Unity" variant="hint">
-
-**Assignment?** The 1 extra credit assignment and details are [here](/unity-assignment)
-
-If you have any questions send an email to jami.kousa@helsinki.fi or contact me on telegram @jakousa
-
-</text-box>
-
-#### DEFA-students ####
-
-If you're a DEFA-student attempting this course during your first year of CS. After discussion within the faculty, we recommend you do not rely on this course as your only option to fulfil the credit requirement!
+You should also read the [studies.helsinki.fi page](https://studies.helsinki.fi/courses/cur/otm-0bd9249b-cd12-46eb-b095-a471cc0cd5e9). This page also includes information about target group, enrolment instructions, recommended reading and most importantly **deadlines**.
 
 This course may be challenging as it expects that you
 
@@ -41,7 +29,17 @@ This course may be challenging as it expects that you
 - have knowledge of SQL databases (probably from <a href="https://courses.helsinki.fi/en/aytkt10004">Introduction to Databases</a>).
 - know basics of networking (probably from <a href="https://courses.helsinki.fi/en/aytkt200041">Introduction to Data Communication</a>).
 
-If you are joining and are not confident, contact me at jami.kousa@helsinki.fi.
+The fall 2021 iteration of the course is open for a shorter time period and includes deadlines for each week. Here is a timetable:
+
+| Part   | Opens | Deadline |
+|--------|-------|----------|
+| Part 1 | 4.11  | 18.11    |
+| Part 2 | 11.11 | 25.11    |
+| Part 3 | 18.11 | 2.12     |
+| Part 4 | 25.11 | 9.12     |
+| Part 5 | 2.12  | 16.12    |
+
+Even though we are locking away parts of the course on https://devopswithkubernetes.com, the material is still available on the github page https://github.com/kubernetes-hy/kubernetes-hy.github.io/tree/master/data. However, you won't be able to submit anything early or late!
 
 ## We have partnered with Unity! ##
 
