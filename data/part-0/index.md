@@ -23,11 +23,11 @@ The course material is also changing be it by pull requests or large scale chang
 
 To complete the course you will need to do and submit all exercises in parts 1-5. There is no exam.
 
-The total workload of the course _has not been estimated yet_. We can estimate how long it took others by peeking at the [statistics](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020).
+The total workload of the course is about 95 hours. You can find out how long it took others by peeking at the old [statistics](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020).
 
 ### Exercises ###
 
-All exercises need to be completed for grading.
+All exercises need to be completed to get a passing grade.
 
 Make a repository to github and publish your solutions there in clearly ordered files / folders. If you need help publishing using git you should refer to their [guide](https://guides.github.com/activities/hello-world/). Make sure that the repository is available to me, either by using a public repository or a private repository and adding [Jakousa](https://github.com/Jakousa) as a collaborator.
 
@@ -61,11 +61,11 @@ If you are not eligible for a @helsinki.fi email address and you have used all $
 
 ## Getting started ##
 
-### Telegram ###
+### Discord ###
 
-This course has a Telegram group where we discuss everything about the course. Support is available almost 24/7, with discussion being in both English and Finnish.
+This course has a Discord group where we discuss everything about the course. Support is available almost 24/7, with discussion being in both English and Finnish.
 
-Join our DevOps with Kubernetes telegram group [here](https://t.me/joinchat/HIg2vlch4pqITxhshipuRQ).
+Join our DevOps with Kubernetes Discord group [here](https://study.cs.helsinki.fi/discord/join/kubernetes).
 
 **All** inappropriate, degrading or discriminating comments on the channel are prohibited and will lead to action taken against the commenter.
 
