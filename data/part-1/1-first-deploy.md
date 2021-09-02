@@ -77,11 +77,17 @@ We will get started with a lightweight Kubernetes distribution. [K3s - 5 less th
 
 A cluster is a group of machines, *nodes*, that work together - in this case, they are part of a Kubernetes cluster. Kubernetes cluster can be of any size - a single node cluster would consist of one machine that hosts the Kubernetes control-plane (exposing API and maintaining the cluster) and that cluster can then be expanded with up to 5000 nodes total, as of Kubernetes v1.18.
 
-We will use the term "server node" to refer to nodes with control-plane and "agent node" to refer to the nodes without that role.
+We will use the term "server node" to refer to nodes with control-plane and "agent node" to refer to the nodes without that role. A basic kubernetes cluster may look like this:
+
+<img src="../img/without_k3d.png">
 
 #### Starting a cluster with k3d ####
 
-We'll use k3d to create a group of docker containers that run k3s. The installation instructions, or at least a link to them, are in [part 0](/part-0#installing-k3d). Creating our very own Kubernetes cluster is a single command.
+We'll use k3d to create a group of docker containers that run k3s. The installation instructions, or at least a link to them, are in [part 0](/part-0#installing-k3d). The reason for using k3d is because it is enables us to create a cluster without worrying about virtual machines or physical machines. With k3d our basic cluster will look like this:
+
+<img src="../img/with_k3d.png">
+
+Because the nodes are containers we are going to need to do a little bit of configuring to get those working like we want them. We will get to that later. Creating our very own Kubernetes cluster with k3d is done by a single command.
 
 ```console
 $ k3d cluster create -a 2
@@ -154,14 +160,14 @@ Now we're finally ready to deploy our first app into Kubernetes!
 
 ### Deployment ###
 
-To deploy an application we'll need to create a *Deployment* with the image.
+To deploy an application we'll need to create a *Deployment* resource with the image.
 
 ```console
 $ kubectl create deployment hashgenerator-dep --image=jakousa/dwk-app1
   deployment.apps/hashgenerator-dep created
 ```
 
-This action created a few things for us to look at: a *Deployment* and a *Pod*.
+This action created a few things for us to look at: a *Deployment* resource and a *Pod*.
 
 #### What is a Pod? ####
 
@@ -169,7 +175,7 @@ This action created a few things for us to look at: a *Deployment* and a *Pod*.
 
 <img src="../img/pods.png">
 
-Reading documentation or searching the internet are not the only ways to find information. In case of Kubernetes we get access to information straight from our command line using `kubectl explain RESOURCE` command. 
+Reading documentation or searching the internet are not the only ways to find information. In case of Kubernetes we get access to information straight from our command line using `kubectl explain RESOURCE` command.
 For example to get information about Pod and its mandatory fields we can use the following command.
 ```console
 $ kubectl explain pod
@@ -177,9 +183,9 @@ $ kubectl explain pod
 
 #### What is a Deployment? ####
 
-A *Deployment* takes care of deployment. It's a way to tell Kubernetes what container you want, how they should be running and how many of them should be running.
+A *Deployment* resource takes care of deployment. It's a way to tell Kubernetes what container you want, how they should be running and how many of them should be running.
 
-The Deployment also created a *ReplicaSet*, which is a way to tell how many replicas of a Pod you want. It will delete or create Pods until the number of Pods you wanted are running. ReplicaSets are managed by Deployments and you should not have to manually define or modify them.
+The Deployment also created a *ReplicaSet* resource, which is a way to tell how many replicas of a Pod you want. It will delete or create Pods until the number of Pods you wanted are running. ReplicaSets are managed by Deployments and you should not have to manually define or modify them.
 
 You can view the deployment:
 ```console
