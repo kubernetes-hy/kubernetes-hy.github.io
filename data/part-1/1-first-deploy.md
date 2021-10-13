@@ -358,6 +358,8 @@ When updating anything in Kubernetes the usage of delete is actually an anti-pat
 
 </exercise>
 
+Note applying a new deployment won't update the application unless the tag is updated. You will not need to delete the deployment if you always come up with a new tag.
+
 Your basic workflow may look something like this:
 
 ```console
