@@ -150,6 +150,8 @@ $ kubectl logs -f cpushredder-dep-85f5b578d7-nb5rs
 
 After a few requests we will see the *HorizontalPodAutoscaler* create a new replica as the CPU utilization rises. As the resources are fluctuating, sometimes very greatly due to increased resource usage on start or exit, the *HPA* will by default wait 5 minutes between downscaling attempts. If your application has multiple replicas even at 0%/50% just wait. If the wait time is set to a value that's too short for stable statistics of the resource usage the replica count may start "thrashing".
 
+Figuring out autoscaling with HorizontalPodAutoscalers can be one of the more challening tasks. Choosing which resources to look at and when to scale
+
 <exercise name='Exercise 3.08: Project v1.5'>
 
   Set sensible resource limits for the project. The exact values are not important. Test what works.
@@ -158,7 +160,7 @@ After a few requests we will see the *HorizontalPodAutoscaler* create a new repl
 
 <exercise name='Exercise 3.09: Sensible processes'>
 
-  Set sensible resource limits for the ping / pong and main applications. The exact values are not important. Test what works.
+  Set sensible resource limits for the "Ping-pong" and "Log output" applications. The exact values are not important. Test what works.
 
 </exercise>
 

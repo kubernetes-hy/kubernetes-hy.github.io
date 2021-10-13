@@ -71,7 +71,7 @@ Note that all data is lost when the pod goes down.
 
 <exercise name='Exercise 1.10: Even more services'>
 
-  Split the main application into two different containers within a single pod:
+  Split the "Log output" application into two different containers within a single pod:
 
   One generates a new timestamp every 5 seconds and saves it into a file.
   The other reads that file and outputs it with its hash for the user to see.
@@ -186,9 +186,9 @@ If you are interested in learning more about running your own storage you can ch
 
 <exercise name='Exercise 1.11: Persisting data'>
 
-  Let's share data between ping-pong and main application using persistent volumes. Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment* to utilize it. As *PersistentVolume* is often maintained by cluster administrators rather than developers and are not application specific you should keep the definition for that separated.
+  Let's share data between "Ping-pong" and "Log output" applications using persistent volumes. Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment* to utilize it. As *PersistentVolume* is often maintained by cluster administrators rather than developers and are not application specific you should keep the definition for that separated.
 
-  Save the number of requests to ping / pong application into a file in the volume and output it with the timestamp and hash when sending a request to our main application. In the end, the two pods should share a persistent volume between the two applications. So the browser should display the following when accessing the main application:
+  Save the number of requests to "Ping-pong" application into a file in the volume and output it with the timestamp and hash when sending a request to our "Log output" application. In the end, the two pods should share a persistent volume between the two applications. So the browser should display the following when accessing the "Log output" application:
 
   ```plaintext
   2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.

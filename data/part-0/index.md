@@ -75,7 +75,7 @@ Kubectl is a command line tool that we'll use to communicate with our Kubernetes
 
 ### Installing k3d ###
 
-We'll use k3d for practice. [Install instructions](https://github.com/rancher/k3d#get)
+We'll use k3d for practice. The [Install instructions](https://github.com/rancher/k3d#get) are here. The course material is written with version 5.0.0 in mind.
 
 ## Mistakes ##
 
@@ -90,7 +90,7 @@ Here is a link to the repository to find the tabs for issues and pull requests: 
 
 ## Experience quizz ##
 
-Thank you for answering. My PhD depends on this.
+Thank you for answering.
 
 <quiz id="b728269b-89d0-4a37-a163-fd882c3059ba" /></quiz>
 

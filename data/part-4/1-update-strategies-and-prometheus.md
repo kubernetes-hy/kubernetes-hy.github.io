@@ -130,19 +130,19 @@ Here three of the pods are completely functional, one of v1 was dropped to make 
 
 <exercise name='Exercise 4.01: Readiness Probe'>
 
-  Create a ReadinessProbe for "ping/pong" application. It should be ready when it has a connection to database.
+  Create a ReadinessProbe for "Ping-pong" application. It should be ready when it has a connection to database.
 
-  And another ReadinessProbe for "main" application. It should be ready when it can receive data from pingpong application.
+  And another ReadinessProbe for "Log output" application. It should be ready when it can receive data from "Ping-pong" application.
 
   Test that it works by applying everything but the database statefulset. The output of `kubectl get po` should look like this before the database is available:
 
   ```console
-NAME                           READY   STATUS    RESTARTS   AGE
-mainapp-dep-7f49547cf4-ttj4f   1/2     Running   0          21s
-pingpong-dep-9b698d6fb-jdgq9   0/1     Running   0          21s
+NAME                             READY   STATUS    RESTARTS   AGE
+logoutput-dep-7f49547cf4-ttj4f   1/2     Running   0          21s
+pingpong-dep-9b698d6fb-jdgq9     0/1     Running   0          21s
   ```
 
-  Adding the database should automatically move the READY states to 2/2 and 1/1 for main and pingpong respectively.
+  Adding the database should automatically move the READY states to 2/2 and 1/1 for "Log output" and "Ping-pong" respectively.
 
 </exercise>
 

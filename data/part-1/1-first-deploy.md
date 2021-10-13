@@ -98,7 +98,7 @@ This created a Kubernetes cluster with 2 agent nodes. As they're in docker you c
 ```console
 $ docker ps
   CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS              PORTS                             NAMES
-  11543a6b5015        rancher/k3d-proxy:v3.0.0   "/bin/sh -c nginx-pr…"   16 seconds ago      Up 14 seconds       80/tcp, 0.0.0.0:57734->6443/tcp   k3d-k3s-default-serverlb
+  11543a6b5015        rancher/k3d-proxy:5.0.0    "/bin/sh -c nginx-pr…"   16 seconds ago      Up 14 seconds       80/tcp, 0.0.0.0:57734->6443/tcp   k3d-k3s-default-serverlb
   f17e07a77061        rancher/k3s:latest         "/bin/k3s agent"         26 seconds ago      Up 24 seconds                                         k3d-k3s-default-agent-1
   b135b5ac987d        rancher/k3s:latest         "/bin/k3s agent"         27 seconds ago      Up 25 seconds                                         k3d-k3s-default-agent-0
   7e5fbc8db7e9        rancher/k3s:latest         "/bin/k3s server --t…"   28 seconds ago      Up 27 seconds                                         k3d-k3s-default-server-0
@@ -106,7 +106,9 @@ $ docker ps
 
 Here we also see that port 6443 is opened to "k3d-k3s-default-serverlb", a useful "load balancer" proxy, that'll redirect a connection to 6443 into the server node, and that's how we can access the contents of the cluster. The port on our machine, above 57734, is randomly chosen. We could have opted out of the load balancer with `k3d cluster create -a 2 --no-lb` and the port would be open straight to the server node but having a load balancer will offer us a few features we wouldn't otherwise have.
 
-K3d helpfully also set up a *kubeconfig*, the contents of which is output by `k3d kubeconfig get k3s-default`. Kubectl will read kubeconfig from the location in KUBECONFIG environment value or by default from `~/.kube/config` and use the information to connect to the cluster. The contents include certificates, passwords and the address in which the cluster API. You can manually set the config with `k3d kubeconfig merge k3s-default --switch-context`.
+K3d helpfully also set up a *kubeconfig*, the contents of which is output by `k3d kubeconfig get k3s-default`.
+
+The other tool that we will be using on this course is kubectl. Kubectl is the Kubernetes command-line tool and will allow us to interact with the cluster. Kubectl will read kubeconfig from the location in KUBECONFIG environment value or by default from `~/.kube/config` and use the information to connect to the cluster. The contents include certificates, passwords and the address in which the cluster API. You can switch set the context with `kubectl config use-context k3d-k3s-default`.
 
 Now kubectl will be able to access the cluster
 
@@ -124,6 +126,7 @@ If you want to stop / start the cluster you can simply run
 ```console
 $ k3d cluster stop
   INFO[0000] Stopping cluster 'k3s-default'
+  INFO[0011] Stopped cluster 'k3s-default'
 
 $ k3d cluster start
   INFO[0000] Starting cluster 'k3s-default'
@@ -141,11 +144,11 @@ For now, we're going to need the cluster but if we want to remove the cluster we
 
 Before we can deploy anything we'll need to do a small application to deploy. During the course, you will develop your own application. The technologies used for the application do not matter - for the examples we're going to use [node.js](https://nodejs.org/en/) but the example application will be offered through GitHub as well as Docker Hub.
 
-Let's create an application that generates and outputs a hash every 5 seconds or so.
+Let's launch an application that generates and outputs a hash every 5 seconds or so.
 
 I've prepared one [here](https://github.com/kubernetes-hy/material-example/tree/master/app1) `docker run jakousa/dwk-app1`.
 
-To deploy we need the cluster to have an access to the image. By default, Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but since that won't work when we go to non-k3d solutions we'll use the now possibly very familiar registry *Docker Hub*, we used that in [DevOps with Docker](http://devopswithdocker.com/). If you've never used Docker Hub, it's the place where docker client defaults to, so when you run "docker pull nginx" the nginx comes from Docker Hub. You'll need to register an account there and after that you can use `docker login` to authenticate yourself. If you don't wish to use Docker Hub you can also use local registry: follow the [tutorial here](https://k3d.io/usage/guides/registries/#using-a-local-registry) to set one up.
+To deploy we need the cluster to have an access to the image. By default, Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but since that won't work when we go to non-k3d solutions we'll use the now possibly very familiar registry *Docker Hub*, which we used in [DevOps with Docker](http://devopswithdocker.com/). If you've never used Docker Hub, it's the place where docker client defaults to, so when you run "docker pull nginx" the nginx comes from Docker Hub. You'll need to register an account there and after that you can use `docker login` to authenticate yourself. If you don't wish to use Docker Hub you can also use local registry: follow the [tutorial here](https://k3d.io/usage/guides/registries/#using-a-local-registry) to set one up.
 
 ```console
 $ docker tag _image_ _username_/_image_
@@ -160,32 +163,47 @@ Now we're finally ready to deploy our first app into Kubernetes!
 
 ### Deployment ###
 
-To deploy an application we'll need to create a *Deployment* resource with the image.
+To deploy an application we'll need to create a *Deployment* object with the image.
 
 ```console
 $ kubectl create deployment hashgenerator-dep --image=jakousa/dwk-app1
   deployment.apps/hashgenerator-dep created
 ```
 
-This action created a few things for us to look at: a *Deployment* resource and a *Pod*.
+This action created a few things for us to look at: a *Deployment* resource and a *Pod* resource.
 
 #### What is a Pod? ####
 
-*Pod* is an abstraction around one or more containers. Similarly, as you've now used containers to define environments for a single process. Pods provide a context for 1..N containers so that they can share storage and a network. They can be thought of as a container of containers. *Most* of the same rules apply: it is deleted if the containers stop running and files will be lost with it.
+*Pod* is an abstraction around one or more containers. Pods provide a context for 1..N containers so that they can share storage and a network. It's very much like how you have used containers to define environments for a single process. They can be thought of as a container of containers. *Most* of the same rules apply: it is deleted if the containers stop running and files will be lost with it.
 
 <img src="../img/pods.png">
 
 Reading documentation or searching the internet are not the only ways to find information. In case of Kubernetes we get access to information straight from our command line using `kubectl explain RESOURCE` command.
 For example to get information about Pod and its mandatory fields we can use the following command.
+
 ```console
 $ kubectl explain pod
+  KIND:     Pod
+  VERSION:  v1
+
+  DESCRIPTION:
+       Pod is a collection of containers that can run on a host. This resource is
+       created by clients and scheduled onto hosts.
 ```
 
-#### What is a Deployment? ####
+In Kubernetes all entities that exist are called objects. You can list all objects of a resource with `kubectl get RESOURCE`.
+
+```
+$ kubectl get pods
+  NAME                               READY   STATUS    RESTARTS   AGE
+  hashgenerator-dep-6965c5c7-2pkxc   1/1     Running   0          2m1s
+```
+
+#### What is a Deployment resource? ####
 
 A *Deployment* resource takes care of deployment. It's a way to tell Kubernetes what container you want, how they should be running and how many of them should be running.
 
-The Deployment also created a *ReplicaSet* resource, which is a way to tell how many replicas of a Pod you want. It will delete or create Pods until the number of Pods you wanted are running. ReplicaSets are managed by Deployments and you should not have to manually define or modify them.
+While we created the Deployment we also created a *ReplicaSet* object. ReplicaSets are used to tell how many replicas of a Pod you want. It will delete or create Pods until the number of Pods you wanted are running. ReplicaSets are managed by Deployments and you should not have to manually define or modify them. If you want to manage the number of replicas, you can edit the Deployment and it will take care of modifying the ReplicaSet.
 
 You can view the deployment:
 ```console
@@ -194,14 +212,7 @@ $ kubectl get deployments
   hashgenerator-dep   1/1     1            1           54s
 ```
 
-And the pods:
-```console
-$ kubectl get pods
-  NAME                               READY   STATUS    RESTARTS   AGE
-  hashgenerator-dep-6965c5c7-2pkxc   1/1     Running   0          2m1s
-```
-
-1/1 replicas are ready and its status is Running! We will try multiple replicas later. If your status doesn't look like this check [this page](/known-problems-solutions#first-deployment).
+1/1 replicas are ready! We will try multiple replicas later. If your status doesn't look like this check [this page](/known-problems-solutions#first-deployment).
 
 To see the output we can run `kubectl logs -f hashgenerator-dep-6965c5c7-2pkxc`
 
@@ -224,7 +235,7 @@ A helpful list for other commands from docker-cli translated to kubectl is avail
 
   Deploy it into your Kubernetes cluster and confirm that it's running with `kubectl logs ...`
 
-  In future exercises, this application will be referred to as "Main application". We will revisit some exercise applications during the course.
+  You will keep building this application in the future exercises. This application will be called "Log output".
 
 </exercise>
 
@@ -232,7 +243,7 @@ A helpful list for other commands from docker-cli translated to kubectl is avail
 
   **Project can be done with any language and framework you want**
 
-  The project will be a simple todo application with the familiar features of create, read, update, and delete (CRUD). We'll develop it during all parts of this course.
+  The project will be a simple todo application with the familiar features of create, read, update, and delete (CRUD). We'll develop it during all parts of this course. Check the title of the exercise if you are unsure if it is building the project.
 
   Todo is a text like "I need to clean the house" that can be in state of not-done or done.
 
@@ -333,7 +344,7 @@ When updating anything in Kubernetes the usage of delete is actually an anti-pat
 
 <exercise name='Exercise 1.03: Declarative approach'>
 
-  In your "main application" create the folder for manifests and move your deployment into a declarative file.
+  In your "Log output" application create the folder for manifests and move your deployment into a declarative file.
 
   Make sure everything still works by restarting and following logs.
 
@@ -341,7 +352,7 @@ When updating anything in Kubernetes the usage of delete is actually an anti-pat
 
 <exercise name='Exercise 1.04: Project v0.2'>
 
-  Create a deployment for your project.
+  Create a deployment for the project.
 
   You won't have access to the port yet but that'll come soon.
 

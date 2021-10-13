@@ -204,9 +204,9 @@ This takes a while to deploy, responses may be 404 and 502 as it becomes availab
 
 <exercise name='Exercise 3.02: Back to Ingress'>
 
-  Deploy the main application as well as the ping / pong application into GKE with ingress.
+  Deploy the "Log output" and "Ping-pong" application into GKE with ingress.
 
-  Unfortunately since GKE Ingress does not have rewrites or rewrite policy like traefik had with "PathPrefixStrip" [yet](https://github.com/kubernetes/ingress-gce/issues/109) pingpong will have to respond from /pingpong path.
+  Unfortunately since GKE Ingress does not have rewrites or rewrite policy like traefik had with "PathPrefixStrip" [yet](https://github.com/kubernetes/ingress-gce/issues/109) "Ping-pong" will have to respond from /pingpong path. This may require you to rewrite parts of the code.
 
 </exercise>
 

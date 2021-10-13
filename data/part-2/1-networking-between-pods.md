@@ -60,7 +60,7 @@ Note that as the busybox yaml above is for a Pod, it will only ever create a sin
 
 <exercise name='Exercise 2.01: Connecting pods'>
 
-  Connect the main application and ping/pong application. Instead of sharing data via files use HTTP endpoints to respond with the number of pongs. Deprecate all the volume between the two applications for the time being.
+  Connect the "Log output" application and "Ping-pong" application. Instead of sharing data via files use HTTP endpoints to respond with the number of pongs. Deprecate all the volume between the two applications for the time being.
 
   The output will stay the same:
 

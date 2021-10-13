@@ -242,7 +242,7 @@ $ curl -H "Host: tester-route.default.example.com" http://localhost:8081
 
 <exercise name='Exercise 5.05: Deploy to Serverless'>
 
-  Let's test serverless by making the pingpong application serverless.
+  Let's test serverless by making the Ping-pong application serverless.
 
   TIP: Your application should listen on port 8080 or better yet have a `PORT` environment variable to configure this.
 

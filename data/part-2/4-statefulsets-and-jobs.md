@@ -88,9 +88,9 @@ You can now open two terminals and run `$ kubectl logs -f redis-ss-X redisfiller
 
 <exercise name='Exercise 2.07: Stateful applications'>
 
-  Run a postgres database and save the ping/pong application counter into the database.
+  Run a postgres database and save the Ping-pong application counter into the database.
 
-  The postgres database and ping/pong application should not be in the same pod.
+  The postgres database and Ping-pong application should not be in the same pod.
   A single postgres database is enough and it may disappear with the cluster but it should survive even if all pods are taken down.
 
   You should not write the database password in plain text.

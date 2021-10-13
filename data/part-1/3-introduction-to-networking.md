@@ -230,7 +230,7 @@ We can see that the ingress is listening on port 80. As we already opened port t
 
 <exercise name='Exercise 1.07: External access with Ingress'>
 
-  "Main application" currently outputs a timestamp and a random string to the logs.
+  "Log output" application currently outputs a timestamp and a random string to the logs.
 
   Add an endpoint to request the current status (timestamp and string) and an ingress so that you can access it with a browser.
 
@@ -240,16 +240,16 @@ We can see that the ingress is listening on port 80. As we already opened port t
 
 <exercise name='Exercise 1.08: Project v0.5'>
 
-  Switch to using Ingress instead of NodePort to access the project. You can delete the ingress of the "main application" so they don't interfere with this exercise. We'll look more into paths and routing in the next exercise and at that point you can configure project to run with the main application side by side.
+  Switch to using Ingress instead of NodePort to access the project. You can delete the ingress of the "Log output" application so they don't interfere with this exercise. We'll look more into paths and routing in the next exercise and at that point you can configure project to run with the "Log output" application side by side.
 
 </exercise>
 
 <exercise name='Exercise 1.09: More services'>
 
   Develop a second application that simply responds with "pong 0" to a GET request and increases a counter (the 0) so that you can see how many requests have been sent. The counter should be in memory so it may reset at some point.
-  Create a new deployment for it and have it share ingress with "main application" just route requests directed '/pingpong' to it.
+  Create a new deployment for it and have it share ingress with "Log output" application. Route requests directed '/pingpong' to it.
 
-  In future exercises, this second application will be referred to as "ping/pong application"
+  In future exercises, this second application will be referred to as "ping-pong application". It will be used with "Log output" application.
 
   This is not required, but you can add the following annotation to your ingress so that the path in ingress is stripped from the request. This'll allow you to use "/pingpong" path whilst the ping-pong application listens on "/":
 
