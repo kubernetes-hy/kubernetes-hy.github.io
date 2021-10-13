@@ -20,7 +20,7 @@ Course details and starting instructions can be found in [part 0](/part-0).
 
 Registration is only required for ECTS credits. The certificate does not require registration or separate sign up. For ECTS credits (Finnish / Open University students) the registration is after you've completed part 2 and there will be a link at the end of the part.
 
-You should also read the [studies.helsinki.fi page](https://studies.helsinki.fi/courses/cur/otm-0bd9249b-cd12-46eb-b095-a471cc0cd5e9). This page also includes information about target group, enrolment instructions, recommended reading and most importantly **deadlines**.
+You should also read the [studies.helsinki.fi page](https://studies.helsinki.fi/courses/cur/otm-0bd9249b-cd12-46eb-b095-a471cc0cd5e9). This page also includes information about target group, enrolment instructions, recommended reading and most importantly **deadlines**. Note that on fall 2021 the ECTS registration is open before the course starts!
 
 This course may be challenging as it expects that you
 
