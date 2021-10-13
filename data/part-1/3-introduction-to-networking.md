@@ -78,7 +78,7 @@ $ k3d cluster delete
   ...
   INFO[0002] Successfully deleted cluster k3s-default!
 
-$ k3d cluster create --port '8082:30080@agent[0]' -p 8081:80@loadbalancer --agents 2
+$ k3d cluster create --port 8082:20080@agent:0 -p 8081:80@loadbalancer --agents 2
   INFO[0000] Created network 'k3d-k3s-default'
   ...
   INFO[0021] Cluster 'k3s-default' created successfully!
@@ -89,7 +89,7 @@ $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-exam
   deployment.apps/hashresponse-dep created
 ```
 
-Above the "agent[0]" and "loadbalancer" are based on k3d [documentation](https://github.com/rancher/k3d/blob/main/docs/usage/guides/exposing_services.md) and reading code from [here](https://github.com/rancher/k3d/blob/11cc7979228f304025d61254eb0c0cb2745b9444/cmd/util/filter.go#L119) and [here](https://github.com/rancher/k3d/blob/main/pkg/types/types.go#L65)
+Above the "agent:0" and "loadbalancer" are based on k3d [documentation](https://github.com/rancher/k3d/blob/main/docs/usage/exposing_services.md) and reading code from [here](https://github.com/rancher/k3d/blob/11cc7979228f304025d61254eb0c0cb2745b9444/cmd/util/filter.go#L119) and [here](https://github.com/rancher/k3d/blob/main/pkg/types/types.go#L65)
 
 Now we have access through port 8081 to our server node (actually all nodes) and 8082 to one of our agent nodes port 30080. They will be used to showcase different methods of communicating with the servers.
 
