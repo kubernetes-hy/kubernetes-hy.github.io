@@ -194,7 +194,7 @@ For resource 2 the new *Ingress*.
 **ingress.yaml**
 
 ```yaml
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: dwk-material-ingress
@@ -203,18 +203,20 @@ spec:
   - http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: hashresponse-svc
-          servicePort: 2345
+          service:
+            name: hashresponse-svc
+            port:
+              number: 2345
 ```
 
 Then we can apply everything and view the result
 
 ```console
-$ kubectl apply -f manifests/service.yaml
-  service/hashresponse-svc created
-$ kubectl apply -f manifests/ingress.yaml
-  ingress.extensions/dwk-material-ingress created
+$ kubectl apply -f manifests/
+  ingress.networking.k8s.io/dwk-material-ingress created
+  service/hashresponse-svc configured
 
 $ kubectl get svc
   NAME               TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
@@ -222,8 +224,8 @@ $ kubectl get svc
   hashresponse-svc   ClusterIP   10.43.236.27   <none>        2345/TCP   4m23s
 
 $ kubectl get ing
-  NAME                    HOSTS   ADDRESS      PORTS   AGE
-  dwk-material-ingress    *       172.28.0.4   80      77s
+  NAME                   CLASS    HOSTS   ADDRESS                            PORTS   AGE
+  dwk-material-ingress   <none>   *       172.28.0.2,172.28.0.3,172.28.0.4   80      18s
 ```
 
 We can see that the ingress is listening on port 80. As we already opened port there we can access the application on http://localhost:8081.
@@ -251,13 +253,7 @@ We can see that the ingress is listening on port 80. As we already opened port t
 
   In future exercises, this second application will be referred to as "ping-pong application". It will be used with "Log output" application.
 
-  This is not required, but you can add the following annotation to your ingress so that the path in ingress is stripped from the request. This'll allow you to use "/pingpong" path whilst the ping-pong application listens on "/":
-
-  ```yaml
-  metadata:
-    annotations:
-      traefik.ingress.kubernetes.io/rule-type: "PathPrefixStrip"
-  ```
+  This is not required, but you can add the annotation to your ingress so that the path in ingress is stripped from the request. This'll allow you to use "/pingpong" path whilst the ping-pong application listens on "/". Check out https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource
 
 </exercise>
 
