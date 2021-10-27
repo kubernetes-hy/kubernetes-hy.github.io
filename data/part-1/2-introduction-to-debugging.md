@@ -51,7 +51,7 @@ $ kubectl describe deployment hashgenerator-dep
     Labels:  app=hashgenerator
     Containers:
      hashgenerator:
-      Image:        jakousa/dwk-app1:78031863af07c4c4cc3c96d07af68e8ce6e3afba
+      Image:        jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
       Port:         <none>
       Host Port:    <none>
       Environment:  <none>
@@ -81,8 +81,8 @@ $ kubectl describe pod hashgenerator-dep-75bdcc94c-whwsm
     Type    Reason     Age   From                              Message
     ----    ------     ----  ----                              -------
     Normal  Scheduled  15m   default-scheduler                 Successfully assigned default/hashgenerator-dep-75bdcc94c-whwsm to k3d-k3s-default-agent-0
-    Normal  Pulling    15m   kubelet, k3d-k3s-default-agent-0  Pulling image "jakousa/dwk-app1:78031863af07c4c4cc3c96d07af68e8ce6e3afba"
-    Normal  Pulled     15m   kubelet, k3d-k3s-default-agent-0  Successfully pulled image "jakousa/dwk-app1:78031863af07c4c4cc3c96d07af68e8ce6e3afba"
+    Normal  Pulling    15m   kubelet, k3d-k3s-default-agent-0  Pulling image "jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64"
+    Normal  Pulled     15m   kubelet, k3d-k3s-default-agent-0  Successfully pulled image "jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64"
     Normal  Created    15m   kubelet, k3d-k3s-default-agent-0  Created container hashgenerator
     Normal  Started    15m   kubelet, k3d-k3s-default-agent-0  Started container hashgenerator
 ```

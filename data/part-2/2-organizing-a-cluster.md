@@ -87,7 +87,7 @@ spec:
     spec:
       containers:
         - name: hashgenerator
-          image: jakousa/dwk-app1:78031863af07c4c4cc3c96d07af68e8ce6e3afba
+          image: jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
 ```
 
 The _selector_ and _matchLabels_ reveal that the instructions of the deployment are directed to pods with the following label. _matchLabels_ is a key-value pair but we could've used _matchExpressions_ instead. While the template metadata includes a label with key-value pair app and hashgenerator. We can use the same label on multiple namespaces and the namespace would keep them from interfering with each other.
@@ -112,7 +112,7 @@ With labels we can even move pods to labeled nodes. Let's say we have a few node
     spec:
       containers:
         - name: hashgenerator
-          image: jakousa/dwk-app1:78031863af07c4c4cc3c96d07af68e8ce6e3afba
+          image: jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
       nodeSelector:
         networkquality: excellent
 ```

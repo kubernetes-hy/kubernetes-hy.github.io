@@ -272,7 +272,7 @@ If we wanted to scale it 4 times and update the image:
 ```console
 $ kubectl scale deployment/hashgenerator-dep --replicas=4
 
-$ kubectl set image deployment/hashgenerator-dep dwk-app1=jakousa/dwk-app1:78031863af07c4c4cc3c96d07af68e8ce6e3afba
+$ kubectl set image deployment/hashgenerator-dep dwk-app1=jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
 ```
 
 Things start to get really cumbersome. In the dark ages, deployments were created similarly by running commands after each other in "correct" order. We'll now use a declarative approach where we define how things should be. This is more sustainable in the long term than the iterative approach.
@@ -305,7 +305,7 @@ spec:
     spec:
       containers:
         - name: hashgenerator
-          image: jakousa/dwk-app1:78031863af07c4c4cc3c96d07af68e8ce6e3afba
+          image: jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
 ```
 
 <text-box name="Text editor of choice" variant="hint">
