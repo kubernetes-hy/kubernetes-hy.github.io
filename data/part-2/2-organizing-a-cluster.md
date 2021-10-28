@@ -34,7 +34,7 @@ $ kubectl get all --all-namespaces
 
 Namespaces should be kept separate - you could run all of the examples and do the exercises of this course in a cluster that is shared with critical software. An administrator should set a *ResourceQuota* for that namespace so that you can safely run anything there. We'll look into resource limits and requests later.
 
-Defining a namespace is a oneliner, but requires the namespace not to exist already (`kubectl create namespace example-namespace`):
+Creating a namespace is a oneliner (`kubectl create namespace example-namespace`). You can define the namespace to use by adding it to the metadata section of the yamls.
 
 ```yaml
 ...
@@ -44,7 +44,7 @@ metadata:
 ...
 ```
 
-If you're using a namespace constantly, you can set the namespace to be used by default with `kubectl config set-context --current --namespace=<name>`.
+If you're using a specific namespace constantly, you can set the namespace to be used by default with `kubectl config set-context --current --namespace=<name>`.
 
 **Kubernetes Best Practices - Organizing Kubernetes with Namespaces**
 
@@ -58,13 +58,15 @@ If you're using a namespace constantly, you can set the namespace to be used by 
 
 <exercise name='Exercise 2.04: Project v1.1'>
 
-  Move the project into its own namespace as well.
+  Create a namespace for the project and move everything related to the project to that namespace.
 
 </exercise>
 
 ### Labels ###
 
-Labels are used to separate an application from others inside a namespace and to group different resources together. Labels are key-value pairs and they can be modified, added or removed at any time. Labels are identifying and you can query resources that have a certain label.
+Labels are used to separate an application from others inside a namespace and to group different resources together. Labels are key-value pairs and they can be modified, added or removed at any time. Labels can also be added to almost anything.
+
+Labels can help us humans identify resources and Kubernetes can use them to act upon a group of resources. You can query resources that have a certain label. The labels are also used by selectors when they select objects.
 
 Let's look at the labels in *Deployment* yamls. This is the first yaml we created:
 
@@ -90,7 +92,7 @@ spec:
           image: jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
 ```
 
-The _selector_ and _matchLabels_ reveal that the instructions of the deployment are directed to pods with the following label. _matchLabels_ is a key-value pair but we could've used _matchExpressions_ instead. While the template metadata includes a label with key-value pair app and hashgenerator. We can use the same label on multiple namespaces and the namespace would keep them from interfering with each other.
+In this case the yaml includes both a selector and a label. The _selector_ and _matchLabels_ reveal that the instructions of the deployment are directed to pods with the following label. _matchLabels_ is a key-value pair but we could've used _matchExpressions_ instead. While the template metadata includes a label with key-value pair app and hashgenerator. We can use the same label on multiple namespaces and the namespace would keep them from interfering with each other.
 
 Grouping is simple. Either add the label into the file or if you've already deployed the hashgenerator above add the label and you can query with `-l`.
 
@@ -139,7 +141,7 @@ $ kubectl get po
   hashgenerator-dep-7b9b88f8bf-lvcv4   1/1     Running   0          5m30s
 ```
 
-_nodeSelector_ is a blunt tool. Let's say you have a cluster of various machines, ranging from a [fighter jet](https://gcn.com/articles/2020/01/07/af-kubernetes-f16.aspx) to a toaster to a supercomputer. Kubernetes can use _affinity_ and _anti-affinity_ to select which nodes are prioritized for which applications and _taints_ with _tolerances_ so that a pod can avoid certain nodes. For example, if a machine has a high network latency and we wouldn't want it to do some latency critical tasks.
+_nodeSelector_ is a blunt tool. It's great when you want to define binary qualities, like "don't run this application if the node is using an HDD instead of an SSD" by labeling the nodes according to disk types. There are more sophisticated tools you should use when you have a cluster of various machines, ranging from a [fighter jet](https://gcn.com/articles/2020/01/07/af-kubernetes-f16.aspx) to a toaster to a supercomputer. Kubernetes can use _affinity_ and _anti-affinity_ to select which nodes are prioritized for which applications and _taints_ with _tolerances_ so that a pod can avoid certain nodes. For example, if a machine has a high network latency and we wouldn't want it to do some latency critical tasks.
 
 See [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) and [taints and tolerances](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for detailed information. We will not be assigning pods to specific nodes on this course, as we have a homogeneous cluster.
 
