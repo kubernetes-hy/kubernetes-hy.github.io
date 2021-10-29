@@ -75,34 +75,69 @@ data:
   API_KEY: aHR0cDovL3d3dy55b3V0dWJlLmNvbS93YXRjaD92PWRRdzR3OVdnWGNR # base64 encoded should look something like this, note that this won't work
 ```
 
-As the containers are already instructed to use the environment from the secret using it happens automatically. We can now confirm that the app is working and then delete the old secret.
+As the containers are already instructed to use the environment from the secret using it happens automatically. We can now confirm that the app is working at http://localhost:8081.
 
-For encrypted secrets let's use ["Sealed Secrets"](https://github.com/bitnami-labs/sealed-secrets). It seems to be a solution until proven otherwise. We need to install it into our local machine as well as to our cluster. Install [instructions](https://github.com/bitnami-labs/sealed-secrets/releases) are simple: apply the correct version to kube-system namespace.
+Since anyone can reverse the base64 version we can't save that to version control. Since we want to store the configuration we make into a long-term storage we'll need to encrypt the value.
 
-```console
-$ kubectl apply -f https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.12.1/controller.yaml
+Let's use [SOPS](https://github.com/mozilla/sops) to encrypt the secret yaml. There are multiple methods for encryption. Of those we will choose [age](https://github.com/FiloSottile/age) because it's recommended over PGP by the README. So install both of the tools, SOPS and age.
+
+Let's create a key first:
+
+```bash
+$ age-keygen -o key.txt
+  Public key: age17mgq9ygh23q0cr00mjn0dfn8msak0apdy0ymjv5k50qzy75zmfkqzjdam4
 ```
 
-It may take a while to start but after that it's ready to convert your secret into a sealed secret and apply it. Before that confirm that we didn't forget to remove the old secret.
+This key.txt file now contains our public and secret keys. The secret key still can not be added to version control, but its our personal key. Other developers can create their own key pairs. Let's encrypt the values under data in secret.yaml. You can also omit the --encrypted-regex if you want.
 
-```console
-$ kubectl get secrets
-  NAME                  TYPE                                  DATA   AGE
-  default-token-jfr7n   kubernetes.io/service-account-token   3      36m
-
-$ kubeseal -o yaml < secret.yaml > sealedsecret.yaml
-$ kubectl apply -f sealedsecret.yaml
-$ kubectl get secrets
-  NAME                  TYPE                                  DATA   AGE
-  default-token-jfr7n   kubernetes.io/service-account-token   3      37m
-  pixabay-apikey        Opaque                                1      2s
+```bash
+$ sops --encrypt \
+       --age age17mgq9ygh23q0cr00mjn0dfn8msak0apdy0ymjv5k50qzy75zmfkqzjdam4 \
+       --encrypted-regex '^(data)$' \
+       secret.yaml > secret.enc.yaml
 ```
 
-To confirm everything is working we can delete the pod and let it restart with the new environment variable `kubectl delete po imageapi-dep-...`. Using *SealedSecret* was our first time using a custom resource. We will be designing our own custom resources in [part 5](https://devopswithkubernetes.com/part5/).
+The secret.enc.yaml will look like this:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+    name: pixabay-apikey
+data:
+    API_KEY: ENC[AES256_GCM,data:geKXBLn4kZ9A2KHnFk4RCeRRnUZn0DjtyxPSAVCtHzoh8r6YsCUX3KiYmeuaYixHv3DRKHXTyjg=,iv:Lk290gWZnUGr8ygLGoKLaEJ3pzGBySyFJFG/AjwfkJI=,tag:BOSX7xJ/E07mXz9ZFLCT2Q==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age17mgq9ygh23q0cr00mjn0dfn8msak0apdy0ymjv5k50qzy75zmfkqzjdam4
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBDczBhbGNxUkc4R0U0SWZI
+            OEVYTEdzNUlVMEY3WnR6aVJ6OEpGeCtJQ1hVCjVSbDBRUnhLQjZYblQ0UHlneDIv
+            UmswM2xKUWxRMHZZQjVJU21UbDNEb3MKLS0tIGhOMy9lQWx4Q0FUdVhoVlZQMjZz
+            dDEreFAvV3Nqc3lIRWh3RGRUczBzdXcKh7S4q8qp5SrDXLQHZTpYlG43vLfBlqcZ
+            BypI8yEuu18rCjl3HJ+9jbB0mrzp60ld6yojUnaggzEaVaCPSH/BMA==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2021-10-29T12:20:40Z"
+    mac: ENC[AES256_GCM,data:qhOMGFCDBXWhuildW81qTni1bnaBBsYo7UHlv2PfQf8yVrdXDtg7GylX9KslGvK22/9xxa2dtlDG7cIrYFpYQPAh/WpOzzn9R26nuTwvZ6RscgFzHCR7yIqJexZJJszC5yd3w5RArKR4XpciTeG53ygb+ng6qKdsQsvb9nQeBxk=,iv:PZLF3Y+OhtLo+/M0C0hqINM/p5K94tb5ZGc/OG8loJI=,tag:ziFOjWuAW/7kSA5tyAbgNg==,type:str]
+    pgp: []
+    encrypted_regex: ^(data)$
+    version: 3.7.1
+
+```
+
+and we can store it to the version control! Anyone with the secret key pair of `age17mgq9ygh23q0cr00mjn0dfn8msak0apdy0ymjv5k50qzy75zmfkqzjdam4` will be able to decode it. Remember to use your own keys!
+
+If we want to encrypt for the whole team we will need to add a list of public keys while encrypting. Any of the private key owners can decrypt the file. In fact the best method is that (almost) no-one has the private key! Public key can be used to encrypt individual files and the private key can be stored separately and used to decrypt the file just in time.
+
+Now you can store the secret.enc.yaml to your version control.
 
 <exercise name='Exercise 2.05: Secrets'>
 
-  In all future exercises if you are using an API key or a password, such as a database password, you will use Secrets. You can use `SealedSecrets` to store it to a git repository.
+  In all future exercises if you are using an API key or a password, such as a database password, you will use Secrets. You can use `SOPS` to store it to a git repository.
 
   There's nothing specific to submit, all following submissions should follow the rule above.
 

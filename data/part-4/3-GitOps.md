@@ -239,6 +239,6 @@ There are a few options for the GitOps setup. What we used here was having the c
 
   Move your project to use GitOps so that you can develop to the repository and the application is automatically updated even locally!
 
-  **This includes using SealedSecrets for all secrets**
+  **Bonus: use SOPS for all secrets, see https://fluxcd.io/docs/guides/mozilla-sops/**
 
 </exercise>

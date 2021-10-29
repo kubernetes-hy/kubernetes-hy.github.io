@@ -10,6 +10,8 @@ After this section you
 
 - know of the wide array of tools used for monitoring and can implement simple logging
 
+- know about CRDs or Custom Resource Definitions
+
 - know about Helm, the package manager for Kubernetes
 
 </text-box>
@@ -32,7 +34,9 @@ $ kubectl create namespace prometheus
 $ helm install prometheus-community/kube-prometheus-stack --generate-name --namespace prometheus
 ```
 
-This added a lot of stuff to our cluster. You can remove almost everything with `helm delete [name]` with the name found via the `helm list` command. Custom resource definitions are left and have to be manually removed if the need arises.
+This added a lot of stuff to our cluster. Among other things it added a number of custom resources. They are a way to extend the kubernetes APIs and doing so offer new resources that Kubernetes doesn't support out of the box. We will be designing our own custom resources in [part 5](https://devopswithkubernetes.com/part5/).
+
+You can remove almost everything with `helm delete [name]` with the name found via the `helm list` command. Custom resource definitions are left and have to be manually removed if the need arises. The definitions don't do anything by themselves so leaving them is not dangerous.
 
 Lets open a way into Grafana so we can see the data.
 
