@@ -253,7 +253,7 @@ We can see that the ingress is listening on port 80. As we already opened port t
 
   In future exercises, this second application will be referred to as "ping-pong application". It will be used with "Log output" application.
 
-  This is not required, but you can add the annotation to your ingress so that the path in ingress is stripped from the request. This'll allow you to use "/pingpong" path whilst the ping-pong application listens on "/". Check out https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource
+  The ping-pong application will need to listen requests on '/pingpong', so you may have to make changes to its code. This can be avoided by configuring the ingress to rewrite the path, but we will leave that as an optional exercise. You can check out https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource
 
 </exercise>
 
