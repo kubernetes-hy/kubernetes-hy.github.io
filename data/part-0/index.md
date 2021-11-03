@@ -7,41 +7,37 @@ hidden: false
 
 ### Prerequisites ###
 
-Attendees are expected to have completed [DevOps with Docker](https://devopswithdocker.com) or have experience with Docker and docker-compose.
-In addition experience with web software is required, such as [Full Stack Web Development](https://fullstackopen.com/en/) or equivalent.
-To complete the exercises and examples in material attendees are required to have computers with admin/superuser priviledges.
+Attendees are expected to have completed [DevOps with Docker](https://devopswithdocker.com) or have Docker and docker-compose experience.
+In addition, experience with web software is required, such as [Full Stack Web Development](https://fullstackopen.com/en/) or equivalent.
+Attendees need admin/superuser privileges to complete the exercises and the examples of the material on their computers.
 
 ### Course material ###
 
-The course material is meant to be read part by part from start to finish. To get a passing grade you have to do every exercise. There are exercises in the material placed so that you will have learned needed skills in the material before it. You should do the exercises as you go through the material. However, note that as we progress further into the course the exercises will require more googling and you should supplement your knowledge with official documentation!
+The course material is meant to be read part by part from start to finish. To get a passing grade, you have to do every exercise. There are exercises in the material placed so that you have learned the required skills from the material. Do the exercises as you go through the material. As you progress further, you will be increasingly searching for information on the internet. You should also supplement your knowledge with the official documentation!
 
-The course material is written using Mac, so some instructions may lack platform specific details. Please make a pull request to the course material in case you find any mistakes or wish to add something. You can also add an "issue" through GitHub in case you find any issues with the course material. @jakousa in the telegram group also works in some quick-fix cases.
-
-The course material is also changing be it by pull requests or large scale changes such as new sections. Check the [news and upcoming](/news-and-upcoming) page for information, upcoming changes and news.
+The course material is written using Mac, so some instructions may lack platform-specific details. Please make a pull request to the course material in case you find any mistakes or wish to add something. You can also add an issue through GitHub if you find any problems with the course material. Pinging @Jami Kousa in the Discord also works in some quick-fix cases.
 
 ## Completing course ##
 
-To complete the course you will need to do and submit all exercises in parts 1-5. There is no exam.
+To complete the course, submit solutions for all of the exercises in parts 1-5. There is no exam.
 
-The total workload of the course is about 95 hours. You can find out how long it took others by peeking at the old [statistics](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020).
+The total workload of the course is about 95 hours. You can find out how long it took others by peeking at the [statistics](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020).
 
 ### Exercises ###
 
-All exercises need to be completed to get a passing grade.
+Complete all of the exercises to receive a passing grade.
 
-Make a repository to github and publish your solutions there in clearly ordered files / folders. If you need help publishing using git you should refer to their [guide](https://guides.github.com/activities/hello-world/). Make sure that the repository is available to me, either by using a public repository or a private repository and adding [Jakousa](https://github.com/Jakousa) as a collaborator.
+Make a repository to GitHub and publish your solutions in clearly ordered files / folders. If you need help publishing using Git, you should refer to their [guide](https://guides.github.com/activities/hello-world/). Make sure that the repository is available to me, either by using a public repository or a private repository and adding [Jakousa](https://github.com/Jakousa) as a collaborator.
 
-Most of the exercises will require you to write code and / or publish something to docker hub.
+Most of the exercises will require you to write code or publish something to Docker Hub. If you are unsure what to submit, you can ask for help in the course chat.
 
-A system for detecting plagiarism is used to check exercises submitted to GitHub. If multiple students hand in the same code, the situation is handled according to the [policy on plagiarism](https://guide.student.helsinki.fi/en/article/what-cheating-and-plagiarism) of the University of Helsinki.
+A system for detecting plagiarism is used to check exercises submitted to GitHub. If multiple students hand in the same code, the situation is handled according to the [policy on plagiarism](https://studies.helsinki.fi/instructions/article/what-cheating-and-plagiarism) of the University of Helsinki.
 
-When you have completed a part, use the submission application to mark your exercises. You can not edit a submission so make sure you have completed enough exercises for a part before submitting.
-
-There are multiple exercises in each part. After you've completed all of the exercises for a part, use the [submission application](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020). Note that you can **not** edit a submission so mark all exercises as completed.
+There are multiple exercises in each part. After you have completed all of the exercises for a part, use the [submission application](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020). Note that you can **not** edit a submission, so mark all as completed.
 
 ### Grading ###
 
-Course size is 5 ECTS credits. Pass/Fail grading, simply complete all exercises.
+Course size is 5 ECTS credits. Pass/Fail.
 
 ### Quizzes ###
 
@@ -49,15 +45,15 @@ The material includes Quizzes that look like this:
 
 <quiz id="467fa274-1e29-4a46-b7ea-c9238fe1612c"></quiz>
 
-They are optional part of the course and do not affect your grading. If you wish to complete the quizzes you have to register a "TMC" account, buttons at the top of the page. Quizzes work as an easy way for us to gather feedback and improve the course.
+They are an optional part of the course and do not affect your grading. To participate in the quizzes, you have to register a "TMC" account. You can find controls to create an account at the top of the page. Quizzes work as an easy way for us to gather feedback and improve the course.
 
 ## Google Cloud Credits ##
 
-In part 3 we'll use Google Kubernetes Engine. It's not free, but everyone starting with Google Cloud has $300 worth of free credits, see your options [here](https://cloud.google.com/free).
+In part 3 we will use Google Kubernetes Engine. It is not free, but everyone starting with Google Cloud has $300 worth of free credits. See your options [here](https://cloud.google.com/free).
 
-Google has offered students with @helsinki.fi email addresses some Google Cloud Credits. Finnish/Open University students, you will be given a @helsinki.fi address when you register to an Open University course, this will be a task for you at the end of part 2.
+Google has offered students with @helsinki.fi email addresses some Google Cloud Credits. Finnish/Open University students, you will be given a @helsinki.fi address when you register to the Open University course.
 
-If you are not eligible for a @helsinki.fi email address and you have used all $300 credits there is nothing I can do. You can complete parts 1-2 and most likely 4-5, but part 3 is required for course completion and the certificate. For the eligibility for credits check the list and link at the bottom of [registration page](/registration-and-completion).
+If you have used all $300 Google Cloud credits, there is nothing I can do. You can complete parts 1-2 and most likely 4-5, but part 3 is required for course completion and the certificate.
 
 ## Getting started ##
 
@@ -86,7 +82,6 @@ Since the course is open source you can fork, edit and send a pull request. If y
 If you feel like you don’t want to be part of the list of contributors you can also add an issue. Guide for making an issue in github is [here](https://help.github.com/en/articles/creating-an-issue).
 
 Here is a link to the repository to find the tabs for issues and pull requests: [https://github.com/kubernetes-hy/kubernetes-hy.github.io](https://github.com/kubernetes-hy/kubernetes-hy.github.io)
-
 
 ## Experience quizz ##
 
