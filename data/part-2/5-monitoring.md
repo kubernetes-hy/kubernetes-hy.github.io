@@ -32,6 +32,15 @@ And after that we can install [kube-prometheus-stack](https://artifacthub.io/pac
 ```console
 $ kubectl create namespace prometheus
 $ helm install prometheus-community/kube-prometheus-stack --generate-name --namespace prometheus
+...
+NAME: kube-prometheus-stack-1635945330
+LAST DEPLOYED: Wed Nov  3 15:15:37 2021
+NAMESPACE: prometheus
+STATUS: deployed
+REVISION: 1
+NOTES:
+kube-prometheus-stack has been installed. Check its status by running:
+  kubectl --namespace prometheus get pods -l "release=kube-prometheus-stack-1635945330"
 ```
 
 This added a lot of stuff to our cluster. Among other things it added a number of custom resources. They are a way to extend the kubernetes APIs and doing so offer new resources that Kubernetes doesn't support out of the box. We will be designing our own custom resources in [part 5](https://devopswithkubernetes.com/part5/).
@@ -52,7 +61,7 @@ $ kubectl get po -n prometheus
  kube-prometheus-stack-1602180058-grafana-59cd48d794-4459m         2/2     Running   0          53s
  prometheus-kube-prometheus-stack-1602-prometheus-0                3/3     Running   1          23s
 
-$ kubectl -n prometheus port-forward kube-prometheus-stack-1602180058-grafana-59cd48d794-4459m  3000
+$ kubectl -n prometheus port-forward kube-prometheus-stack-1602180058-grafana-59cd48d794-4459m 3000
   Forwarding from 127.0.0.1:3000 -> 3000
   Forwarding from [::1]:3000 -> 3000
 ```
@@ -63,15 +72,15 @@ The dashboards are nice but we'd like to know more about the apps we're running 
 
 Let's run the Redis application from previously `https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app5/manifests/statefulset.yaml`. We can keep it running as it'll generate a good amount of log output for us.
 
-The [Loki Chart](https://github.com/grafana/loki/tree/master/production/helm) includes almost everything:
+The [Loki-stack Chart](https://github.com/grafana/helm-charts/tree/main/charts/loki-stack) includes everything we need:
 
 ```console
-$ helm repo add loki https://grafana.github.io/loki/charts
+$ helm repo add grafana https://grafana.github.io/helm-charts
 $ helm repo update
 $ kubectl create namespace loki-stack
   namespace/loki-stack created
 
-$ helm upgrade --install loki --namespace=loki-stack loki/loki-stack
+$ helm upgrade --install loki --namespace=loki-stack grafana/loki-stack
 
 $ kubectl get all -n loki-stack
   NAME                      READY   STATUS    RESTARTS   AGE
@@ -91,7 +100,9 @@ $ kubectl get all -n loki-stack
   statefulset.apps/loki   1/1     18m
 ```
 
-Here we see that Loki is running in port 3100. Open Grafana and go to settings and "Add data source". Choose Loki and then insert the correct URL. From the output above we can guess that the port should be 3100, the namespace is loki-stack and the name of the service is loki. So the answer would be: http://loki.loki-stack:3100. No other fields need to be changed.
+Here we see that Loki is running in port 3100. As an additional bonus, because we installed the loki-stack we've got "Promtail". [Promtail](https://grafana.com/docs/loki/latest/clients/promtail/) makes it trivial for us to send logs from our applications to Loki. So trivial in fact, that we don't have to do anything except configure Grafana to show Loki.
+
+Open Grafana and go to settings and "Add data source". Choose Loki and then insert the correct URL. From the output above we can guess that the port should be 3100, the namespace is loki-stack and the name of the service is loki. So the answer would be: http://loki.loki-stack:3100. No other fields need to be changed.
 
 Now we can use the Explore tab (compass) to explore the data.
 
