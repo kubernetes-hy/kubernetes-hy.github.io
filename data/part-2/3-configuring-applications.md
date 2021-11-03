@@ -8,9 +8,11 @@ hidden: false
 
 After this section you
 
-- know about CRDs
-
 - know how to pass variables in to your pods
+
+- have options for storing secrets into version control
+
+- have experience searching information in the kubernetes documentation
 
 </text-box>
 
@@ -131,13 +133,21 @@ sops:
 
 and we can store it to the version control! Anyone with the secret key pair of `age17mgq9ygh23q0cr00mjn0dfn8msak0apdy0ymjv5k50qzy75zmfkqzjdam4` will be able to decode it. Remember to use your own keys!
 
-If we want to encrypt for the whole team we will need to add a list of public keys while encrypting. Any of the private key owners can decrypt the file. In fact the best method is that (almost) no-one has the private key! Public key can be used to encrypt individual files and the private key can be stored separately and used to decrypt the file just in time.
-
 Now you can store the secret.enc.yaml to your version control.
+
+If we want to encrypt for the whole team we will need to add a list of public keys while encrypting. Any of the private key owners can decrypt the file. In fact, the best method is that (almost) no-one has the private key! Public key can be used to encrypt individual files and the private key can be stored separately and used to decrypt the file just in time.
+
+You can decrypt the encrypted file by exporting the key file in SOPS_AGE_KEY_FILE environment variable and running sops with --decrypt flag.
+
+```console
+$ export SOPS_AGE_KEY_FILE=$(pwd)/key.txt
+
+$ sops --decrypt secret.enc.yaml > secret.yaml
+```
 
 <exercise name='Exercise 2.05: Secrets'>
 
-  In all future exercises if you are using an API key or a password, such as a database password, you will use Secrets. You can use `SOPS` to store it to a git repository.
+  In all future exercises if you are using an API key or a password, such as a database password, you will use Secrets. You can use `SOPS` to store it to a git repository. _Never_ save unencrypted files into a git repository.
 
   There's nothing specific to submit, all following submissions should follow the rule above.
 
