@@ -27,7 +27,7 @@ The total workload of the course is about 95 hours. You can find out how long it
 
 Complete all of the exercises to receive a passing grade.
 
-Make a repository to GitHub and publish your solutions in clearly ordered files / folders. If you need help publishing using Git, you should refer to their [guide](https://guides.github.com/activities/hello-world/). Make sure that the repository is available to me, either by using a public repository or a private repository and adding [Jakousa](https://github.com/Jakousa) as a collaborator.
+Make a repository to GitHub and publish your solutions in clearly ordered files / folders. If you need help publishing using Git, you should refer to their [guide](https://guides.github.com/activities/hello-world/). Make sure that the repository is available to me. We prefer public repositories, but if you want to keep your experience secret, you can create a private repository and add [Jakousa](https://github.com/Jakousa) as a collaborator.
 
 Most of the exercises will require you to write code or publish something to Docker Hub. If you are unsure what to submit, you can ask for help in the course chat.
 
@@ -49,7 +49,7 @@ They are an optional part of the course and do not affect your grading. To parti
 
 ## Google Cloud Credits ##
 
-In part 3 we will use Google Kubernetes Engine. It is not free, but everyone starting with Google Cloud has $300 worth of free credits. See your options [here](https://cloud.google.com/free).
+In part 3, we will use Google Kubernetes Engine. It is not free, but everyone starting with Google Cloud has $300 worth of free credits. See your options [here](https://cloud.google.com/free).
 
 Google has offered students with @helsinki.fi email addresses some Google Cloud Credits. Finnish/Open University students, you will be given a @helsinki.fi address when you register to the Open University course.
 
@@ -59,27 +59,27 @@ If you have used all $300 Google Cloud credits, there is nothing I can do. You c
 
 ### Discord ###
 
-This course has a Discord group where we discuss everything about the course. Support is available almost 24/7, with discussion being in both English and Finnish.
+This course has a Discord group where we discuss everything about the course. Support is available almost 24/7, with the discussion being in both English and Finnish.
 
 Join our DevOps with Kubernetes Discord group: <https://study.cs.helsinki.fi/discord/join/kubernetes>.
 
-**All** inappropriate, degrading or discriminating comments on the channel are prohibited and will lead to action taken against the commenter.
+**All** inappropriate, degrading, or discriminating comments on the channel are prohibited and will lead to action taken against the commenter.
 
 ### Installing kubectl ###
 
-Kubectl is a command line tool that we'll use to communicate with our Kubernetes cluster. [Install instructions](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+Kubectl is a command-line tool that we will use to communicate with our Kubernetes cluster. [Install instructions](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
 ### Installing k3d ###
 
-We'll use k3d for practice. The [Install instructions](https://github.com/rancher/k3d#get) are here. The course material is written with version 5.0.0 in mind.
+We will also use k3d for practice. The [Install instructions](https://github.com/rancher/k3d#get) are here. I have tested the course material with version 5.0.0 of k3d.
 
 ## Mistakes ##
 
-Did you find a mistake, issue, typo or something missing? Maybe you just thought that something was not well written and you could do better? Maybe it’s hacktoberfest? Or you want to share a link to a great blog post? Make a contribution!
+Did you find a mistake, issue, typo, or something missing? Maybe you just thought that something was not well written and you could do better? Is it Hacktoberfest? Or maybe you want to share a link to a great blog post? Please go ahead and contribute!
 
-Since the course is open source you can fork, edit and send a pull request. If you don’t know what forking is or how to make pull request consult the [github guides](https://guides.github.com/activities/hello-world/). It’s okay to practice here.
+Since the course is open source, you can fork, edit and send a pull request. If you do not know what forking is or how to make a pull request consult the [github guides](https://guides.github.com/activities/hello-world/). It is okay to practice here.
 
-If you feel like you don’t want to be part of the list of contributors you can also add an issue. Guide for making an issue in github is [here](https://help.github.com/en/articles/creating-an-issue).
+If you feel like you do not want to be part of the list of [contributors](https://github.com/kubernetes-hy/kubernetes-hy.github.io/graphs/contributors) you can also add an issue. The guide for making an issue in Github is [here](https://help.github.com/en/articles/creating-an-issue).
 
 Here is a link to the repository to find the tabs for issues and pull requests: [https://github.com/kubernetes-hy/kubernetes-hy.github.io](https://github.com/kubernetes-hy/kubernetes-hy.github.io)
 
