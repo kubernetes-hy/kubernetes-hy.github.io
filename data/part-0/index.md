@@ -61,7 +61,7 @@ If you have used all $300 Google Cloud credits, there is nothing I can do. You c
 
 This course has a Discord group where we discuss everything about the course. Support is available almost 24/7, with the discussion being in both English and Finnish.
 
-Join our DevOps with Kubernetes Discord group: <https://study.cs.helsinki.fi/discord/join/kubernetes>.
+Join our DevOps with Kubernetes Discord channel: <https://study.cs.helsinki.fi/discord/join/kubernetes>.
 
 **All** inappropriate, degrading, or discriminating comments on the channel are prohibited and will lead to action taken against the commenter.
 
