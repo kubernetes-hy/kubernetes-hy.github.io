@@ -352,7 +352,7 @@ When updating anything in Kubernetes the usage of delete is actually an anti-pat
 
 <exercise name='Exercise 1.04: Project v0.2'>
 
-  Create a deployment for the project.
+  Create a deployment.yaml for the project.
 
   You won't have access to the port yet but that'll come soon.
 
