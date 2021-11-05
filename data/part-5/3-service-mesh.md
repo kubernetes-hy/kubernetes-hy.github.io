@@ -64,7 +64,7 @@ Here we see the "vote-bot" deployment that automatically generates traffic. The 
 Since it already has a service we're only missing an ingress.
 
 ```yaml
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: web-ingress
@@ -73,9 +73,13 @@ spec:
   rules:
   - http:
       paths:
-      - backend:
-          serviceName: web-svc
-          servicePort: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-svc
+            port:
+              number: 80
 ```
 
 And it becomes available for us in [http://localhost:8081](http://localhost:8081). However, there's something strange going on! You can figure it out by watching the leaderboards and knowing where the votes are going, or by clicking every single emoji by yourself.
