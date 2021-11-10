@@ -129,28 +129,36 @@ $ kubectl get svc
   cpushredder-svc   LoadBalancer   10.31.254.209   35.228.149.206   80:32577/TCP   94s
 ```
 
-After a few requests to the external IP here the application will start using more CPU. Note that if you request above the limit the pod will be taken down.
+Opening the external-ip, above http://35.228.149.206, in your browser will start one process that will take some CPU. Refresh the page a few times and you should see that if you request above the limit the pod will be taken down.
 
 ```console
 $ kubectl logs -f cpushredder-dep-85f5b578d7-nb5rs
   Started in port 3001
   Received a request
-  started fibo with 25
+  started fibo with 20
   Received a request
-  started fibo with 25
+  started fibo with 20
+  Fibonacci 20: 10946
+  Closed
+  Fibonacci 20: 10946
+  Closed
   Received a request
-  started fibo with 25
-  Fibonacci 25: 121393
-  Closed
-  Fibonacci 25: 121393
-  Closed
-  Fibonacci 25: 121393
-  Closed
+  started fibo with 20
 ```
 
 After a few requests we will see the *HorizontalPodAutoscaler* create a new replica as the CPU utilization rises. As the resources are fluctuating, sometimes very greatly due to increased resource usage on start or exit, the *HPA* will by default wait 5 minutes between downscaling attempts. If your application has multiple replicas even at 0%/50% just wait. If the wait time is set to a value that's too short for stable statistics of the resource usage the replica count may start "thrashing".
 
-Figuring out autoscaling with HorizontalPodAutoscalers can be one of the more challening tasks. Choosing which resources to look at and when to scale
+I recommend opening the cluster in Lens and just refreshing the page and looking at what happens in the cluster. If you do not have Lens installed, `kubectl get deployments --watch` and `kubectl get pods --watch` show the behavior in real time as well.
+
+By default it will take 300 seconds to scale down. You can change the stabilization window by adding the following to the HorizontalPodAutoscaler:
+
+```yaml
+behavior:
+  scaleDown:
+    stabilizationWindowSeconds: 30
+```
+
+Figuring out autoscaling with HorizontalPodAutoscalers can be one of the more challening tasks. Choosing which resources to look at and when to scale is not easy. In our case we only at, and stress the CPU. But your applications may need to scale based on, and take into consideration, a number of resources e.g. network, disk or memory.
 
 <exercise name='Exercise 3.08: Project v1.5'>
 
@@ -194,9 +202,11 @@ spec:
       app: example-app
 ```
 
-This would ensure that no more than half of the pods can be unavailable at. The Kubernetes documentation states "The budget can only protect against voluntary evictions, not all causes of unavailability."
+This would ensure that no more than half of the pods can be unavailable. The Kubernetes documentation states "The budget can only protect against voluntary evictions, not all causes of unavailability."
 
-_Side note:_ Kubernetes also offers the possibility to limit resources per namespace. This can prevent apps in the development namespace from consuming too many resources. Google has created a nice video that explains the possibilities of the `ResourceQuota` object.
+In addition to scaling to multiple nodes (Horizontal scaling), you can also scale individual nodes with [VerticalPodAutoscaler](https://cloud.google.com/kubernetes-engine/docs/concepts/verticalpodautoscaler). These help ensure you are always using 100% of the resources you pay for.
+
+_Side note:_ Kubernetes also offers the possibility to limit resources per namespace. This can prevent apps in the development namespace from consuming too many resources. Google has created a great video that explains the possibilities of the `ResourceQuota` object.
 
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/xjpHggHKm78" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
