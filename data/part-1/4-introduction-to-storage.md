@@ -160,7 +160,7 @@ Modify the previously introduced deployment to use it:
             mountPath: /usr/src/app/files
 ```
 
-And apply it
+And apply it (pv.yaml and pvc.yaml too)
 
 ```console
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
