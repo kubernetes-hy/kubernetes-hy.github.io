@@ -322,7 +322,7 @@ jobs:
     # Build the Docker image
     - name: Build
       run: |-
-        cd ./app6/ && docker build \
+        docker build \
           --tag "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA" \
           .
     # Push the Docker image to Google Container Registry
