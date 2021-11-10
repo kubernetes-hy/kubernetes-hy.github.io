@@ -258,15 +258,18 @@ And finally deployment. We'll setup Kustomize first:
       uses: imranismail/setup-kustomize@v1
 ```
 
-And with Kustomize we can set the image PROJECT/IMAGE as the one we just published and apply it. Finally we'll preview the *rollout* and confirm that the release was a success.
+Now we can use Kustomize to set the image we want the pipeline to publish. I decided to change the name for this one to `gcr.io/PROJECT_ID/IMAGE`.
+After this we can use kustomize to build it. Here I pipe the output of `kustomize build .` to `kubectl apply`, if you are unsure what is happening you can output the `kustomize build .` and check what was built in the middle of the pipeline!
+
+Finally we'll preview the *rollout* and confirm that the release was a success. Rollout will wait until the deployment has rolled out. Here we use the same name of the image, dwk-environments, as the deployment name so we can use the $IMAGE environment variable.
 
 ```yaml
 ...
     - name: Deploy
       run: |-
-        kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
+        kustomize edit set image gcr.io/PROJECT_ID/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
         kustomize build . | kubectl apply -f -
-        kubectl rollout status deployment/$IMAGE
+        kubectl rollout status deployment $IMAGE
         kubectl get services -o wide
 ```
 
@@ -337,9 +340,9 @@ jobs:
     # Deploy the Docker image to the GKE cluster
     - name: Deploy
       run: |-
-        kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
+        kustomize edit set image gcr.io/PROJECT_ID/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
         kustomize build . | kubectl apply -f -
-        kubectl rollout status deployment/$IMAGE
+        kubectl rollout status deployment $IMAGE
         kubectl get services -o wide
 ```
 
@@ -370,7 +373,7 @@ So in the correct order and inside the Deploy:
         kubectl create namespace ${GITHUB_REF#refs/heads/} || true
         kubectl config set-context --current --namespace=${GITHUB_REF#refs/heads/}
         kustomize edit set namespace ${GITHUB_REF#refs/heads/}
-        kustomize edit set image PROJECT/IMAGE=$IMAGE_WITH_TAG
+        kustomize edit set image gcr.io/PROJECT_ID/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
         kubectl apply -k .
         kubectl rollout status deployment $IMAGE
 ```
