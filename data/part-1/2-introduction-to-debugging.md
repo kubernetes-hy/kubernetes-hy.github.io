@@ -26,7 +26,7 @@ The third is `kubectl delete` which will simply delete the resource and in some 
 
 Finally, we have the overarching tool [Lens "The Kubernetes IDE"](https://k8slens.dev/). Which you should start using right now to familiarize yourself with the usage.
 
-During exercises, you also have our Telegram group available (which you joined in [part 0](/part-0)).
+During exercises you also have our Discord channel available (which you joined in [part 0](/part-0)).
 
 Let's test these tools and experiment using Lens. You will likely face a real debugging challenge during the exercises and there is another preplanned one in part 5 when we have a larger set of moving parts available to us.
 
