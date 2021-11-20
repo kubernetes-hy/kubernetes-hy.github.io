@@ -137,7 +137,7 @@ Now you can store the secret.enc.yaml to your version control.
 
 If we want to encrypt for the whole team we will need to add a list of public keys while encrypting. Any of the private key owners can decrypt the file. In fact, the best method is that (almost) no-one has the private key! Public key can be used to encrypt individual files and the private key can be stored separately and used to decrypt the file just in time.
 
-You can decrypt the encrypted file by exporting the key file in SOPS_AGE_KEY_FILE environment variable and running sops with --decrypt flag.
+You can decrypt the encrypted file by exporting the key file in SOPS\_AGE\_KEY\_FILE environment variable and running sops with --decrypt flag.
 
 ```console
 $ export SOPS_AGE_KEY_FILE=$(pwd)/key.txt
