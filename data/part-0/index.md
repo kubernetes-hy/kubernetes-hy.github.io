@@ -78,7 +78,7 @@ Depending on your installation method you might get a `Permission denied` error 
 ```
 sudo chmod go+xr /usr/local/bin/k3d
 ```
-might be necessary so that `k3d` could be run as a normal user. Running `k3d` as `sudo` leads to problems such as generating the kubeconfig into wrong place i.e. not into _~/.kube_.
+might be necessary so that `k3d` could be run as a normal user. If you're using Apple silicon, homebrew installs `k3d` in `/opt/homebrew/bin/k3d` but if you're not sure, you can check your `k3d` install location with `which k3d`. Running `k3d` as `sudo` leads to problems such as generating the kubeconfig into wrong place i.e. not into _~/.kube_.
 
 ## Mistakes ##
 
