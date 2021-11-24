@@ -146,7 +146,7 @@ This added NATS into the cluster. At this state however, the applications don't 
               value: nats://my-nats:4222
 ```
 
-After applying the modified deployments we can confirm that everything is working here by reading the logs of the fetcher - `kubectl logs fetcher-dep-7d799bb6bf-zz8hr -f`. We'll want to monitor the state of NATS as well. Fortunately it already has a Prometheus Exporter included in port 7777. We can access from browser with `kubectl port-forward my-nats-0 7777:7777` in [http://127.0.0.1:7777/metrics](http://127.0.0.1:7777/metrics) to confirm that it works. Connecting Prometheus to the exporter will require a new resource ServiceMonitor, a CRD (Custom Resource Definition).
+After applying the modified deployments we can confirm that everything is working here by reading the logs of the fetcher - `kubectl logs fetcher-dep-7d799bb6bf-zz8hr -f`. We'll want to monitor the state of NATS as well. Fortunately it already has a Prometheus Exporter included in port 7777. We can access from browser with `kubectl port-forward my-nats-0 7777:7777` in [http://127.0.0.1:7777/metrics](http://127.0.0.1:7777/metrics) to confirm that it works. Connecting Prometheus to the exporter will require a new resource ServiceMonitor another new CRD (Custom Resource Definition).
 
 **servicemonitor.yaml**
 
@@ -160,7 +160,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: my-nats
+    # We also need a label which we want to listen
   endpoints:
     - interval: 10s
       path: /metrics
@@ -194,6 +194,8 @@ $ kubectl describe svc my-nats
   Endpoints:         10.42.1.31:7777
 ```
 
+And the label we want to listen can be found with `kubectl describe`. I found the label `app.kubernetes.io/name=nats`
+
 So finally we can fill it with
 
 ```console
@@ -207,7 +209,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: my-nats
+      app.kubernetes.io/name: nats
   endpoints:
     - interval: 10s
       path: /metrics
