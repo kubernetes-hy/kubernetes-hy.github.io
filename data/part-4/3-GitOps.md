@@ -24,7 +24,7 @@ An average simple deployment pipeline we have used and learned about is somethin
 
 This is called a push deployment. It is a descriptive name as everything is pushed forward by the previous step. There are some challenges with the push approach. For example, if we have a Kubernetes cluster that is unavailable for external connections i.e. the cluster on your local machine or any cluster we don't want to give outsiders access to. In those cases having CI/CD push the update to the cluster is not possible.
 
-In a pull configuration, we'd have the cluster, running anywhere, **pull** the new image and deploy it automatically. Do we lose anything or increase the risk of a bug by doing so? No. The new image has been tested and built by the CI/CD. We simply relieve the CI/CD of the burden of deployment and move it to another system.
+In a pull configuration the setup is reversed. We can have the cluster, running anywhere, **pull** the new image and deploy it automatically. The new image will still be tested and built by the CI/CD. We simply relieve the CI/CD of the burden of deployment and move it to another system that is doing the pulling.
 
 <text-box name="Watchtower" variant="hint">
 
@@ -52,13 +52,12 @@ $ curl -s https://toolkit.fluxcd.io/install.sh | sudo bash
 
 or if that doesn't work read [installation guide](https://toolkit.fluxcd.io/guides/installation/).
 
- `flux check` will tell us if something is wrong with the cluster itself.
+`flux check` will tell us if something is wrong with the cluster itself.
 
 ```console
 $ flux check --pre
   ► checking prerequisites
-  ✔ kubectl 1.19.0 >=1.18.0
-  ✔ Kubernetes 1.19.4+k3s1 >=1.16.0
+  ✔ Kubernetes 1.22.2+k3s2 >=1.19.0-0
   ✔ prerequisites checks passed
 ```
 
@@ -115,7 +114,7 @@ spec:
   validation: client # Who validates the objects. Server or the client.
 ```
 
-And this is the application within that repository and takes care of the manifests. Kustomization will either look for kustomization.yaml within the path or if none found generate one that contains all Kubernetes manifests in it. Now simply `git add` both of them and push them to the repository. After a short while, you will have hashgenerator pod running
+And this is the application within that repository and takes care of the manifests. Kustomization will either look for kustomization.yaml within the path or if none found generate one that contains all Kubernetes manifests in it. Now simply `git add` both of them, `git commit` and `git push` them to the repository. After a short while, you will have hashgenerator pod running
 
 ```console
 $ kubectl get pods
@@ -163,15 +162,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # Build and push
-    - name: Publish to Registry
-      uses: docker/build-push-action@v1
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
       with:
-        repository: jakousa/dwk-4-gitops-app
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        tags: ${{ github.sha }}
-        path: 4-gitops/app
+
+    - name: Build and Push
+      uses: docker/build-push-action@v2
+      with:
+        context: 4-gitops/app
+        push: true
+        tags: jakousa/dwk-4-gitops-app:${{ github.sha }}
 
   deploy:
     name: Deploy
@@ -181,20 +183,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    # Set up kustomize
     - name: Set up Kustomize
-      working-directory: 4-gitops/manifests
-      run: |-
-        curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
-        chmod u+x ./kustomize
+      uses: imranismail/setup-kustomize@v1
 
     # Update yamls
     - name: Update yamls
       working-directory: 4-gitops/manifests
       run: |-
-        ./kustomize edit set image IMAGE_PLACEHOLDER=jakousa/dwk-4-gitops-app:${{ github.sha }}
+        kustomize edit set image IMAGE_PLACEHOLDER=jakousa/dwk-4-gitops-app:${{ github.sha }}
 
     # Commit and push
-    - uses: EndBug/add-and-commit@v5
+    - uses: EndBug/add-and-commit@v7
       with:
         add: '4-gitops/manifests/kustomization.yaml'
         message: New version release for gitops-app ${{ github.sha }}

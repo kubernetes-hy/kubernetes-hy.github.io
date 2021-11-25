@@ -111,7 +111,7 @@ spec:
                port: 3541
 ```
 
-Here the *initalDelay* and *periodSeconds* will mean that the probe is sent 10 seconds after the container is up and every 5 seconds after that. Now if we change the tag to v2 and apply it
+Here the *initalDelay* and *periodSeconds* will mean that the probe is sent 10 seconds after the container is up and every 5 seconds after that. Now if we change the tag to v2 and apply it the result will look like this:
 
 ```console
 $ kubectl apply -f deployment.yaml
@@ -146,7 +146,7 @@ pingpong-dep-9b698d6fb-jdgq9     0/1     Running   0          21s
 
 </exercise>
 
-But as the application is working we can just push a new update on top of the v2. Let's try the v4 which our colleague has assured us will "surely" work:
+Even though v2 didn't work. At least the application is working. We can just push a new update on top of the v2. Let's try the v4 which should break after a short while:
 
 ```console
 $ kubectl apply -f deployment.yaml
@@ -171,7 +171,22 @@ $ kubectl rollout undo deployment flaky-update-dep
   deployment.apps/flaky-update-dep rolled back
 ```
 
-There's another probe that could've helped us in a situation like this. *LivenessProbes* can be configured similarly to *ReadinessProbes*, but if the check fails the container will be restarted.
+This will roll back into the previous version. Since it was v2, which doesn't work, we need to use a flag with the undo:
+
+```console
+$ kubectl describe deployment flaky-update-dep | grep Image
+    Image:        jakousa/dwk-app8:v2
+
+$ kubectl rollout undo deployment flaky-update-dep --to-revision=1
+  deployment.apps/flaky-update-dep rolled back
+
+$ kubectl describe deployment flaky-update-dep | grep Image
+    Image:        jakousa/dwk-app8:v1
+```
+
+Read `kubectl rollout undo --help` to find out more!
+
+There's another probe that could've helped us in a situation like the v4. *LivenessProbes* can be configured similarly to *ReadinessProbes*, but if the check fails the container will be restarted.
 
 **deployment.yaml**
 
@@ -241,11 +256,11 @@ A *StartupProbe* can delay the liveness probe so that an application with a long
 
 With rolling updates, when including the Probes, we could create releases with no downtime for users. Sometimes this is not enough and you need to be able to do a partial release for some users and get data for the new / upcoming release. Canary release is the term used to describe a release strategy in which we introduce a subset of the users to a new version of the application. Then increasing the number of users in the new version until the old version is no longer used.
 
-At the moment of writing this Canary is not a strategy for deployments. This may be due to the ambiguity of the methods for canary release. We will use [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) to test one type of canary release. At the moment of writing the latest release is v0.8.2.
+At the moment of writing this Canary is not a strategy for deployments. This may be due to the ambiguity of the methods for canary release. We will use [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) to test one type of canary release. At the moment of writing the latest release is v1.1.0. We will in fact go with the unreleased version in the master branch of the project, since our 1.22 version of Kubernetes isn't supported in stable release yet:
 
 ```console
 $ kubectl create namespace argo-rollouts
-$ kubectl apply -n argo-rollouts -f https://raw.githubusercontent.com/argoproj/argo-rollouts/stable/manifests/install.yaml
+$ kubectl apply -n argo-rollouts -f https://raw.githubusercontent.com/argoproj/argo-rollouts/master/manifests/install.yaml
 ```
 
 Now we have a new resource "Rollout" available to us. The Rollout will replace our previously created deployment and enable us to use a new field:
@@ -272,12 +287,30 @@ spec:
       - pause:
           duration: 30s
   template:
-    ...
+    metadata:
+      labels:
+        app: flaky-update
+    spec:
+      containers:
+        - name: flaky-update
+          image: jakousa/dwk-app8:v1
+          readinessProbe:
+            initialDelaySeconds: 10 # Initial delay until the readiness is tested
+            periodSeconds: 5 # How often to test
+            httpGet:
+               path: /healthz
+               port: 3541
+          livenessProbe:
+            initialDelaySeconds: 20 # Initial delay until the liveness is tested
+            periodSeconds: 5 # How often to test
+            httpGet:
+               path: /healthz
+               port: 3541
 ```
 
-The above will first move 25% of the pods to a new version (in our case 1 pod) after which it will wait for 20 seconds, move to 50% of pods and then wait for 20 seconds until every pod is updated. A kubectl plugin from Argo also offers us promote command to enable us to pause the rollout indefinitely and then use the promote to move forward.
+The above strategy will first move 25% of the pods to a new version (in our case 1 pod) after which it will wait for 20 seconds, move to 50% of pods and then wait for 20 seconds until every pod is updated. A kubectl plugin from Argo also offers us `promote` command to enable us to pause the rollout indefinitely and then use the promote to move forward.
 
-There are other options such as the familiar *maxUnavailable* but the defaults will work for us. However, simply rolling slowly to production will not be enough for a canary deployment. Just like with rolling updates we need to know the status of the application.
+There are other options such as the previously seen *maxUnavailable* but the defaults will work for us. However, simply rolling slowly to production will not be enough for a canary deployment. Just like with rolling updates we need to know the status of the application.
 
 With another custom resource we've already installed with Argo Rollouts called "AnalysisTemplate" we will be able to define a test that doesn't let the broken versions through.
 
