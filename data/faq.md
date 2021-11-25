@@ -23,7 +23,7 @@ If you are not eligible for a @helsinki.fi email address and you have used all $
 
 ### CKAD or CKA ###
 
-At this point in time I have not completed the [CKAD](https://www.cncf.io/certification/ckad/) (or CKA) certificates, that some attendees asked me about, and as such I do not know how different the contents of this course are. But by looking at the [v1.18 curriculum](https://github.com/cncf/curriculum/blob/master/CKAD_Curriculum_V1.18.pdf) and comparing it to the contents of this course I'll deduce that while most of the contents are covered by this course there are still some subjects that this course does not cover.
+At this point in time I have not completed the [CKAD](https://www.cncf.io/certification/ckad/) (or CKA) certificates, that some attendees asked me about, and as such I do not know how different the contents of this course are. But by looking at the [v1.22 curriculum](https://github.com/cncf/curriculum/blob/master/CKAD_Curriculum_v1.22.pdf) and comparing it to the contents of this course I'll deduce that while most of the contents are covered by this course there are still some subjects that this course does not cover.
 
 There's a certificate for this course as well. But this certificate (or this course) does not have anything to do with CKAD or CKA.
 
