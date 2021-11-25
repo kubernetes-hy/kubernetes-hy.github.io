@@ -158,7 +158,7 @@ behavior:
     stabilizationWindowSeconds: 30
 ```
 
-Figuring out autoscaling with HorizontalPodAutoscalers can be one of the more challening tasks. Choosing which resources to look at and when to scale is not easy. In our case we only at, and stress the CPU. But your applications may need to scale based on, and take into consideration, a number of resources e.g. network, disk or memory.
+Figuring out autoscaling with HorizontalPodAutoscalers can be one of the more challening tasks. Choosing which resources to look at and when to scale is not easy. In our case, we only stress the CPU. But your applications may need to scale based on, and take into consideration, a number of resources e.g. network, disk or memory.
 
 <exercise name='Exercise 3.08: Project v1.5'>
 
