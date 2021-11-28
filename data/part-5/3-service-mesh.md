@@ -63,6 +63,7 @@ Here we see the "vote-bot" deployment that automatically generates traffic. The 
 
 Since it already has a service we're only missing an ingress.
 
+**ingress.yaml**
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -84,13 +85,29 @@ spec:
 
 And it becomes available for us in [http://localhost:8081](http://localhost:8081). However, there's something strange going on! You can figure it out by watching the leaderboards and knowing where the votes are going, or by clicking every single emoji by yourself.
 
-Let's see if there's a better way to detect the behavior and figure out what's wrong. Open linkerd with
+Let's see if there's a better way to detect the behavior and figure out what's wrong. Linkerd offers us a dashboard through an extension called `viz`.
 
 ```
-$ linkerd dashboard
+$ linkerd viz install | kubectl apply -f -
+  ...
+
+$ linkerd viz dashboard
 ```
 
-it should open your browser window. Click the "emojivoto" namespace (to reach /namespaces/emojivoto) we'll notice that the resources in emojivoto namespace are not in the service mesh yet. This is due to the fact that they do not have the sidecar container in the pods. Let's add Linkerd with the following
+it should open your browser window. Click the "emojivoto" namespace (to reach /namespaces/emojivoto) we'll notice that the resources in emojivoto namespace are not in the service mesh yet. This is due to the fact that they do not have the `sidecar container` in the pods. Sidecar containers are a commonly used pattern where a new container is added to the pod to add more functionality to the pod. Let's add Linkerd sidecars to emojivoto.
+
+The state of the pods before:
+
+```
+$ kubectl get po -n emojivoto
+  NAME                        READY   STATUS    RESTARTS   AGE
+  voting-f999bd4d7-r4mct      1/1     Running   0          10m
+  web-79469b946f-ksprv        1/1     Running   0          10m
+  emoji-66ccdb4d86-rhcnf      1/1     Running   0          10m
+  vote-bot-69754c864f-g24jt   1/1     Running   0          10m
+```
+
+The spell to add linkerd to the deployments and then apply the deployments.
 
 ```
 $ kubectl get -n emojivoto deploy -o yaml \
@@ -98,13 +115,22 @@ $ kubectl get -n emojivoto deploy -o yaml \
     | kubectl apply -f -
 ```
 
-You can run the rows independently to see what they do. The first will output all deployments in emojivoto namespace. The `inject` on the second will add an annotation to instruct Linkerd to add the sidecar proxy container. Finally the kubectl apply will apply the modified deployments.
+You can run the rows independently to see what they do. The first, `kubectl get -n emojivoto deploy -o yaml`, will output all deployments in emojivoto namespace. The `linkerd inject -` will add an annotation to instruct Linkerd to add the sidecar proxy container. Finally the kubectl apply will apply the modified deployments. Now the pods look like this:
 
-If you now look at the dashboard you'll see a lot more information as the old deployments were replaced by the meshed ones. We also notice that success rate is less than stellar.
+```
+kubectl get po -n emojivoto
+NAME                        READY   STATUS    RESTARTS   AGE
+vote-bot-6d7677bb68-qxfx9   2/2     Running   0          3m17s
+web-5f86686c4d-qgxtv        2/2     Running   0          3m17s
+emoji-696d9d8f95-sgzqs      2/2     Running   0          3m17s
+voting-ff4c54b8d-sf99j      2/2     Running   0          3m18s
+```
+
+Also, if you now look at the dashboard you'll see a lot more information as the old deployments were replaced by the meshed ones. We also notice that success rate is less than stellar.
 
 Two services have success rate below 100%. As the _web_ is most likely just propagating the error from _voting_ we can click either of the services and you should quickly see which request is failing.
 
-There's a lot more service meshes offer.
+Service meshes can be powerful tools as they can help you connect and observe your services.
 
 <exercise name='Exercise 5.02: Project: Service Mesh Edition'>
 

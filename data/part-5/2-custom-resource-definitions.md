@@ -75,6 +75,7 @@ spec:
 
 Now we can create our own Countdown:
 
+**countdown.yaml**
 ```yaml
 apiVersion: stable.dwk/v1
 kind: Countdown
@@ -221,7 +222,7 @@ $ kubectl logs countdown-controller-dep-7ff598ffbf-q2rp5
 
   You should use Golang but this may not be the best place to learn a new language so this will just be a recommendation. The app10-go README has info for what to do to get started with own CRD in Golang!
 
-  "Should migrate to golang when dealing with kubernetes, all non-go k8s client libraries are abandonware/harmful" - Matti Paksula, in this courses Telegram channel
+  "Should migrate to golang when dealing with kubernetes, all non-go k8s client libraries are abandonware/harmful" - Matti Paksula, in this courses channel
 
 </text-box>
 
