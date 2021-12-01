@@ -35,35 +35,35 @@ Finally as Kubernetes is a platform we'll go over a few popular building blocks 
 
 [Serverless](https://en.wikipedia.org/wiki/Serverless_computing) has gained a lot of popularity and it's easy to see why. Be it Google Cloud Run, Knative, OpenFaaS, OpenWhisk, Fission or Kubeless they're running on top of Kubernetes, or atleast capable of doing so. The older the serverless platform the more likely it won't be running on Kubernetes. As such a statement like "Kubernetes is competing with serverless" doesn't make much sense.
 
-As this isn't a serverless course we won't go into depth about it but serverless sounds pretty dope. So next let's setup a serverless platform on our k3d because that's something we can do. For this let's choose [Knative](https://knative.dev/) as it's the one [Google Cloud Run](https://cloud.google.com/blog/products/serverless/knative-based-cloud-run-services-are-ga) is based on and seems to be a competent option compared to other open source options we have available. It also keeps us in the theme of platforms for platforms as it could be used to create your own serverless platform.
+As this isn't a serverless course we won't go into depth about it but serverless sounds pretty dope. That's why next we will setup a serverless platform on top of our k3d. Just because that's something we can do. For this let's choose [Knative](https://knative.dev/) as it's the one [Google Cloud Run](https://cloud.google.com/blog/products/serverless/knative-based-cloud-run-services-are-ga) is based on and seems to be a competent option compared to other open source options we have available. It also keeps us in the theme of platforms for platforms as it could be used to create your own serverless platform.
 
-Knative has its own community-backed [runtime contract](https://github.com/knative/serving/blob/master/docs/runtime-contract.md). It describes what kind of features an application must and should have to run correctly as a FaaS. An essential requirement is that the app itself must be stateless and configurable with environmental variables. This kind of open-source specification helps a project gain wider adoption. For instance, [Google Cloud Run implemented](https://ahmet.im/blog/cloud-run-is-a-knative/) the same contract.
+Knative has its own community-backed [runtime contract](https://github.com/knative/specs/blob/main/specs/serving/runtime-contract.md). It describes what kind of features an application must and should have to run correctly as a FaaS. An essential requirement is that the app itself must be stateless and configurable with environmental variables. This kind of open-source specification helps a project gain wider adoption. For instance, [Google Cloud Run implemented](https://ahmet.im/blog/cloud-run-is-a-knative/) the same contract.
 
-We will follow [this guide](https://knative.dev/docs/install/any-kubernetes-cluster/) to install "Serving" component of Knative. This will require us to choose a networking layer from the 6 offered. We will choose [Contour](https://projectcontour.io/) since it's listed as being in `Stable` state and the other Stable, Istio, has resource requirements that are quite large. For Contour and Knative to work locally in k3d we'll need to create our cluster without the traefik ingress.
+We will follow [this guide](https://knative.dev/docs/install/serving/install-serving-with-yaml/) to install "Serving" component of Knative. This will require us to choose a networking layer from the 4 offered. I will choose [Contour](https://projectcontour.io/), but you are free to experiment. Contour was one of the firsts in a stable state, while support for most others followed. Be wary that Istio has resource requirements that are quite large. For Contour and Knative to work locally in k3d we'll need to create our cluster without traefik.
 
 ```console
-$ k3d cluster create --port '8082:30080@agent[0]' -p 8081:80@loadbalancer --agents 2 --k3s-server-arg '--no-deploy=traefik'
+$ k3d cluster create --port 8082:30080@agent:0 -p 8081:80@loadbalancer --agents 2 --k3s-arg "--disable=traefik@server:0"
 ```
 
 Now installing Knative is pretty straight forward CRDs and core:
 
 ```console
-$ kubectl apply -f https://github.com/knative/serving/releases/download/v0.18.0/serving-crds.yaml
+$ kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.0.0/serving-crds.yaml
   ...
 
-$ kubectl apply -f https://github.com/knative/serving/releases/download/v0.18.0/serving-core.yaml
+$ kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.0.0/serving-core.yaml
   ...
 ```
 
-That's it. Well, if we wanted to run something that we would never access that is it. Next we'll install Contour.
+That's it. Well, if we wanted to run something that we would never access, that is it. Next we'll install Contour.
 
 ## Contour ##
 
 Previously we used traefik for the job, but "[Traefik as Knative Ingress?](https://github.com/traefik/traefik/issues/5081)" is still an open issue.
 
 ```console
-$ kubectl apply -f https://github.com/knative/net-contour/releases/download/v0.18.0/contour.yaml \
-                -f https://github.com/knative/net-contour/releases/download/v0.18.0/net-contour.yaml
+$ kubectl apply -f https://github.com/knative/net-contour/releases/download/knative-v1.0.0/contour.yaml \
+                -f https://github.com/knative/net-contour/releases/download/knative-v1.0.0/net-contour.yaml
 ```
 
 And configure Knative Serving to use Contour
@@ -72,10 +72,10 @@ And configure Knative Serving to use Contour
 $ kubectl patch configmap/config-network \
   --namespace knative-serving \
   --type merge \
-  --patch '{"data":{"ingress.class":"contour.ingress.networking.knative.dev"}}'
+  --patch '{"data":{"ingress-class":"contour.ingress.networking.knative.dev"}}'
 ```
 
-And that's it. We'll leave the step 4 for configuring DNS out.
+And that's it.
 
 #### Hello Serverless World ####
 
