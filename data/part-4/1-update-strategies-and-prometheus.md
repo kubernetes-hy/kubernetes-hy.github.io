@@ -363,7 +363,7 @@ $ kubectl -n prometheus port-forward prometheus-kube-prometheus-stack-1602-prome
     </tbody>
   </table>
 
-  Query for "kube_pod_info" should have the required fields to filter through. See [documentation](https://prometheus.io/docs/prometheus/latest/querying/basics/) for help with querying.
+  Query for "kube\_pod\_info" should have the required fields to filter through. See [documentation](https://prometheus.io/docs/prometheus/latest/querying/basics/) for help with querying.
 
 </exercise>
 
