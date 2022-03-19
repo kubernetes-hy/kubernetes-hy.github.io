@@ -73,12 +73,12 @@ Kubectl is a command-line tool that we will use to communicate with our Kubernet
 
 We will also use k3d for practice. The [Install instructions](https://github.com/rancher/k3d#get) are here. I have tested the course material with version 5.0.0 of k3d.
 
-#### Note about k3d install permissions
-Depending on your installation method you might get a `Permission denied` error while using `k3d` as a normal user.
-```
-sudo chmod go+xr /usr/local/bin/k3d
-```
-might be necessary so that `k3d` could be run as a normal user. If you're using Apple silicon, homebrew installs `k3d` in `/opt/homebrew/bin/k3d` but if you're not sure, you can check your `k3d` install location with `which k3d`. Running `k3d` as `sudo` leads to problems such as generating the kubeconfig into wrong place i.e. not into _~/.kube_.
+#### Note about k3d permission errors
+You might get a `Permission denied` error while using `k3d` as a normal user.
+
+Be sure to go through this [docker post-installation step](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
+
+Running `k3d` as `sudo` leads to problems such as generating the kubeconfig into wrong place i.e. not into _~/.kube_.
 
 ## Mistakes ##
 
