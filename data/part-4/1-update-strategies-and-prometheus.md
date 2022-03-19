@@ -29,7 +29,7 @@ Both of these update strategies are designed to make sure that the application w
 
 By default Kubernetes initiates a "rolling update" when we change the image. That means that every pod is updated sequentially. The rolling update is a great default since it enables the application to be available during the update. If we decide to push an image that does not work the update will automatically stop.
 
-I've prepared an application with 5 versions here. v1 works always, v2 never works, v3 works 90% of the time, v4 will die after 20 seconds and v5 works always.
+I've prepared an application with 5 versions here. The one with tag v1 works always, v2 never works, v3 works 90% of the time, v4 will die after 20 seconds and v5 works always.
 
 **deployment.yaml**
 
@@ -73,13 +73,13 @@ $ kubectl get po --watch
 ...
 ```
 
-You can see the rolling update performed but unfortunately the application no longer works. The application is running, it's just that there's a bug which prevents it from working correctly. This is where *ReadinessProbes* come in.
+You can see the rolling update performed but unfortunately the application no longer works. The application is running, it's just that there's a bug which prevents it from working correctly. This is where [*ReadinessProbes*](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) come in.
 
 **Kubernetes Best Practices - Kubernetes Health Checks with Readiness and Liveness Probes**
 
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/mxEvAPQRwhw" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-With a *ReadinessProbe* Kubernetes can check if a pod is ready to process requests. The application has an endpoint [/healthz](https://stackoverflow.com/questions/43380939/where-does-the-convention-of-using-healthz-for-application-health-checks-come-f) in port 3541 we can test for health. It will simply answer with status code 500 if it's not working and 200 if it is.
+With a *ReadinessProbe* Kubernetes can check if a pod is ready to process requests. The application has an endpoint [/healthz](https://stackoverflow.com/questions/43380939/where-does-the-convention-of-using-healthz-for-application-health-checks-come-f) in port 3541, and we can use that to test for health. It will simply answer with status code 500 if it's not working and 200 if it is.
 
 Let's roll the version back to v1 as well so we can test the update to v2 again.
 
@@ -111,7 +111,7 @@ spec:
                port: 3541
 ```
 
-Here the *initalDelay* and *periodSeconds* will mean that the probe is sent 10 seconds after the container is up and every 5 seconds after that. Now if we change the tag to v2 and apply it
+Here the *initialDelaySeconds* and *periodSeconds* will mean that the probe is sent 10 seconds after the container is up and every 5 seconds after that. Now if we change the tag to v2 and apply it the result will look like this:
 
 ```console
 $ kubectl apply -f deployment.yaml
@@ -146,7 +146,7 @@ pingpong-dep-9b698d6fb-jdgq9     0/1     Running   0          21s
 
 </exercise>
 
-But as the application is working we can just push a new update on top of the v2. Let's try the v4 which our colleague has assured us will "surely" work:
+Even though v2 didn't work. At least the application is working. We can just push a new update on top of the v2. Let's try the v4 which should break after a short while:
 
 ```console
 $ kubectl apply -f deployment.yaml
@@ -171,7 +171,22 @@ $ kubectl rollout undo deployment flaky-update-dep
   deployment.apps/flaky-update-dep rolled back
 ```
 
-There's another probe that could've helped us in a situation like this. *LivenessProbes* can be configured similarly to *ReadinessProbes*, but if the check fails the container will be restarted.
+This will roll back into the previous version. Since it was v2, which doesn't work, we need to use a flag with the undo:
+
+```console
+$ kubectl describe deployment flaky-update-dep | grep Image
+    Image:        jakousa/dwk-app8:v2
+
+$ kubectl rollout undo deployment flaky-update-dep --to-revision=1
+  deployment.apps/flaky-update-dep rolled back
+
+$ kubectl describe deployment flaky-update-dep | grep Image
+    Image:        jakousa/dwk-app8:v1
+```
+
+Read `kubectl rollout undo --help` to find out more!
+
+There's another probe that could've helped us in a situation like the v4. [*LivenessProbes*](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) can be configured similarly to *ReadinessProbes*, but if the check fails the container will be restarted.
 
 **deployment.yaml**
 
@@ -241,11 +256,11 @@ A *StartupProbe* can delay the liveness probe so that an application with a long
 
 With rolling updates, when including the Probes, we could create releases with no downtime for users. Sometimes this is not enough and you need to be able to do a partial release for some users and get data for the new / upcoming release. Canary release is the term used to describe a release strategy in which we introduce a subset of the users to a new version of the application. Then increasing the number of users in the new version until the old version is no longer used.
 
-At the moment of writing this Canary is not a strategy for deployments. This may be due to the ambiguity of the methods for canary release. We will use [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) to test one type of canary release. At the moment of writing the latest release is v0.8.2.
+At the moment of writing this Canary is not a strategy for deployments. This may be due to the ambiguity of the methods for canary release. We will use [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) to test one type of canary release. At the moment of writing the latest release is v1.1.0. We will in fact go with the unreleased version in the master branch of the project, since our 1.22 version of Kubernetes isn't supported in stable release yet:
 
 ```console
 $ kubectl create namespace argo-rollouts
-$ kubectl apply -n argo-rollouts -f https://raw.githubusercontent.com/argoproj/argo-rollouts/stable/manifests/install.yaml
+$ kubectl apply -n argo-rollouts -f https://raw.githubusercontent.com/argoproj/argo-rollouts/master/manifests/install.yaml
 ```
 
 Now we have a new resource "Rollout" available to us. The Rollout will replace our previously created deployment and enable us to use a new field:
@@ -272,14 +287,32 @@ spec:
       - pause:
           duration: 30s
   template:
-    ...
+    metadata:
+      labels:
+        app: flaky-update
+    spec:
+      containers:
+        - name: flaky-update
+          image: jakousa/dwk-app8:v1
+          readinessProbe:
+            initialDelaySeconds: 10 # Initial delay until the readiness is tested
+            periodSeconds: 5 # How often to test
+            httpGet:
+               path: /healthz
+               port: 3541
+          livenessProbe:
+            initialDelaySeconds: 20 # Initial delay until the liveness is tested
+            periodSeconds: 5 # How often to test
+            httpGet:
+               path: /healthz
+               port: 3541
 ```
 
-The above will first move 25% of the pods to a new version (in our case 1 pod) after which it will wait for 20 seconds, move to 50% of pods and then wait for 20 seconds until every pod is updated. A kubectl plugin from Argo also offers us promote command to enable us to pause the rollout indefinitely and then use the promote to move forward.
+The above strategy will first move 25% ([*setWeight*](https://argoproj.github.io/argo-rollouts/features/canary/#overview)) of the pods to a new version (in our case 1 pod) after which it will wait for 30 seconds, move to 50% of pods and then wait for 30 seconds until every pod is updated. A kubectl plugin from Argo also offers us `promote` command to enable us to pause the rollout indefinitely and then use the promote to move forward.
 
-There are other options such as the familiar *maxUnavailable* but the defaults will work for us. However, simply rolling slowly to production will not be enough for a canary deployment. Just like with rolling updates we need to know the status of the application.
+There are other options such as the [*maxUnavailable*](https://argoproj.github.io/argo-rollouts/features/bluegreen/#maxunavailable) but the defaults will work for us. However, simply rolling slowly to production will not be enough for a canary deployment. Just like with rolling updates we need to know the status of the application.
 
-With another custom resource we've already installed with Argo Rollouts called "AnalysisTemplate" we will be able to define a test that doesn't let the broken versions through.
+With another custom resource we've already installed with Argo Rollouts called ["AnalysisTemplate"](https://argoproj.github.io/argo-rollouts/architecture/#analysistemplate-and-analysisrun) we will be able to define a test that doesn't let the broken versions through.
 
 If you don't have Prometheus available go back to part 2 for a reminder. We'll have the analysis done as the version is updating. If the analysis fails it will automatically cancel the rollout.
 
@@ -330,7 +363,7 @@ $ kubectl -n prometheus port-forward prometheus-kube-prometheus-stack-1602-prome
     </tbody>
   </table>
 
-  Query for "kube_pod_info" should have the required fields to filter through. See [documentation](https://prometheus.io/docs/prometheus/latest/querying/basics/) for help with querying.
+  Query for "kube\_pod\_info" should have the required fields to filter through. See [documentation](https://prometheus.io/docs/prometheus/latest/querying/basics/) for help with querying.
 
 </exercise>
 

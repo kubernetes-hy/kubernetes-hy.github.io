@@ -84,6 +84,8 @@ spec:
 
 Looks a lot like *Deployment* but uses volumeClaimTemplate to claim a volume for each pod. StatefulSets require a "Headless Service" to be responsible for the network identity. We define a "Headless Service" with `clusterIP: None` - this will instruct Kubernetes to not do proxying or load balancing and instead to allow access straight to the Pods.
 
+The storageClassName here, `storageClassName: local-path` is a k3d specific *dynamically* provisioned Claim. So we don't need to create PersistentVolume. To learn more, see [Rancher documentation](https://rancher.com/docs/k3s/latest/en/storage/) and read more about [dynamic provisioning](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#dynamic). You can revisit the examples and exercises of part 1 and use dynamic provisioning instead of manual provisioning in your applications!
+
 You can now open two terminals and run `$ kubectl logs -f redis-ss-X redisfiller` where X is 0 or 1. To confirm it's working we can delete a pod and it will restart and continue right where you left off. In addition we can delete the StatefulSet and the volume will stay and bind back when you apply the StatefulSet back.
 
 <exercise name='Exercise 2.07: Stateful applications'>

@@ -17,13 +17,13 @@ As this course was written by a developer it offers an introduction into Kuberne
 
 Google has offered students with @helsinki.fi email addresses some Google Cloud Credits and everyone starting with Google Cloud has $300 worth of free credits.
 
-Finnish/Open University students, you will be given a @helsinki.fi address when you register to an Open University course, this will be a task for you at the end of part 2.
+Finnish/Open University students, you will be given a @helsinki.fi address when you register to an Open University course, this will be a task for you at the end of part 1.
 
 If you are not eligible for a @helsinki.fi email address and you have used all $300 credits there is nothing I can do. You can complete parts 1-2 and most likely 4-5, but part 3 is required for course completion and the certificate. For the eligibility for credits check the list and link at the bottom of [registration page](/registration-and-completion).
 
 ### CKAD or CKA ###
 
-At this point in time I have not completed the [CKAD](https://www.cncf.io/certification/ckad/) (or CKA) certificates, that some attendees asked me about, and as such I do not know how different the contents of this course are. But by looking at the [v1.18 curriculum](https://github.com/cncf/curriculum/blob/master/CKAD_Curriculum_V1.18.pdf) and comparing it to the contents of this course I'll deduce that while most of the contents are covered by this course there are still some subjects that this course does not cover.
+At this point in time I have not completed the [CKAD](https://www.cncf.io/certification/ckad/) (or CKA) certificates, that some attendees asked me about, and as such I do not know how different the contents of this course are. But by looking at the [v1.22 curriculum](https://github.com/cncf/curriculum/blob/master/CKAD_Curriculum_v1.22.pdf) and comparing it to the contents of this course I'll deduce that while most of the contents are covered by this course there are still some subjects that this course does not cover.
 
 There's a certificate for this course as well. But this certificate (or this course) does not have anything to do with CKAD or CKA.
 

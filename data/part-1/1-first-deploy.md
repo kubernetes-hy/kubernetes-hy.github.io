@@ -108,7 +108,7 @@ Here we also see that port 6443 is opened to "k3d-k3s-default-serverlb", a usefu
 
 K3d helpfully also set up a *kubeconfig*, the contents of which is output by `k3d kubeconfig get k3s-default`.
 
-The other tool that we will be using on this course is kubectl. Kubectl is the Kubernetes command-line tool and will allow us to interact with the cluster. Kubectl will read kubeconfig from the location in KUBECONFIG environment value or by default from `~/.kube/config` and use the information to connect to the cluster. The contents include certificates, passwords and the address in which the cluster API. You can switch set the context with `kubectl config use-context k3d-k3s-default`.
+The other tool that we will be using on this course is kubectl. Kubectl is the Kubernetes command-line tool and will allow us to interact with the cluster. Kubectl will read kubeconfig from the location in KUBECONFIG environment value or by default from `~/.kube/config` and use the information to connect to the cluster. The contents include certificates, passwords and the address in which the cluster API. You can set the context with `kubectl config use-context k3d-k3s-default`.
 
 Now kubectl will be able to access the cluster
 
@@ -148,7 +148,7 @@ Let's launch an application that generates and outputs a hash every 5 seconds or
 
 I've prepared one [here](https://github.com/kubernetes-hy/material-example/tree/master/app1) `docker run jakousa/dwk-app1`.
 
-To deploy we need the cluster to have an access to the image. By default, Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but since that won't work when we go to non-k3d solutions we'll use the now possibly very familiar registry *Docker Hub*, which we used in [DevOps with Docker](http://devopswithdocker.com/). If you've never used Docker Hub, it's the place where docker client defaults to, so when you run `docker pull nginx` the nginx comes from Docker Hub. You'll need to register an account there and after that you can use `docker login` to authenticate yourself. If you don't wish to use Docker Hub you can also use local registry: follow the [tutorial here](https://k3d.io/usage/guides/registries/#using-a-local-registry) to set one up.
+To deploy we need the cluster to have an access to the image. By default, Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but since that won't work when we go to non-k3d solutions we'll use the now possibly very familiar registry *Docker Hub*, which we used in [DevOps with Docker](http://devopswithdocker.com/). If you've never used Docker Hub, it's the place where docker client defaults to, so when you run `docker pull nginx` the nginx comes from Docker Hub. You'll need to register an account there and after that you can use `docker login` to authenticate yourself. If you don't wish to use Docker Hub you can also use local registry: follow the [tutorial here](https://k3d.io/v5.3.0/usage/registries/?h=registries#using-a-local-registry) to set one up.
 
 ```console
 $ docker tag _image_ _username_/_image_

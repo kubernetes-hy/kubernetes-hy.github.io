@@ -18,9 +18,11 @@ We have used Kubernetes distribution k3s using docker containers via k3d. In a p
 
 Even in Kubernetes then the cost for running software that is rarely used may be higher than the value it generates. In such cases using [Serverless](https://en.wikipedia.org/wiki/Serverless_computing) solutions could be more cost-efficient. Kubernetes can get really expensive really fast.
 
+<!---
 <text-box variant='hint' name='Registration for Open University students'>
   If you are student in Finland, a student with finnish social security number or a student at the University of Helsinki register for the course now. Follow the <a href="/registration-and-completion">instructions</a> to receive Google Cloud Platform Education Grant.
 </text-box>
+-->
 
 Let's focus on the Google Kubernetes Engine (GKE) costs for now. Note that the GKE costs a little bit more than its competitors.
 
@@ -28,7 +30,7 @@ The calculator here [https://cloud.google.com/products/calculator](https://cloud
 
 During part 3 we will be using GKE either by using the student credits available to students with helsinki.fi email or the free credits offered by Google. You are responsible for making sure that the credits last for the whole part and if all of them are consumed I can not help you.
 
-After redeeming the credits we can create a project with the billing account. The google cloud UI can be confusing. On the [resources page](https://console.cloud.google.com/cloud-resource-manager) we can create a new project and let's name it "dwk-gke" for the purposes of this course. After creating this project make sure that the project is linked to the correct billing account from the top-left dropdown and billing and then "Account Management". It should look like this (account is "DevOps with Kubernetes" and project "dwk-gke"):
+After redeeming the credits we can create a project with the billing account. The Google Cloud UI can be confusing. On the [resources page](https://console.cloud.google.com/cloud-resource-manager) we can create a new project and let's name it "dwk-gke" for the purposes of this course. After creating this project make sure that the project is linked to the correct billing account from the top-left dropdown and billing and then "Account Management". It should look like this (In this case the account is "DevOps with Kubernetes" and project "dwk-gke"):
 
 <img src="../img/gke_billing.png">
 
@@ -36,10 +38,10 @@ Install the Google Cloud SDK. Instructions [here](https://cloud.google.com/sdk/i
 
 ```console
 $ gcloud -v
-  Google Cloud SDK 290.0.1
-  bq 2.0.56
-  core 2020.04.24
-  gsutil 4.49
+  Google Cloud SDK 363.0.0
+  bq 2.0.71
+  core 2021.10.29
+  gsutil 5.4
 
 $ gcloud auth login
   ...
@@ -49,26 +51,37 @@ $ gcloud config set project dwk-gke
   Updated property [core/project].
 ```
 
-We can now create a cluster. We can choose any zone we want from the list [here](https://cloud.google.com/about/locations/). I chose Finland:
+We can now create a cluster. You can choose any zone we want from the list [here](https://cloud.google.com/about/locations/). I chose Finland. Notice that one region (e.g. europe-north1) may have multiple regions (e.g. -a). Let's add a few more flags: `--release-channel=rapid --cluster-version=1.22`. These will ask GKE to use a version that will be default in December 2021. If it's already December or 2022 you can test that it works without the flags and throw a PR into the material!
 
 ```console
-$ gcloud container clusters create dwk-cluster --zone=europe-north1-b
+$ gcloud container clusters create dwk-cluster --zone=europe-north1-b --release-channel=rapid --cluster-version=1.22
+ERROR: (gcloud.container.clusters.create) ResponseError: code=400, message=Failed precondition when calling the ServiceConsumerManager: tenantmanager:: Consumer should enable service:container.googleapis.com before generating a service account.
+```
+
+Let's enable the service in question, `container.googleapis.com`, before retrying.
+
+```console
+$ gcloud services enable container.googleapis.com
+  Operation "operations/acf.p2-385245615727-2f855eed-e785-49ac-91da-896925a691ab" finished successfully.
+
+$ gcloud container clusters create dwk-cluster --zone=europe-north1-b --release-channel=rapid --cluster-version=1.22
   ...
   Creating cluster dwk-cluster in europe-north1-b...
   ...
-  NAME         LOCATION         MASTER_VERSION  MASTER_IP       MACHINE_TYPE   NODE_VERSION    NUM_NODES  STATUS
-  dwk-cluster  europe-north1-b  1.14.10-gke.27  35.228.239.103  n1-standard-1  1.14.10-gke.27  3          RUNNING
+  kubeconfig entry generated for dwk-cluster.
+  NAME         LOCATION         MASTER_VERSION   MASTER_IP      MACHINE_TYPE  NODE_VERSION     NUM_NODES  STATUS
+  dwk-cluster  europe-north1-b  1.22.2-gke.1901  35.228.152.81  e2-medium     1.22.2-gke.1901  3          RUNNING
 ```
 
-As we did with k3d we need to set kubeconfig so kubectl can access it:
+It set the kubeconfig to point in the right direction already. But if you need to do it again we can set the kubeconfig like this:
 
 ```console
 $ gcloud container clusters get-credentials dwk-cluster --zone=europe-north1-b
   Fetching cluster endpoint and auth data.
   kubeconfig entry generated for dwk-cluster.
-
-$ kubectl cluster-info
 ```
+
+You can check the cluster info with `kubectl cluster-info` to verify it's pointing in the right direction.
 
 ### Deploying to GKE ###
 
@@ -99,7 +112,7 @@ spec:
       targetPort: 3000
 ```
 
-A load balancer service asks for google services to provision us a load balancer. We can wait until the service gets an external IP:
+A load balancer service asks for Google services to provision us a load balancer. We can wait until the service gets an external IP:
 
 ```console
 $ kubectl get svc --watch
@@ -119,7 +132,7 @@ $ gcloud container clusters delete dwk-cluster --zone=europe-north1-b
 
 And when resuming progress create the cluster back.
 ```console
-$ gcloud container clusters create dwk-cluster --zone=europe-north1-b
+$ gcloud container clusters create dwk-cluster --zone=europe-north1-b --release-channel=rapid --cluster-version=1.22
 ```
 
 Closing the cluster will also remove everything you've deployed on the cluster. If you decide to take a break during an example you may have to redo it. Thankfully we have used a declarative approach so continuing progress will only require you to apply the yamls.
@@ -162,9 +175,9 @@ Create a subdirectory under the mount point.
 
 ### From Service to Ingress ###
 
-Services are quite simple, but as ingresses offer us additional tools, in exchange for complexity. We're no longer using traefik but instead "GKE Ingress".
+Services are quite simple. Let's try using ingress since it offers us additional tools in exchange for complexity.
 
-*NodePort* type service is required with Ingresses in GKE. Even though it is NodePort GKE does not expose it outside the cluster. Let's test this by continuing with the previous example.
+*NodePort* type service is required with an Ingress in GKE. Even though it is NodePort, GKE does not expose it outside the cluster. Let's test this by continuing with the previous example.
 
 **service.yaml**
 
@@ -186,7 +199,7 @@ spec:
 **ingress.yaml**
 
 ```yaml
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: seedimage-ing
@@ -195,18 +208,29 @@ spec:
   - http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: seedimage-svc
-          servicePort: 80
+          service:
+            name: seedimage-svc
+            port:
+              number: 80
 ```
 
-This takes a while to deploy, responses may be 404 and 502 as it becomes available. The Ingress performs health checks by GET requesting / and expects an HTTP 200 response.
+When you have applied those you can view the port from the list of ingresses:
+
+```
+$ kubectl get ing
+  NAME            CLASS    HOSTS   ADDRESS         PORTS   AGE
+  seedimage-ing   <none>   *       34.120.61.234   80      2m13s
+```
+
+Now the address here will be the way to access the application. This will take a moment to deploy, responses may be 404 and 502 as it becomes available. The Ingress performs health checks by GET requesting / and expects an HTTP 200 response.
 
 <exercise name='Exercise 3.02: Back to Ingress'>
 
-  Deploy the "Log output" and "Ping-pong" application into GKE with ingress.
+  Deploy the "Log output" and "Ping-pong" applications into GKE and expose it with Ingress.
 
-  Unfortunately since GKE Ingress does not have rewrites or rewrite policy like traefik had with "PathPrefixStrip" [yet](https://github.com/kubernetes/ingress-gce/issues/109) "Ping-pong" will have to respond from /pingpong path. This may require you to rewrite parts of the code.
+  "Ping-pong" will have to respond from /pingpong path. This may require you to rewrite parts of the code.
 
 </exercise>
 
