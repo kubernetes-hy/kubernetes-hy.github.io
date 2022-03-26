@@ -143,6 +143,9 @@ You can decrypt the encrypted file by exporting the key file in SOPS\_AGE\_KEY\_
 $ export SOPS_AGE_KEY_FILE=$(pwd)/key.txt
 
 $ sops --decrypt secret.enc.yaml > secret.yaml
+
+# You can apply a secret yaml via piping directly, helps avoid creaing plain secret.yaml file:
+sops --decrypt secret.enc.yaml | kubectl apply -f -
 ```
 
 <exercise name='Exercise 2.05: Secrets'>
