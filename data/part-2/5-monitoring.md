@@ -122,7 +122,7 @@ Now we can use the Explore tab (compass) to explore the data.
 
 There was an easier way for us to install Prometheus with a few clicks. If you have to install it again you can try this:
 
-1. Open Lens
+1. Open [Lens](https://k8slens.dev/)
 2. Right click the cluster icon in the top left and choose "Settings"
 3. Scroll down and under "Features" under "Metrics" you can press "Install"
 
