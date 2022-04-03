@@ -11,9 +11,9 @@ For the certificate, mark the course as finished in the submission software. The
 
 ### Completing the course for credits ###
 
-To have access to a University of Helsinki email address. Enroll yourself to the course through the Open University: https://www.avoin.helsinki.fi/palvelut/esittely.aspx?s=otm-0bd9249b-cd12-46eb-b095-a471cc0cd5e9&lang=en
+To have access to a University of Helsinki email address. Enroll yourself to the course through the Open University: https://www.avoin.helsinki.fi/palvelut/esittely.aspx?s=otm-f4b5c4b0-73fb-4195-86cd-e3dcc5da964c&lang=en
 
-To get credits for the Google Cloud Credits, after completing part 1:
+To get the Google Cloud Credits, please do the following after completing part 1:
 
 - **Request Google Cloud Platform Education Grant from the teacher**. Send an email to the teacher of the course (jami.kousa@helsinki.fi) from **your @helsinki.fi email address**. Title your email: Google Cloud Coupon. The reply will include link to redeem the Student Coupon. University Email [Outlook Web App](http://www.helsinki.fi/office365)
 
