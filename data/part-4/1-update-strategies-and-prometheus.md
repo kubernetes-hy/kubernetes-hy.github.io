@@ -65,6 +65,14 @@ $ kubectl get po
   flaky-update-dep-7b5fd9ffc7-nzl98   1/1     Running   0          88s
 ```
 
+To check our app's health status, we can browse `/healthz` endpoint by using <i>port-forward</i> mechanism. To apply <i>port-forward</i> to one of the conatiner, we are required to specify container's port (3541) and any desirable host's port (say 3000) :
+
+```console
+kubectl port-forward flaky-update-dep-7b5fd9ffc7-27cxt 3000:3541
+```
+
+Visiting http://localhost:3000/healthz on our host computer shows <i>OK</i> response, so this means our app is healthy.
+
 Now change the tag to v2 and apply it.
 
 ```console
