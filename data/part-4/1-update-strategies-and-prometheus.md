@@ -81,7 +81,9 @@ $ kubectl get po --watch
 ...
 ```
 
-You can see the rolling update performed but unfortunately the application no longer works. The application is running, it's just that there's a bug which prevents it from working correctly. This is where [*ReadinessProbes*](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) come in.
+You can see the rolling update performed but unfortunately the application no longer works as we can check by visiting http://localhost:3000/healthz (now it throws <i>Internal Server Errror</i>). Note: You need to redo the port-forward to connect to one of the container by running `kubectl port-forward flaky-update-dep-xxxxxxx-xxxx 3000:3541` where <i>flaky-update-dep-xxxxxxx-xxxx</i> is the newly created pod's name.
+
+The application is running, it's just that there's a bug which prevents it from working correctly. This is where [*ReadinessProbes*](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) come in.
 
 **Kubernetes Best Practices - Kubernetes Health Checks with Readiness and Liveness Probes**
 
