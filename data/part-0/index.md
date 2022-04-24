@@ -71,9 +71,10 @@ Kubectl is a command-line tool that we will use to communicate with our Kubernet
 
 ### Installing k3d ###
 
-We will also use k3d for practice. The [Install instructions](https://github.com/rancher/k3d#get) are here. I have tested the course material with version 5.0.0 of k3d.
+We will also use k3d for practice. The [Install instructions](https://github.com/rancher/k3d#get) are here. I have tested the course material with version 5.4.1 of k3d.
 
-#### Note about k3d permission errors
+#### Note about k3d permission errors ####
+
 You might get a `Permission denied` error while using `k3d` as a normal user.
 
 Be sure to go through this [docker post-installation step](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)

@@ -97,14 +97,15 @@ This created a Kubernetes cluster with 2 agent nodes. As they're in docker you c
 
 ```console
 $ docker ps
-  CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS              PORTS                             NAMES
-  11543a6b5015        rancher/k3d-proxy:5.0.0    "/bin/sh -c nginx-pr…"   16 seconds ago      Up 14 seconds       80/tcp, 0.0.0.0:57734->6443/tcp   k3d-k3s-default-serverlb
-  f17e07a77061        rancher/k3s:latest         "/bin/k3s agent"         26 seconds ago      Up 24 seconds                                         k3d-k3s-default-agent-1
-  b135b5ac987d        rancher/k3s:latest         "/bin/k3s agent"         27 seconds ago      Up 25 seconds                                         k3d-k3s-default-agent-0
-  7e5fbc8db7e9        rancher/k3s:latest         "/bin/k3s server --t…"   28 seconds ago      Up 27 seconds                                         k3d-k3s-default-server-0
+  CONTAINER ID   IMAGE                            COMMAND                  CREATED          STATUS          PORTS                             NAMES
+  b25a9bb6c42f   ghcr.io/k3d-io/k3d-tools:5.4.1   "/app/k3d-tools noop"    56 seconds ago   Up 55 seconds                                     k3d-k3s-default-tools
+  19f992606131   ghcr.io/k3d-io/k3d-proxy:5.4.1   "/bin/sh -c nginx-pr…"   56 seconds ago   Up 32 seconds   80/tcp, 0.0.0.0:50122->6443/tcp   k3d-k3s-default-serverlb
+  7a8bf6a44099   rancher/k3s:v1.22.7-k3s1         "/bin/k3d-entrypoint…"   56 seconds ago   Up 43 seconds                                     k3d-k3s-default-agent-1
+  c85fbcbcf9b2   rancher/k3s:v1.22.7-k3s1         "/bin/k3d-entrypoint…"   56 seconds ago   Up 43 seconds                                     k3d-k3s-default-agent-0
+  7191a3bdae7a   rancher/k3s:v1.22.7-k3s1         "/bin/k3d-entrypoint…"   56 seconds ago   Up 52 seconds                                     k3d-k3s-default-server-0
 ```
 
-Here we also see that port 6443 is opened to "k3d-k3s-default-serverlb", a useful "load balancer" proxy, that'll redirect a connection to 6443 into the server node, and that's how we can access the contents of the cluster. The port on our machine, above 57734, is randomly chosen. We could have opted out of the load balancer with `k3d cluster create -a 2 --no-lb` and the port would be open straight to the server node but having a load balancer will offer us a few features we wouldn't otherwise have.
+Here we also see that port 6443 is opened to "k3d-k3s-default-serverlb", a useful "load balancer" proxy, that'll redirect a connection to 6443 into the server node, and that's how we can access the contents of the cluster. The port on our machine, above 50122, is randomly chosen. We could have opted out of the load balancer with `k3d cluster create -a 2 --no-lb` and the port would be open straight to the server node. Having a load balancer will offer us a few features we wouldn't otherwise have, so let's keep it in.
 
 K3d helpfully also set up a *kubeconfig*, the contents of which is output by `k3d kubeconfig get k3s-default`.
 
@@ -114,9 +115,9 @@ Now kubectl will be able to access the cluster
 
 ```console
 $ kubectl cluster-info
-  Kubernetes master is running at https://0.0.0.0:57734
-  CoreDNS is running at https://0.0.0.0:57545/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
-  Metrics-server is running at https://0.0.0.0:57545/api/v1/namespaces/kube-system/services/https:metrics-server:/proxy
+  Kubernetes control plane is running at https://0.0.0.0:50122
+  CoreDNS is running at https://0.0.0.0:50122/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+  Metrics-server is running at https://0.0.0.0:50122/api/v1/namespaces/kube-system/services/https:metrics-server:https/proxy
 ```
 
 We can see that kubectl is connected to the container *k3d-k3s-default-serverlb* through (in this case) port 57734.
@@ -129,14 +130,25 @@ $ k3d cluster stop
   INFO[0011] Stopped cluster 'k3s-default'
 
 $ k3d cluster start
-  INFO[0000] Starting cluster 'k3s-default'
-  INFO[0000] Starting Node 'k3d-k3s-default-agent-1'
-  INFO[0000] Starting Node 'k3d-k3s-default-agent-0'
-  INFO[0000] Starting Node 'k3d-k3s-default-server-0'
-  INFO[0001] Starting Node 'k3d-k3s-default-serverlb'
+  INFO[0000] Using the k3d-tools node to gather environment information
+  INFO[0000] Starting existing tools node k3d-k3s-default-tools...
+  INFO[0000] Starting Node 'k3d-k3s-default-tools'
+  INFO[0001] Starting new tools node...
+  INFO[0001] Starting Node 'k3d-k3s-default-tools'
+  INFO[0003] Starting cluster 'k3s-default'
+  INFO[0003] Starting servers...
+  INFO[0003] Starting Node 'k3d-k3s-default-server-0'
+  INFO[0010] Starting agents...
+  INFO[0010] Starting Node 'k3d-k3s-default-agent-1'
+  INFO[0011] Starting Node 'k3d-k3s-default-agent-0'
+  INFO[0027] Starting helpers...
+  INFO[0027] Starting Node 'k3d-k3s-default-serverlb'
+  INFO[0027] Starting Node 'k3d-k3s-default-tools'
+  INFO[0035] Injecting records for hostAliases (incl. host.k3d.internal) and for 5 network members into CoreDNS configmap...
+  INFO[0038] Started cluster 'k3s-default'
 ```
 
-For now, **we're going to need the cluster started** but if we want to remove the cluster we can run `k3d cluster delete`.
+For now, **we're going to need the cluster running**, but if we want to remove the cluster we can run `k3d cluster delete`.
 
 ## First Deploy ##
 
@@ -146,9 +158,9 @@ Before we can deploy anything we'll need to do a small application to deploy. Du
 
 Let's launch an application that generates and outputs a hash every 5 seconds or so.
 
-I've prepared one [here](https://github.com/kubernetes-hy/material-example/tree/master/app1) `docker run jakousa/dwk-app1`.
+I have prepared one [here](https://github.com/kubernetes-hy/material-example/tree/master/app1), you can test it with `docker run jakousa/dwk-app1`.
 
-To deploy we need the cluster to have an access to the image. By default, Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but since that won't work when we go to non-k3d solutions we'll use the now possibly very familiar registry *Docker Hub*, which we used in [DevOps with Docker](http://devopswithdocker.com/). If you've never used Docker Hub, it's the place where docker client defaults to, so when you run `docker pull nginx` the nginx comes from Docker Hub. You'll need to register an account there and after that you can use `docker login` to authenticate yourself. If you don't wish to use Docker Hub you can also use local registry: follow the [tutorial here](https://k3d.io/v5.3.0/usage/registries/?h=registries#using-a-local-registry) to set one up.
+To deploy an image, we need the cluster to have an access to the image. By default, Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but that won't work when we switch to non-k3d solutions. We will use the familiar registry *Docker Hub*, which we also used in [DevOps with Docker](http://devopswithdocker.com/). If you've never used Docker Hub, it is the place Docker client defaults to. E.g. when you run `docker pull nginx`, the nginx comes from Docker Hub. You will need to register an account there and after that you can use `docker login` to authenticate yourself. If you don't wish to use Docker Hub you can also use a local registry: follow the [tutorial here](https://k3d.io/v5.3.0/usage/registries/?h=registries#using-a-local-registry) to set one up.
 
 ```console
 $ docker tag _image_ _username_/_image_
@@ -159,11 +171,11 @@ $ docker push _username_/_image_
 In the future, the material will use the offered applications in the commands. You may follow along by changing the image to your application. Almost everything is found in the same repository <a href="https://github.com/kubernetes-hy/material-example">https://github.com/kubernetes-hy/material-example</a>.
 </text-box>
 
-Now we're finally ready to deploy our first app into Kubernetes!
+Now we are finally ready to deploy our first app into Kubernetes!
 
 ### Deployment ###
 
-To deploy an application we'll need to create a *Deployment* object with the image.
+To deploy an application, we will need to create a *Deployment* object with the image.
 
 ```console
 $ kubectl create deployment hashgenerator-dep --image=jakousa/dwk-app1
@@ -174,12 +186,13 @@ This action created a few things for us to look at: a *Deployment* resource and 
 
 #### What is a Pod? ####
 
-*Pod* is an abstraction around one or more containers. Pods provide a context for 1..N containers so that they can share storage and a network. It's very much like how you have used containers to define environments for a single process. They can be thought of as a container of containers. *Most* of the same rules apply: it is deleted if the containers stop running and files will be lost with it.
+*Pod* is an abstraction around one or more containers. Pods provide a context for 1..N containers so that they can share storage and a network. It's very much like how you have used containers to define environments for a single process. They can be thought of as a container of containers. *Most* of the same rules apply: it is deleted if the containers within stop running and contained files will be lost with it.
 
 <img src="../img/pods.png">
 
-Reading documentation or searching the internet are not the only ways to find information. In case of Kubernetes we get access to information straight from our command line using `kubectl explain RESOURCE` command.
-For example to get information about Pod and its mandatory fields we can use the following command.
+Reading through the documentation or searching the internet are not the only ways to find information about the different resources Kubernetes has. We can get access to simple explanations straight from our command line using `kubectl explain RESOURCE` command.
+
+For example, to get a description what a Pod is and its mandatory fields, we can use the following command.
 
 ```console
 $ kubectl explain pod
@@ -191,7 +204,7 @@ $ kubectl explain pod
        created by clients and scheduled onto hosts.
 ```
 
-In Kubernetes all entities that exist are called objects. You can list all objects of a resource with `kubectl get RESOURCE`.
+In Kubernetes, all entities that exist are called objects. You can list all objects of a resource with `kubectl get RESOURCE`.
 
 ```
 $ kubectl get pods
@@ -249,13 +262,13 @@ A helpful list for other commands from docker-cli translated to kubectl is avail
 
   <img src="../img/project.png" alt="Project evolution" />
 
-  Dashed lines separate major differences across the course. Some exercises are not included in the picture. The connections between most pods are not included as well. You're free to do them however you want.
+  Dashed lines separate major differences across the course. Some exercises are not included in the picture. The connections between most pods are not included as well. You are free to do them however you want.
 
   Keep this in mind if you want to avoid doing more work than necessary.
 
   Let's get started!
 
-  Create a web server that outputs "Server started in port NNNN" when it's started and deploy it into your Kubernetes cluster. You won't have access to the port yet but that'll come soon.
+  Create a web server that outputs "Server started in port NNNN" when it is started and deploy it into your Kubernetes cluster. Please make it so that an environment variable PORT can be used to choose that port. You will not have access to the port when it is running in Kuberetes yet. We will configure the access when we get to networking.
 
 </exercise>
 
@@ -275,16 +288,16 @@ $ kubectl scale deployment/hashgenerator-dep --replicas=4
 $ kubectl set image deployment/hashgenerator-dep dwk-app1=jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
 ```
 
-Things start to get really cumbersome. In the dark ages, deployments were created similarly by running commands after each other in "correct" order. We'll now use a declarative approach where we define how things should be. This is more sustainable in the long term than the iterative approach.
+Things start to get really cumbersome. It is hard to imagine how someone in their right mind could be maintaining multiple applications like that. Thankfully we will now use a declarative approach where we define how things should be rather than how they should change. This is more sustainable in the long term than the iterative approach and will let us keep our sanity.
 
-Before redoing the previous let's take the deployment down.
+Before redoing the previous steps via the declarative approach, let's take the existing deployment down.
 
 ```console
 $ kubectl delete deployment hashgenerator-dep
   deployment.apps "hashgenerator-dep" deleted
 ```
 
-and create a new folder named `manifests` to the project and a file called deployment.yaml with the following contents (you can check the example [here](https://github.com/kubernetes-hy/material-example/tree/master/app1)):
+and create a new folder named `manifests` and place a file called deployment.yaml with the following contents (you can check the example [here](https://github.com/kubernetes-hy/material-example/tree/master/app1)) there:
 
 **deployment.yaml**
 
@@ -309,7 +322,7 @@ spec:
 ```
 
 <text-box name="Text editor of choice" variant="hint">
-  I personally use vscode to create these yaml files. It has helpful autofill, definitions and syntax check for Kubernetes with the extension Kubernetes by Microsoft. Even now it helpfully warns us that we haven't defined resource limitations.
+  I personally use vscode to create these yaml files. It has helpful autofill, definitions, and syntax check for Kubernetes with the extension Kubernetes by Microsoft. Even now it helpfully warns us that we haven't defined resource limitations. I won't care about that warning yet, but you can figure it out if you want to.
 </text-box>
 
 This looks a lot like the docker-compose.yamls we have previously written. Let's ignore what we don't know for now, which is mainly labels, and focus on the things that we know:
@@ -326,7 +339,7 @@ $ kubectl apply -f manifests/deployment.yaml
   deployment.apps/hashgenerator-dep created
 ```
 
-That's it, but for the sake of revision let's delete it and create it again:
+That's it, but for the sake of revision, let's delete it and create it again:
 
 ```console
 $ kubectl delete -f manifests/deployment.yaml

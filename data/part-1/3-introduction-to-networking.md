@@ -56,7 +56,8 @@ External connections with docker used the flag -p `-p 3003:3000` or in docker-co
 
 #### Before anything else ####
 
-Because we are running our cluster inside docker with k3d we will have to do a few preparations.
+Because we are running our cluster inside docker with k3d we will have to do some preparations.
+
 Opening a route from outside of the cluster to the pod will not be enough if we have no means of accessing the cluster inside the containers!
 
 ```console
@@ -218,14 +219,13 @@ $ kubectl apply -f manifests/
   ingress.networking.k8s.io/dwk-material-ingress created
   service/hashresponse-svc configured
 
-$ kubectl get svc
-  NAME               TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
-  kubernetes         ClusterIP   10.43.0.1      <none>        443/TCP    23h
-  hashresponse-svc   ClusterIP   10.43.236.27   <none>        2345/TCP   4m23s
+$ kubectl get svc,ing
+  NAME                       TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE
+  service/kubernetes         ClusterIP   10.43.0.1    <none>        443/TCP    5m22s
+  service/hashresponse-svc   ClusterIP   10.43.0.61   <none>        2345/TCP   45s
 
-$ kubectl get ing
-  NAME                   CLASS    HOSTS   ADDRESS                            PORTS   AGE
-  dwk-material-ingress   <none>   *       172.28.0.2,172.28.0.3,172.28.0.4   80      18s
+  NAME                                             CLASS    HOSTS   ADDRESS                            PORTS   AGE
+  ingress.networking.k8s.io/dwk-material-ingress   <none>   *       172.21.0.3,172.21.0.4,172.21.0.5   80      16s
 ```
 
 We can see that the ingress is listening on port 80. As we already opened port there we can access the application on http://localhost:8081.

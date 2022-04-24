@@ -30,7 +30,7 @@ App 1 will check if /usr/src/app/files/image.jpg exists and if not download a ra
 
 App 2 will check for /usr/src/app/files/image.jpg and show it if it is available.
 
-They share a deployment so that both of them are inside the same pod. My version available [here](https://github.com/kubernetes-hy/material-example/blob/616b241e2e9a76e7cecabb47384f67c874c05f80/app3/manifests/deployment.yaml). The example includes ingress and service to access the application.
+They share a deployment so that both of them are inside the same pod. My version is available for you to use [here](https://github.com/kubernetes-hy/material-example/blob/b9ff709b4af7ca13643635e07df7367b54f5c575/app3/manifests/deployment.yaml). The example includes ingress and service to access the application.
 
 **deployment.yaml**
 
@@ -160,7 +160,7 @@ Modify the previously introduced deployment to use it:
             mountPath: /usr/src/app/files
 ```
 
-And apply it (pv.yaml and pvc.yaml too)
+And apply it with persistentvolume.yaml and persistentvolumeclaim.yaml.
 
 ```console
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
