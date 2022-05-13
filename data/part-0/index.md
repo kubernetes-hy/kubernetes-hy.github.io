@@ -21,7 +21,7 @@ The course material is written using Mac, so some instructions may lack platform
 
 To complete the course, submit solutions for all of the exercises in parts 1-5. There is no exam.
 
-The total workload of the course is about 95 hours. You can find out how long it took others by peeking at the [statistics](https://studies.cs.helsinki.fi/stats/courses/kubernetes2022).
+The total workload of the course is about 95 hours.
 
 ### Exercises ###
 
