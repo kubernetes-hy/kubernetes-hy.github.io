@@ -20,15 +20,7 @@ Course details and starting instructions can be found in [part 0](/part-0).
 
 Registration is only required for ECTS credits. The certificate does not require registration or separate sign up.
 
-You should also read the [studies.helsinki.fi page](https://studies.helsinki.fi/courses/cur/otm-f4b5c4b0-73fb-4195-86cd-e3dcc5da964c). This page also includes information about target group, enrolment instructions, recommended reading and most importantly **deadlines** for enrollment.
-
-<text-box name="Summer 2022" variant="hint">
-
-The fall 2021 edition has ended, but we will be back next summer. Check the availability and enrollment dates here https://studies.helsinki.fi/courses/cur/otm-f4b5c4b0-73fb-4195-86cd-e3dcc5da964c.
-
-The course material will be kept open and you can ask for more details & help on our Discord channel.
-
-</text-box>
+You should also read the [studies.helsinki.fi page](https://studies.helsinki.fi/courses/cur/otm-f4b5c4b0-73fb-4195-86cd-e3dcc5da964c). That page also includes information about target group, enrolment instructions, recommended reading and most importantly **deadlines** for enrollment.
 
 The following are suggestions on what you should complete before joining the course. These are not mandatory, but it's recommended that you..
 
@@ -47,7 +39,7 @@ The summer 2022 iteration of the course is open for a shorter time period and in
 | Part 4 | 06.06 | 31.07    |
 | Part 5 | 13.06 | 31.07    |
 
-Even though we are locking away parts of the course on https://devopswithkubernetes.com, the material is still available on the github page https://github.com/kubernetes-hy/kubernetes-hy.github.io/tree/master/data. However, you won't be able to submit anything early or late!
+Even though we have locked away some parts, the material is still available on the GitHub page https://github.com/kubernetes-hy/kubernetes-hy.github.io/tree/master/data. However, you won't be able to submit anything early or late!
 
 ## We have partnered with Unity! ##
 
