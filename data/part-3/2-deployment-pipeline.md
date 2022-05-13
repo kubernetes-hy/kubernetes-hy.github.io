@@ -1,6 +1,6 @@
 ---
-path: '/part-3/2-deployment-pipeline'
-title: 'Deployment Pipeline'
+path: "/part-3/2-deployment-pipeline"
+title: "Deployment Pipeline"
 hidden: false
 ---
 
@@ -11,7 +11,6 @@ After this section you can
 - Create your own deployment pipeline to GKE with Github Actions and enable continuous delivery from a git push to production
 
 </text-box>
-
 
 Let's setup a deployment pipeline using GitHub actions. We just need something to deploy so let's create a new website.
 
@@ -84,13 +83,13 @@ $ kubectl apply -f manifests/service.yaml
 $ kubectl apply -f manifests/deployment.yaml
 ```
 
-### Kustomize ###
+### Kustomize
 
 Applying multiple files like this gets bothersome. We can of course point it at a directory like so: `kubectl apply -f manifests/`, but this is an excellent moment to turn our attention to Kustomize.
 
 [Kustomize](https://github.com/kubernetes-sigs/kustomize) is a tool that helps with configuration customization and is baked into kubectl. In this case we'll use it to define which files are meaningful for Kubernetes.
 
-For us a new file *kustomization.yaml* in the root of the project will work. The *kustomization.yaml* should include instructions to use the deployment.yaml and service.yaml.
+For us a new file _kustomization.yaml_ in the root of the project will work. The _kustomization.yaml_ should include instructions to use the deployment.yaml and service.yaml.
 
 **kustomization.yaml**
 
@@ -98,8 +97,8 @@ For us a new file *kustomization.yaml* in the root of the project will work. The
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- manifests/deployment.yaml
-- manifests/service.yaml
+  - manifests/deployment.yaml
+  - manifests/service.yaml
 ```
 
 Now we can deploy this using the `-k` flag identifying that we want to use Kustomize.
@@ -113,10 +112,10 @@ We can preview the file with `kubectl kustomize .`. Kustomize will be an essenti
 **kustomization.yaml**
 
 ```yaml
-...
+# ...
 images:
-- name: PROJECT/IMAGE
-  newName: jakousa/colorcontent
+  - name: PROJECT/IMAGE
+    newName: jakousa/colorcontent
 ```
 
 This will replace the image "IMAGE:TAG" with the one defined in _newName_. Next setting a placeholder value inside the deployment.yaml for the image:
@@ -124,10 +123,10 @@ This will replace the image "IMAGE:TAG" with the one defined in _newName_. Next 
 **deployment.yaml**
 
 ```yaml
-      ...
-      containers:
-        - name: dwk-environments
-          image: PROJECT/IMAGE
+# ...
+containers:
+  - name: dwk-environments
+    image: PROJECT/IMAGE
 ```
 
 Test that everything works
@@ -143,15 +142,15 @@ $ kubectl kustomize .
 
 Kustomize has a few additional tools you can test out if you want to install it - but we'll see the usage in the next section.
 
-### Github Actions ###
+### Github Actions
 
 Github Actions will be the CI/CD tool of choice for this course. The behavior is similar to CircleCI or even Travis which you may have used previously. Google also offers [Cloud Build](https://cloud.google.com/cloud-build), and a [step-by-step guide to deploying to GKE](https://cloud.google.com/cloud-build/docs/deploying-builds/deploy-gke) with it. You can return here to implement deployment with Cloud Build if you have credits left over after the course!
 
 Create a file .github/workflows/main.yaml. We'll want the workflow to do 3 things:
 
-* build the image
-* publish the image to a container registry
-* deploy the new image to our cluster
+- build the image
+- publish the image to a container registry
+- deploy the new image to our cluster
 
 The initial config will look something like this:
 
@@ -175,15 +174,15 @@ We set the workflow to run whenever changes are pushed to the repository and set
 Next is adding the jobs. For simplicity we'll add everything into a single job that'll build, publish and deploy.
 
 ```yaml
-...
+# ...
 jobs:
   build-publish-deploy:
     name: Build, Publish and Deploy
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 ```
 
 This sets the environment for the job and triggers the [checkout action](https://github.com/actions/checkout) as the first step.
@@ -191,20 +190,21 @@ This sets the environment for the job and triggers the [checkout action](https:/
 Next we'll use some additional actions, mainly from [google-github-actions](https://github.com/google-github-actions/setup-gcloud) that are designed to help on deployments to Google Cloud.
 
 ```yaml
-...
-    - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@master
-      with:
-        project_id: ${{ secrets.GKE_PROJECT }}
-        service_account_key: ${{ secrets.GKE_SA_KEY }}
-        export_default_credentials: true
+# ...
+- name: Set up Cloud SDK
+  uses: google-github-actions/setup-gcloud@master
+  with:
+    project_id: ${{ secrets.GKE_PROJECT }}
+    service_account_key: ${{ secrets.GKE_SA_KEY }}
+    export_default_credentials: true
 ```
 
 The secrets here are not from the environment variables but are included into the project from Github. Read their guide [here](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets).
 
-The *GKE\_SA\_KEY* is a service account key that is required to access the Google Cloud services - read their guide for it [here](https://cloud.google.com/iam/docs/creating-managing-service-account-keys). You will need to create a new service account and fetch its key.
+The _GKE_SA_KEY_ is a service account key that is required to access the Google Cloud services - read their guide for it [here](https://cloud.google.com/iam/docs/creating-managing-service-account-keys). You will need to create a new service account and fetch its key.
 
 These roles are more than enough to do the deployment. Give them to the service account:
+
 - Kubernetes Engine Service Agent
 - Storage Admin
 
@@ -214,72 +214,72 @@ After creating a service account for GKE called "github-actions" I created the k
 $ gcloud iam service-accounts keys create ./private-key.json --iam-account=github-actions@dwk-gke-331210.iam.gserviceaccount.com
 ```
 
-The entire JSON generated needs to be added to *GKE\_SA\_KEY*.
+The entire JSON generated needs to be added to _GKE_SA_KEY_.
 
 Next, use _gcloud_ commands to configure Docker. This will enable us to push to Google Container Registry, which we'll use instead of Docker Hub. We could use Docker Hub if we wanted to do so, but GCR is an excellent option now that we have access to it. GCR is a lot more performant and has a low network latency. Cutting down on the time we spend moving images around will ensure our deployments are quick. Read more about it here <https://cloud.google.com/container-registry/>. Note that the registry is [not free](https://cloud.google.com/container-registry/pricing) and you'll probably want to delete the images from there during and after this course.
 
 ```yaml
-...
-    - run: gcloud --quiet auth configure-docker
+# ...
+- run: gcloud --quiet auth configure-docker
 ```
 
 And then we'll set the kubectl access to the right cluster, as defined in the environment variables.
 
 ```yaml
-...
-    - run: gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+# ...
+- run: gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
 ```
 
 And finally let's write out the desired image with a tag. The image will be `gcr.io/PROJECT_ID/IMAGE:GITHUB_BRANCH-GITHUB_SHA`. And building the image:
 
 ```yaml
-...
-    - name: Build
-      run: |-
-        docker build \
-          --tag "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA" \
-          .
+# ...
+- name: Build
+  run: |-
+    docker build \
+      --tag "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA" \
+      .
 ```
 
 Publish similarily:
 
 ```yaml
-...
-    - name: Publish
-      run: |-
-        docker push "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA"
+# ...
+- name: Publish
+  run: |-
+    docker push "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA"
 ```
 
 And finally deployment. We'll setup Kustomize first:
 
 ```yaml
-...
-    - name: Set up Kustomize
-      uses: imranismail/setup-kustomize@v1
+# ...
+- name: Set up Kustomize
+  uses: imranismail/setup-kustomize@v1
 ```
 
 Now we can use Kustomize to set the image we want the pipeline to publish. I decided to change the name for this one to `gcr.io/PROJECT_ID/IMAGE`.
 After this we can use kustomize to build it. Here I pipe the output of `kustomize build .` to `kubectl apply`, if you are unsure what is happening you can output the `kustomize build .` and check what was built in the middle of the pipeline!
 
-Finally we'll preview the *rollout* and confirm that the release was a success. Rollout will wait until the deployment has rolled out. Here we use the same name of the image, dwk-environments, as the deployment name so we can use the $IMAGE environment variable.
+Finally we'll preview the _rollout_ and confirm that the release was a success. Rollout will wait until the deployment has rolled out. Here we use the same name of the image, dwk-environments, as the deployment name so we can use the \$IMAGE environment variable.
 
 ```yaml
-...
-    - name: Deploy
-      run: |-
-        kustomize edit set image gcr.io/PROJECT_ID/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
-        kustomize build . | kubectl apply -f -
-        kubectl rollout status deployment $IMAGE
-        kubectl get services -o wide
+# ...
+- name: Deploy
+  run: |-
+    kustomize edit set image gcr.io/PROJECT_ID/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
+    kustomize build . | kubectl apply -f -
+    kubectl rollout status deployment $IMAGE
+    kubectl get services -o wide
 ```
 
 <exercise name='Exercise 3.03: Project v1.4'>
 
-  Setup automatic deployment for the project as well.
+Setup automatic deployment for the project as well.
 
 </exercise>
 
-### Separate environment for each branch ###
+### Separate environment for each branch
 
 A quite popular choice when using a deployment pipeline is having a separate environment for every branch - especially when using feature branching.
 
@@ -305,49 +305,49 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@master
-      with:
-        project_id: ${{ secrets.GKE_PROJECT }}
-        service_account_key: ${{ secrets.GKE_SA_KEY }}
-        export_default_credentials: true
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GKE_PROJECT }}
+          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          export_default_credentials: true
 
-    # Configure Docker to use the gcloud command-line tool as a credential
-    # helper for authentication
-    - run: |-
-        gcloud --quiet auth configure-docker
-    # Get the GKE credentials so we can deploy to the cluster
-    - run: |-
-        gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
-    # Build the Docker image
-    - name: Build
-      run: |-
-        docker build \
-          --tag "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA" \
-          .
-    # Push the Docker image to Google Container Registry
-    - name: Publish
-      run: |-
-        docker push "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA"
+      # Configure Docker to use the gcloud command-line tool as a credential
+      # helper for authentication
+      - run: |-
+          gcloud --quiet auth configure-docker
+      # Get the GKE credentials so we can deploy to the cluster
+      - run: |-
+          gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+      # Build the Docker image
+      - name: Build
+        run: |-
+          docker build \
+            --tag "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA" \
+            .
+      # Push the Docker image to Google Container Registry
+      - name: Publish
+        run: |-
+          docker push "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA"
 
-    # Set up kustomize
-    - name: Set up Kustomize
-      uses: imranismail/setup-kustomize@v1
+      # Set up kustomize
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v1
 
-    # Deploy the Docker image to the GKE cluster
-    - name: Deploy
-      run: |-
-        kustomize edit set image gcr.io/PROJECT_ID/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
-        kustomize build . | kubectl apply -f -
-        kubectl rollout status deployment $IMAGE
-        kubectl get services -o wide
+      # Deploy the Docker image to the GKE cluster
+      - name: Deploy
+        run: |-
+          kustomize edit set image gcr.io/PROJECT_ID/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
+          kustomize build . | kubectl apply -f -
+          kubectl rollout status deployment $IMAGE
+          kubectl get services -o wide
 ```
 
 What we'll want to do is deploy each branch into a separate namespace so that each branch has its own separate environment.
-Kustomize has a method to set the namespace. *${GITHUB_REF#refs/heads/}* will be the branch name.
+Kustomize has a method to set the namespace. _\${GITHUB_REF#refs/heads/}_ will be the branch name.
 
 ```console
 kustomize edit set namespace ${GITHUB_REF#refs/heads/}
@@ -368,14 +368,14 @@ kubectl config set-context --current --namespace=${GITHUB_REF#refs/heads/}
 So in the correct order and inside the Deploy:
 
 ```yaml
-    - name: Deploy
-      run: |-
-        kubectl create namespace ${GITHUB_REF#refs/heads/} || true
-        kubectl config set-context --current --namespace=${GITHUB_REF#refs/heads/}
-        kustomize edit set namespace ${GITHUB_REF#refs/heads/}
-        kustomize edit set image gcr.io/PROJECT_ID/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
-        kubectl apply -k .
-        kubectl rollout status deployment $IMAGE
+- name: Deploy
+  run: |-
+    kubectl create namespace ${GITHUB_REF#refs/heads/} || true
+    kubectl config set-context --current --namespace=${GITHUB_REF#refs/heads/}
+    kustomize edit set namespace ${GITHUB_REF#refs/heads/}
+    kustomize edit set image gcr.io/PROJECT_ID/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
+    kubectl apply -k .
+    kubectl rollout status deployment $IMAGE
 ```
 
 To test this, edit the index.html and publish the changes to a new branch.
@@ -384,13 +384,13 @@ The next step would be to configure the domain names for each branch so that we'
 
 <exercise name='Exercise 3.04: Project v1.4.1'>
 
-  Improve the deployment so that each branch creates its own environment.
+Improve the deployment so that each branch creates its own environment.
 
 </exercise>
 
 <exercise name='Exercise 3.05: Project v1.4.2'>
 
-  Finally, create a new workflow so that deleting a branch deletes the environment.
+Finally, create a new workflow so that deleting a branch deletes the environment.
 
 </exercise>
 

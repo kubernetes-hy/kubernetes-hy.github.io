@@ -37,11 +37,11 @@ Namespaces should be kept separate - you could run all of the examples and do th
 Creating a namespace is a oneliner (`kubectl create namespace example-namespace`). You can define the namespace to use by adding it to the metadata section of the yamls.
 
 ```yaml
-...
+# ...
 metadata:
   namespace: example-namespace
   name: example
-...
+# ...
 ```
 
 If you're using a specific namespace constantly, you can set the namespace to be used by default with `kubectl config set-context --current --namespace=<name>`.

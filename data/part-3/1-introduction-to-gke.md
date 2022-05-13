@@ -161,12 +161,12 @@ Create a subdirectory under the mount point.
 
   **statefulset.yaml**
   ```yaml
-...
+# ...
   volumeMounts:
   - name: data
     mountPath: /var/lib/postgresql/data
     subPath: postgres
-...
+# ...
   ```
 
   This will create a postgres directory where the data will reside. subPaths also make it possible to use single volume for multiple purposes.

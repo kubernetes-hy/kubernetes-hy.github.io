@@ -141,7 +141,7 @@ Modify the previously introduced deployment to use it:
 
 **deployment.yaml**
 ```yaml
-...
+# ...
     spec:
       volumes:
         - name: shared-image

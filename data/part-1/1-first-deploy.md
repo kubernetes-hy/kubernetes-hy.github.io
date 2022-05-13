@@ -1,6 +1,6 @@
 ---
-path: '/part-1/1-first-deploy'
-title: 'First Deploy'
+path: "/part-1/1-first-deploy"
+title: "First Deploy"
 hidden: false
 ---
 
@@ -14,7 +14,7 @@ After this section you
 
 </text-box>
 
-## What are microservices? ##
+## What are microservices?
 
 In this course, we'll talk about microservices and create microservices. Before we get started with anything else we'll need to define what a microservice is. Currently there are a many different definitions for microservices.
 
@@ -24,7 +24,7 @@ The misconception of microservices being a large number of extremely small servi
 
 - "Monoliths are the future" - Kelsey Hightower, Staff Developer Advocate at Google, ["Monoliths are the Future"](https://changelog.com/posts/monoliths-are-the-future)
 
-For the context of this unpopular opinion, Kelsey Hightower points out at "The problem people try to solve with microservices doesn't really line up with reality", leading to *Distributed Monoliths* where you have a large number of microservices without a good reason.
+For the context of this unpopular opinion, Kelsey Hightower points out at "The problem people try to solve with microservices doesn't really line up with reality", leading to _Distributed Monoliths_ where you have a large number of microservices without a good reason.
 
 - "Run a small team, not a tech behemoth? Embrace the monolith and make it majestic. You Deserve It!" - David Heinemeier Hansson, cofounder & CTO at Basecamp, ["The Majestic Monolith"](https://m.signalvnoise.com/the-majestic-monolith/)
 
@@ -33,21 +33,22 @@ And this evolves into ["The Majestic Monolith can become The Citadel"](https://m
 When to use microservices? In the following video where Sam Newman and Martin Fowler discuss microservices, the answer is: "When you've got a really good reason".
 
 It also includes the top 3 reasons for using microservices:
-* Zero-downtime independent deployability
-* Isolation of data and of processing around that data
-* Use microservices to reflect the organizational structure
+
+- Zero-downtime independent deployability
+- Isolation of data and of processing around that data
+- Use microservices to reflect the organizational structure
 
 **When To Use Microservices (And When Not To!)**
 
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/GBTdnfD6s5Q" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-A big topic in the video was also the *Distributed Monolith*, where the services are not independently deployable. This is possibly part of the reason why microservices are so hard to define. A simple definition such as "A microservice is any service that is smaller than a monolith", can be used to claim that a Distributed Monolith is a microservice. So a seemingly microservice architecture that does not have the benefits of a microservice architecture may actually be a disguised monolith.
+A big topic in the video was also the _Distributed Monolith_, where the services are not independently deployable. This is possibly part of the reason why microservices are so hard to define. A simple definition such as "A microservice is any service that is smaller than a monolith", can be used to claim that a Distributed Monolith is a microservice. So a seemingly microservice architecture that does not have the benefits of a microservice architecture may actually be a disguised monolith.
 
 Since it is so hard to define rather than going first into microservices we should listen to the first two takeaways from the video that are "One should use microservices as a means to obtain a desired outcome rather than for the sake of using a new technology" and "Microservices shouldn't be the default option. If you think a service architecture could help, try it with one of the modules from a very simple monolith typology and let it evolve from there".
 
 However, sometimes during this course we'll do **arbitrary** splits to our services just to show the features of Kubernetes. So even though we are doing "[microservices](https://www.youtube.com/watch?v=y8OnoxKotPQ)" in this course, a healthy amount of scepticism is required around microservices in the real world. We will see at least one actual and well-justified use case for microservices with service scaling during the course.
 
-## What is Kubernetes? ##
+## What is Kubernetes?
 
 Let's say you have 3 processes and 2 computers incapable of running all 3 processes. How would you approach this problem?
 
@@ -71,17 +72,17 @@ Read [this comic](https://cloud.google.com/kubernetes-engine/kubernetes-comic/) 
 
 We will get started with a lightweight Kubernetes distribution. [K3s - 5 less than K8s](https://k3s.io/), offers us an actual Kubernetes cluster that we can run in containers using [k3d](https://github.com/rancher/k3d).
 
-### Kubernetes cluster with k3d ###
+### Kubernetes cluster with k3d
 
-#### What is a cluster? ####
+#### What is a cluster?
 
-A cluster is a group of machines, *nodes*, that work together - in this case, they are part of a Kubernetes cluster. Kubernetes cluster can be of any size - a single node cluster would consist of one machine that hosts the Kubernetes control-plane (exposing API and maintaining the cluster) and that cluster can then be expanded with up to 5000 nodes total, as of Kubernetes v1.18.
+A cluster is a group of machines, _nodes_, that work together - in this case, they are part of a Kubernetes cluster. Kubernetes cluster can be of any size - a single node cluster would consist of one machine that hosts the Kubernetes control-plane (exposing API and maintaining the cluster) and that cluster can then be expanded with up to 5000 nodes total, as of Kubernetes v1.18.
 
 We will use the term "server node" to refer to nodes with control-plane and "agent node" to refer to the nodes without that role. A basic kubernetes cluster may look like this:
 
 <img src="../img/without_k3d.png">
 
-#### Starting a cluster with k3d ####
+#### Starting a cluster with k3d
 
 We'll use k3d to create a group of docker containers that run k3s. The installation instructions, or at least a link to them, are in [part 0](/part-0#installing-k3d). The reason for using k3d is because it is enables us to create a cluster without worrying about virtual machines or physical machines. With k3d our basic cluster will look like this:
 
@@ -107,7 +108,7 @@ $ docker ps
 
 Here we also see that port 6443 is opened to "k3d-k3s-default-serverlb", a useful "load balancer" proxy, that'll redirect a connection to 6443 into the server node, and that's how we can access the contents of the cluster. The port on our machine, above 50122, is randomly chosen. We could have opted out of the load balancer with `k3d cluster create -a 2 --no-lb` and the port would be open straight to the server node. Having a load balancer will offer us a few features we wouldn't otherwise have, so let's keep it in.
 
-K3d helpfully also set up a *kubeconfig*, the contents of which is output by `k3d kubeconfig get k3s-default`.
+K3d helpfully also set up a _kubeconfig_, the contents of which is output by `k3d kubeconfig get k3s-default`.
 
 The other tool that we will be using on this course is kubectl. Kubectl is the Kubernetes command-line tool and will allow us to interact with the cluster. Kubectl will read kubeconfig from the location in KUBECONFIG environment value or by default from `~/.kube/config` and use the information to connect to the cluster. The contents include certificates, passwords and the address in which the cluster API. You can set the context with `kubectl config use-context k3d-k3s-default`.
 
@@ -120,7 +121,7 @@ $ kubectl cluster-info
   Metrics-server is running at https://0.0.0.0:50122/api/v1/namespaces/kube-system/services/https:metrics-server:https/proxy
 ```
 
-We can see that kubectl is connected to the container *k3d-k3s-default-serverlb* through (in this case) port 57734.
+We can see that kubectl is connected to the container _k3d-k3s-default-serverlb_ through (in this case) port 57734.
 
 If you want to stop / start the cluster you can simply run
 
@@ -150,9 +151,9 @@ $ k3d cluster start
 
 For now, **we're going to need the cluster running**, but if we want to remove the cluster we can run `k3d cluster delete`.
 
-## First Deploy ##
+## First Deploy
 
-### Preparing for first deploy ###
+### Preparing for first deploy
 
 Before we can deploy anything we'll need to do a small application to deploy. During the course, you will develop your own application. The technologies used for the application do not matter - for the examples we're going to use [node.js](https://nodejs.org/en/) but the example application will be offered through GitHub as well as Docker Hub.
 
@@ -160,7 +161,7 @@ Let's launch an application that generates and outputs a hash every 5 seconds or
 
 I have prepared one [here](https://github.com/kubernetes-hy/material-example/tree/master/app1), you can test it with `docker run jakousa/dwk-app1`.
 
-To deploy an image, we need the cluster to have an access to the image. By default, Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but that won't work when we switch to non-k3d solutions. We will use the familiar registry *Docker Hub*, which we also used in [DevOps with Docker](http://devopswithdocker.com/). If you've never used Docker Hub, it is the place Docker client defaults to. E.g. when you run `docker pull nginx`, the nginx comes from Docker Hub. You will need to register an account there and after that you can use `docker login` to authenticate yourself. If you don't wish to use Docker Hub you can also use a local registry: follow the [tutorial here](https://k3d.io/v5.3.0/usage/registries/?h=registries#using-a-local-registry) to set one up.
+To deploy an image, we need the cluster to have an access to the image. By default, Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but that won't work when we switch to non-k3d solutions. We will use the familiar registry _Docker Hub_, which we also used in [DevOps with Docker](http://devopswithdocker.com/). If you've never used Docker Hub, it is the place Docker client defaults to. E.g. when you run `docker pull nginx`, the nginx comes from Docker Hub. You will need to register an account there and after that you can use `docker login` to authenticate yourself. If you don't wish to use Docker Hub you can also use a local registry: follow the [tutorial here](https://k3d.io/v5.3.0/usage/registries/?h=registries#using-a-local-registry) to set one up.
 
 ```console
 $ docker tag _image_ _username_/_image_
@@ -173,20 +174,20 @@ In the future, the material will use the offered applications in the commands. Y
 
 Now we are finally ready to deploy our first app into Kubernetes!
 
-### Deployment ###
+### Deployment
 
-To deploy an application, we will need to create a *Deployment* object with the image.
+To deploy an application, we will need to create a _Deployment_ object with the image.
 
 ```console
 $ kubectl create deployment hashgenerator-dep --image=jakousa/dwk-app1
   deployment.apps/hashgenerator-dep created
 ```
 
-This action created a few things for us to look at: a *Deployment* resource and a *Pod* resource.
+This action created a few things for us to look at: a _Deployment_ resource and a _Pod_ resource.
 
-#### What is a Pod? ####
+#### What is a Pod?
 
-*Pod* is an abstraction around one or more containers. Pods provide a context for 1..N containers so that they can share storage and a network. It's very much like how you have used containers to define environments for a single process. They can be thought of as a container of containers. *Most* of the same rules apply: it is deleted if the containers within stop running and contained files will be lost with it.
+_Pod_ is an abstraction around one or more containers. Pods provide a context for 1..N containers so that they can share storage and a network. It's very much like how you have used containers to define environments for a single process. They can be thought of as a container of containers. _Most_ of the same rules apply: it is deleted if the containers within stop running and contained files will be lost with it.
 
 <img src="../img/pods.png">
 
@@ -212,13 +213,14 @@ $ kubectl get pods
   hashgenerator-dep-6965c5c7-2pkxc   1/1     Running   0          2m1s
 ```
 
-#### What is a Deployment resource? ####
+#### What is a Deployment resource?
 
-A *Deployment* resource takes care of deployment. It's a way to tell Kubernetes what container you want, how they should be running and how many of them should be running.
+A _Deployment_ resource takes care of deployment. It's a way to tell Kubernetes what container you want, how they should be running and how many of them should be running.
 
-While we created the Deployment we also created a *ReplicaSet* object. ReplicaSets are used to tell how many replicas of a Pod you want. It will delete or create Pods until the number of Pods you wanted are running. ReplicaSets are managed by Deployments and you should not have to manually define or modify them. If you want to manage the number of replicas, you can edit the Deployment and it will take care of modifying the ReplicaSet.
+While we created the Deployment we also created a _ReplicaSet_ object. ReplicaSets are used to tell how many replicas of a Pod you want. It will delete or create Pods until the number of Pods you wanted are running. ReplicaSets are managed by Deployments and you should not have to manually define or modify them. If you want to manage the number of replicas, you can edit the Deployment and it will take care of modifying the ReplicaSet.
 
 You can view the deployment:
+
 ```console
 $ kubectl get deployments
   NAME                READY   UP-TO-DATE   AVAILABLE   AGE
@@ -237,42 +239,42 @@ A helpful list for other commands from docker-cli translated to kubectl is avail
 
 <exercise name='Exercise 1.01: Getting started'>
 
-  **Exercises can be done with any language and framework you want.**
+**Exercises can be done with any language and framework you want.**
 
-  Create an application that generates a random string on startup, stores this string into memory, and outputs it every 5 seconds with a timestamp. e.g.
+Create an application that generates a random string on startup, stores this string into memory, and outputs it every 5 seconds with a timestamp. e.g.
 
-  ```plaintext
+```plaintext
 2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43
 2020-03-30T12:15:22.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43
-  ```
+```
 
-  Deploy it into your Kubernetes cluster and confirm that it's running with `kubectl logs ...`
+Deploy it into your Kubernetes cluster and confirm that it's running with `kubectl logs ...`
 
-  You will keep building this application in the future exercises. This application will be called "Log output".
+You will keep building this application in the future exercises. This application will be called "Log output".
 
 </exercise>
 
 <exercise name='Exercise 1.02: Project v0.1'>
 
-  **Project can be done with any language and framework you want**
+**Project can be done with any language and framework you want**
 
-  The project will be a simple todo application with the familiar features of create, read, update, and delete (CRUD). We'll develop it during all parts of this course. Check the title of the exercise if you are unsure if it is building the project.
+The project will be a simple todo application with the familiar features of create, read, update, and delete (CRUD). We'll develop it during all parts of this course. Check the title of the exercise for "Project vX.Y" to know it is about building the project.
 
-  Todo is a text like "I need to clean the house" that can be in state of not-done or done.
+Todo is a text like "I need to clean the house" that can be in state of not-done or done.
 
   <img src="../img/project.png" alt="Project evolution" />
 
-  Dashed lines separate major differences across the course. Some exercises are not included in the picture. The connections between most pods are not included as well. You are free to do them however you want.
+Dashed lines separate major differences across the course. Some exercises are not included in the picture. The connections between most pods are not included as well. You are free to do them however you want.
 
-  Keep this in mind if you want to avoid doing more work than necessary.
+Keep this in mind if you want to avoid doing more work than necessary.
 
-  Let's get started!
+Let's get started!
 
-  Create a web server that outputs "Server started in port NNNN" when it is started and deploy it into your Kubernetes cluster. Please make it so that an environment variable PORT can be used to choose that port. You will not have access to the port when it is running in Kuberetes yet. We will configure the access when we get to networking.
+Create a web server that outputs "Server started in port NNNN" when it is started and deploy it into your Kubernetes cluster. Please make it so that an environment variable PORT can be used to choose that port. You will not have access to the port when it is running in Kuberetes yet. We will configure the access when we get to networking.
 
 </exercise>
 
-## Declarative configuration with YAML ##
+## Declarative configuration with YAML
 
 We created the deployment with
 
@@ -327,10 +329,10 @@ spec:
 
 This looks a lot like the docker-compose.yamls we have previously written. Let's ignore what we don't know for now, which is mainly labels, and focus on the things that we know:
 
-* We're declaring what kind it is (kind: Deployment)
-* We're declaring it a name as metadata (name: hashgenerator-dep)
-* We're declaring that there should be one of them (replicas: 1)
-* We're declaring that it has a container that is from a certain image with a name
+- We're declaring what kind it is (kind: Deployment)
+- We're declaring it a name as metadata (name: hashgenerator-dep)
+- We're declaring that there should be one of them (replicas: 1)
+- We're declaring that it has a container that is from a certain image with a name
 
 Apply the deployment with `apply` command:
 
@@ -357,17 +359,17 @@ When updating anything in Kubernetes the usage of delete is actually an anti-pat
 
 <exercise name='Exercise 1.03: Declarative approach'>
 
-  In your "Log output" application create the folder for manifests and move your deployment into a declarative file.
+In your "Log output" application create the folder for manifests and move your deployment into a declarative file.
 
-  Make sure everything still works by restarting and following logs.
+Make sure everything still works by restarting and following logs.
 
 </exercise>
 
 <exercise name='Exercise 1.04: Project v0.2'>
 
-  Create a deployment.yaml for the project.
+Create a deployment.yaml for the project.
 
-  You won't have access to the port yet but that'll come soon.
+You won't have access to the port yet but that'll come soon.
 
 </exercise>
 
