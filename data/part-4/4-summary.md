@@ -4,7 +4,7 @@ title: 'Summary'
 hidden: false
 ---
 
-Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020)
+Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/courses/kubernetes2022)
 
 By this point you have a grasp on the variety of decisions that are made during application development and how it may affect the operations side.
 

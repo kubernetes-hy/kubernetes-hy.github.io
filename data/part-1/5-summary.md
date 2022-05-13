@@ -4,7 +4,7 @@ title: 'Summary'
 hidden: false
 ---
 
-Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020)
+Submit your completed exercises through the [submission application](https://studies.cs.helsinki.fi/stats/courses/kubernetes2022)
 
 In this part, we learned about k8s, k3s, and k3d. We learned about resources that are used in Kubernetes to run any software as well as resources to manage storage for some use cases, for example, caching and sharing data between Pods.
 

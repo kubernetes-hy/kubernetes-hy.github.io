@@ -21,7 +21,7 @@ The course material is written using Mac, so some instructions may lack platform
 
 To complete the course, submit solutions for all of the exercises in parts 1-5. There is no exam.
 
-The total workload of the course is about 95 hours. You can find out how long it took others by peeking at the [statistics](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020).
+The total workload of the course is about 95 hours. You can find out how long it took others by peeking at the [statistics](https://studies.cs.helsinki.fi/stats/courses/kubernetes2022).
 
 ### Exercises ###
 
@@ -33,7 +33,7 @@ Most of the exercises will require you to write code or publish something to Doc
 
 A system for detecting plagiarism is used to check exercises submitted to GitHub. If multiple students hand in the same code, the situation is handled according to the [policy on plagiarism](https://studies.helsinki.fi/instructions/article/what-cheating-and-plagiarism) of the University of Helsinki.
 
-There are multiple exercises in each part. After you have completed all of the exercises for a part, use the [submission application](https://studies.cs.helsinki.fi/stats/courses/kubernetes2020). Note that you can **not** edit a submission, so mark all as completed.
+There are multiple exercises in each part. After you have completed all of the exercises for a part, use the [submission application](https://studies.cs.helsinki.fi/stats/courses/kubernetes2022). Note that you can **not** edit a submission, so mark all as completed.
 
 ### Grading ###
 
