@@ -208,7 +208,7 @@ spec:
       restartPolicy: Never # This time we'll run it only once
 ```
 
-Pods have a few available configurations. For example we can force it to retry for a number of times by defining `backoffLimit`.
+Pods have a few available configurations. For example, we can force it to retry for a number of times by defining `backoffLimit`.
 
 ```console
 $ kubectl get jobs

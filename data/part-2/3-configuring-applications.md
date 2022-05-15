@@ -81,7 +81,9 @@ As the containers are already instructed to use the environment from the secret 
 
 Since anyone can reverse the base64 version we can't save that to version control. Since we want to store the configuration we make into a long-term storage we'll need to encrypt the value.
 
-Let's use [SOPS](https://github.com/mozilla/sops) to encrypt the secret yaml. There are multiple methods for encryption. Of those we will choose [age](https://github.com/FiloSottile/age) because it's recommended over PGP by the README. So install both of the tools, SOPS and age.
+There are multiple solutions for secret management depending on the platform. Cloud service providers may have their solution, like Google Cloud [Secret Manager](https://cloud.google.com/secret-manager) or [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/). For a kubernetes native solution, we could use [SealedSecrets](https://github.com/bitnami-labs/sealed-secrets). In fact, the SealedSecrets were used in a previous version of this course.
+
+We will use [SOPS](https://github.com/mozilla/sops) to encrypt the secret yaml. The tool has some additional flexibility, so I hope you get some use out of it, regardless of the environment you will be working in the future. For example, you could use it with docker-compose files. Please take a moment to read through the readme. Read through the [Motivation](https://github.com/mozilla/sops#motivation), if nothing else. We will use [age](https://github.com/FiloSottile/age) for encryption because it's recommended over PGP by the README. So install both of the tools, SOPS and age.
 
 Let's create a key first:
 
@@ -157,14 +159,14 @@ There's nothing specific to submit, all following submissions should follow the 
 
 ### ConfigMaps
 
-ConfigMaps are similar but the data doesn't have to be encoded and is not encrypted. Let's say you have a videogame server that takes a "serverconfig.txt" which looks like this:
+ConfigMaps are similar but the data doesn't have to be encoded and is not encrypted. Since you rarely need to have live configureable values coming up with a use case can be somewhat convoluted, but let's say you have a videogame server that takes a "serverconfig.txt" which looks like this:
 
 ```ini
 maxplayers=12
 difficulty=2
 ```
 
-The following ConfigMap would contain the values:
+The following ConfigMap could contain the values:
 
 **configmap.yaml**
 

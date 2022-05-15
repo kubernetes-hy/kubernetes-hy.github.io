@@ -27,7 +27,7 @@ $ helm repo add prometheus-community https://prometheus-community.github.io/helm
 $ helm repo add stable https://charts.helm.sh/stable
 ```
 
-And after that we can install [kube-prometheus-stack](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack). By default this would put everything to the default namespace.
+And after that we can install [kube-prometheus-stack](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack). By default, this would put everything to the default namespace. Let's create a new namespace and move it there.
 
 ```console
 $ kubectl create namespace prometheus
@@ -102,7 +102,7 @@ $ kubectl get all -n loki-stack
 
 Here we see that Loki is running in port 3100. As an additional bonus, because we installed the loki-stack we've got "Promtail". [Promtail](https://grafana.com/docs/loki/latest/clients/promtail/) makes it trivial for us to send logs from our applications to Loki. So trivial in fact, that we don't have to do anything except configure Grafana to show Loki.
 
-Open Grafana and go to settings and "Add data source". Choose Loki and then insert the correct URL. From the output above we can guess that the port should be 3100, the namespace is loki-stack and the name of the service is loki. So the answer would be: http://loki.loki-stack:3100. No other fields need to be changed.
+Open Grafana, go to settings and choose "Add data source". Choose Loki and then insert the correct URL. From the output above we can guess that the port should be 3100, the namespace is loki-stack and the name of the service is loki. So the answer would be: http://loki.loki-stack:3100. No other fields need to be changed.
 
 Now we can use the Explore tab (compass) to explore the data.
 
