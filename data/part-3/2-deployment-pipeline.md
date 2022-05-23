@@ -201,7 +201,7 @@ Next we'll use some additional actions, mainly from [google-github-actions](http
 
 The secrets here are not from the environment variables but are included into the project from Github. Read their guide [here](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets).
 
-The _GKE_SA_KEY_ is a service account key that is required to access the Google Cloud services - read their guide for it [here](https://cloud.google.com/iam/docs/creating-managing-service-account-keys). You will need to create a new service account and fetch its key.
+The GKE\_SA\_KEY is a service account key that is required to access the Google Cloud services - read their guide for it [here](https://cloud.google.com/iam/docs/creating-managing-service-account-keys). You will need to create a new service account and fetch its key.
 
 These roles are more than enough to do the deployment. Give them to the service account:
 
@@ -214,7 +214,7 @@ After creating a service account for GKE called "github-actions" I created the k
 $ gcloud iam service-accounts keys create ./private-key.json --iam-account=github-actions@dwk-gke-331210.iam.gserviceaccount.com
 ```
 
-The entire JSON generated needs to be added to _GKE_SA_KEY_.
+The entire JSON generated needs to be added to GKE\_SA\_KEY.
 
 Next, use _gcloud_ commands to configure Docker. This will enable us to push to Google Container Registry, which we'll use instead of Docker Hub. We could use Docker Hub if we wanted to do so, but GCR is an excellent option now that we have access to it. GCR is a lot more performant and has a low network latency. Cutting down on the time we spend moving images around will ensure our deployments are quick. Read more about it here <https://cloud.google.com/container-registry/>. Note that the registry is [not free](https://cloud.google.com/container-registry/pricing) and you'll probably want to delete the images from there during and after this course.
 

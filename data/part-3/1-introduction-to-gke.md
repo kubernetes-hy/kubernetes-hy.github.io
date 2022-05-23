@@ -16,7 +16,7 @@ After this section you can
 
 We have used Kubernetes distribution k3s using docker containers via k3d. In a production environment the task of maintaining a Kubernetes cluster is often left to third parties. A managed Kubernetes as a service is often the best choice as the additional work required in maintenance exceeds the benefits of a personal cluster. In some, somewhat rare, cases setting up and maintaining your own cluster is a reasonable option. A case for it would be that your company/organization already has the hardware and/or wants to stay independent from providers, one such example could be a University. Another primary reason for operating your own Kubernetes cluster is that regulations rule out all other choices.
 
-Maintaining your own Kubernetes cluster is one way to increase costs. The other is running servers that are not in use. To avoid costs [Serverless](https://en.wikipedia.org/wiki/Serverless_computing) solutions could be more cost-efficient. A Kubernetes cluster of improper size can get really expensive really fast. An excellent option to start out with would be a high-tier environment for serverless workloads, such as Google Cloud Run or AWS Fargate. In them you can run any container serverless, compared to older solutions like Cloud Functions or AWS Lambda, which have a wildly varying support for different languages, environments and tooling.
+Maintaining your own Kubernetes cluster is one way to increase costs. The other is running servers that are not in use. To avoid costs [Serverless](https://en.wikipedia.org/wiki/Serverless_computing) solutions could be more cost-efficient. A Kubernetes cluster of improper size can get really expensive really fast. An excellent option to start out with would be a high-tier environment for serverless workloads, such as Google Cloud Run or AWS Fargate. In them you can run any container, compared to older solutions like Cloud Functions or AWS Lambda, which have a wildly varying support for different languages, environments and tooling.
 
 <!---
 <text-box variant='hint' name='Registration for Open University students'>
@@ -51,10 +51,10 @@ $ gcloud config set project dwk-gke
   Updated property [core/project].
 ```
 
-We can now create a cluster. You can choose any zone we want from the list [here](https://cloud.google.com/about/locations/). I chose Finland. Notice that one region (e.g. europe-north1) may have multiple regions (e.g. -a). Let's add a few more flags: `--release-channel=rapid --cluster-version=1.22`. These will ask GKE to use a version that will be default in December 2021. If it's already December or 2022 you can test that it works without the flags and throw a PR into the material!
+We can now create a cluster. You can choose any zone we want from the list [here](https://cloud.google.com/about/locations/). I chose Finland. Notice that one region (e.g. europe-north1) may have multiple regions (e.g. -a). Let's add another flag: `--cluster-version=1.22`. This will ask GKE to use a version that will be default in June 2022. [GKE release schedule here](https://cloud.google.com/kubernetes-engine/docs/release-schedule).
 
 ```console
-$ gcloud container clusters create dwk-cluster --zone=europe-north1-b --release-channel=rapid --cluster-version=1.22
+$ gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.22
 ERROR: (gcloud.container.clusters.create) ResponseError: code=400, message=Failed precondition when calling the ServiceConsumerManager: tenantmanager:: Consumer should enable service:container.googleapis.com before generating a service account.
 ```
 
@@ -64,13 +64,13 @@ Let's enable the service in question, `container.googleapis.com`, before retryin
 $ gcloud services enable container.googleapis.com
   Operation "operations/acf.p2-385245615727-2f855eed-e785-49ac-91da-896925a691ab" finished successfully.
 
-$ gcloud container clusters create dwk-cluster --zone=europe-north1-b --release-channel=rapid --cluster-version=1.22
+$ gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.22
   ...
   Creating cluster dwk-cluster in europe-north1-b...
   ...
   kubeconfig entry generated for dwk-cluster.
-  NAME         LOCATION         MASTER_VERSION   MASTER_IP      MACHINE_TYPE  NODE_VERSION     NUM_NODES  STATUS
-  dwk-cluster  europe-north1-b  1.22.2-gke.1901  35.228.152.81  e2-medium     1.22.2-gke.1901  3          RUNNING
+  NAME         LOCATION         MASTER_VERSION   MASTER_IP       MACHINE_TYPE  NODE_VERSION     NUM_NODES  STATUS
+  dwk-cluster  europe-north1-b  1.22.8-gke.2200  35.228.176.118  e2-medium     1.22.8-gke.2200  3          RUNNING
 ```
 
 It set the kubeconfig to point in the right direction already. But if you need to do it again we can set the kubeconfig like this:
@@ -121,7 +121,7 @@ $ kubectl get svc --watch
   seedimage-svc   LoadBalancer   10.31.241.224   35.228.41.16   80:30215/TCP   94s
 ```
 
-If we now access http://35.228.41.16 with our browser we'll see the application up and running. By refreshing the page we can also see that the load balancer sometimes offers us a different image.
+If we now access http://35.228.41.16 with our browser we'll see the application up and running. By refreshing the page we can also see that the load balancer sometimes offers us a different image. Note that this is available in port 80, so https will not work.
 
 <div class="highlight-box" markdown="1">
 To avoid using up the credits delete the cluster whenever you do not need it
@@ -132,7 +132,7 @@ $ gcloud container clusters delete dwk-cluster --zone=europe-north1-b
 
 And when resuming progress create the cluster back.
 ```console
-$ gcloud container clusters create dwk-cluster --zone=europe-north1-b --release-channel=rapid --cluster-version=1.22
+$ gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.22
 ```
 
 Closing the cluster will also remove everything you've deployed on the cluster. If you decide to take a break during an example you may have to redo it. Thankfully we have used a declarative approach so continuing progress will only require you to apply the yamls.
