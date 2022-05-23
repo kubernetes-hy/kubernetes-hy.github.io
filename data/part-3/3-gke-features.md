@@ -166,7 +166,7 @@ Figuring out autoscaling with HorizontalPodAutoscalers can be one of the more ch
 
 </exercise>
 
-<exercise name='Exercise 3.09: Sensible processes'>
+<exercise name='Exercise 3.09: Resource limits'>
 
   Set sensible resource limits for the "Ping-pong" and "Log output" applications. The exact values are not important. Test what works.
 
