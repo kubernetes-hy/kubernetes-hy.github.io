@@ -204,7 +204,7 @@ spec:
         image: jakousa/simple-backup-example
         env:
           - name: URL
-            value: "postgres://postgres:example@postgres-svc.default:5432/postgres"
+            value: "postgres://postgres:example@postgres-svc:5432/postgres"
       restartPolicy: Never # This time we'll run it only once
 ```
 

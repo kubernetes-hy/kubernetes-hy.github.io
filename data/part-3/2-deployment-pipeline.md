@@ -87,7 +87,7 @@ $ kubectl apply -f manifests/deployment.yaml
 
 Applying multiple files like this gets bothersome. We can of course point it at a directory like so: `kubectl apply -f manifests/`, but this is an excellent moment to turn our attention to Kustomize.
 
-[Kustomize](https://github.com/kubernetes-sigs/kustomize) is a tool that helps with configuration customization and is baked into kubectl. In this case we'll use it to define which files are meaningful for Kubernetes.
+[Kustomize](https://github.com/kubernetes-sigs/kustomize) is a tool that helps with configuration customization and is baked into kubectl. In this case we'll use it to define which files are meaningful for Kubernetes. Alternatively, we could use Helm and maybe [Helmsman](https://github.com/Praqma/helmsman), but we will leave that outside of the context of this course.
 
 For us a new file _kustomization.yaml_ in the root of the project will work. The _kustomization.yaml_ should include instructions to use the deployment.yaml and service.yaml.
 
