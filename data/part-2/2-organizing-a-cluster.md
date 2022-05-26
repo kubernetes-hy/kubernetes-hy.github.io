@@ -119,15 +119,13 @@ With labels we can even move pods to labeled nodes. Let's say we have a few node
         networkquality: excellent
 ```
 
-If you already had it running, it won't move the pod to avoid unwanted changes in the system. We'll delete the pod so that Kubernetes will move the new version to the correct node.
+If you already had it running, it won't close the pod to avoid unwanted changes in the system.
 
 ```console
-$ kubectl delete po hashgenerator-dep-7b9b88f8bf-tnvfg
-  pod "hashgenerator-dep-7b9b88f8bf-tnvfg" deleted
-
 $ kubectl get po
   NAME                                 READY   STATUS    RESTARTS   AGE
-  hashgenerator-dep-7b9b88f8bf-lvcv4   0/1     Pending   0          4s
+  hashgenerator-dep-548d4d6c8d-mbblj   1/1     Running   0          107s
+  hashgenerator-dep-7586cb6456-mktcl   0/1     Pending   0          23s
 ```
 
 Now the status is "Pending" as there are no nodes with an excellent network quality. Next, label the agent-1 as being one with excellent network quality and Kubernetes will know where the pod is able to run .
@@ -138,7 +136,7 @@ $ kubectl label nodes k3d-k3s-default-agent-1 networkquality=excellent
 
 $ kubectl get po
   NAME                                 READY   STATUS    RESTARTS   AGE
-  hashgenerator-dep-7b9b88f8bf-lvcv4   1/1     Running   0          5m30s
+  hashgenerator-dep-7b9b88f8bf-mktcl   1/1     Running   0          5m30s
 ```
 
 _nodeSelector_ is a blunt tool. It's great when you want to define binary qualities, like "don't run this application if the node is using an HDD instead of an SSD" by labeling the nodes according to disk types. There are more sophisticated tools you should use when you have a cluster of various machines, ranging from a [fighter jet](https://gcn.com/articles/2020/01/07/af-kubernetes-f16.aspx) to a toaster to a supercomputer. Kubernetes can use _affinity_ and _anti-affinity_ to select which nodes are prioritized for which applications and _taints_ with _tolerances_ so that a pod can avoid certain nodes. For example, if a machine has a high network latency and we wouldn't want it to do some latency critical tasks.
