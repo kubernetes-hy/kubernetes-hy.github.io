@@ -73,7 +73,7 @@ $ kubectl get po --watch
 ...
 ```
 
-You can see the rolling update performed but unfortunately the application no longer works. The application is running, it's just that there's a bug which prevents it from working correctly. This is where [*ReadinessProbes*](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) come in.
+You can see the rolling update performed but unfortunately the application no longer works. The application is running, it's just that there's a bug which prevents it from working correctly. How do we communicate this malfunction outside the application? This is where [*ReadinessProbes*](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) come in.
 
 **Kubernetes Best Practices - Kubernetes Health Checks with Readiness and Liveness Probes**
 
@@ -256,11 +256,11 @@ A *StartupProbe* can delay the liveness probe so that an application with a long
 
 With rolling updates, when including the Probes, we could create releases with no downtime for users. Sometimes this is not enough and you need to be able to do a partial release for some users and get data for the new / upcoming release. Canary release is the term used to describe a release strategy in which we introduce a subset of the users to a new version of the application. Then increasing the number of users in the new version until the old version is no longer used.
 
-At the moment of writing this Canary is not a strategy for deployments. This may be due to the ambiguity of the methods for canary release. We will use [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) to test one type of canary release. At the moment of writing the latest release is v1.1.0. We will in fact go with the unreleased version in the master branch of the project, since our 1.22 version of Kubernetes isn't supported in stable release yet:
+At the moment of writing this Canary is not a strategy for deployments. This may be due to the ambiguity of the methods for canary release. We will use [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) to test one type of canary release:
 
 ```console
 $ kubectl create namespace argo-rollouts
-$ kubectl apply -n argo-rollouts -f https://raw.githubusercontent.com/argoproj/argo-rollouts/master/manifests/install.yaml
+$ kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
 ```
 
 Now we have a new resource "Rollout" available to us. The Rollout will replace our previously created deployment and enable us to use a new field:
