@@ -202,11 +202,15 @@ If you are interested in learning more about running your own storage you can ch
 
 <exercise name='Exercise 1.12: Project v0.6'>
 
-  Since the project looks really boring at the moment let's add some outside resources.
+  Since the project looks really boring right now, let's add a picture!
 
-  A daily image where every day a new image is fetched on the first request.
+  The goal is to add a daily image to the project. And every day a new image is fetched on the first request.
 
-  Get an image from Lorem Picsum like `https://picsum.photos/1200` and display it in the project. Make sure to cache the image into a volume so we don't spam the API for new images every time we access the application or the container crashes.
+  Get a random picture from Lorem Picsum like `https://picsum.photos/1200` and display it in the project. Find a way to store the image so it stays the same for an entire day.
+
+  Make sure to cache the image into a volume so that the API isn't needed for new images every time we access the application or the container crashes.
+
+  Best way to test what happens when your container shuts down is likely by shutting down the container, so you can add logic for that as well, for testing purposes.
 
 </exercise>
 
