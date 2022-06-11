@@ -20,11 +20,3 @@ To get the Google Cloud Credits, please do the following after completing part 1
 Please note!
 
 · Credits for the course are only available to those students who have successfully enrolled on the course through the Open University and have completed the course according to the instructions.
-
-*Electronic enrollment is available if you meet one of the following criteria:
-
-· You have a Finnish personal identity number (format: xxxxxxxx-xxxx), or an online banking ID, or
-
-· you are a student at the University of Helsinki, or
-
-· you are a student at a [HAKA member institution](https://wiki.eduuni.fi/display/CSCHAKA/Members+and+partners)

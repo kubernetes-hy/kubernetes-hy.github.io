@@ -22,6 +22,8 @@ Registration is only required for ECTS credits. The certificate does not require
 
 You should also read the [studies.helsinki.fi page](https://studies.helsinki.fi/courses/cur/otm-f4b5c4b0-73fb-4195-86cd-e3dcc5da964c). That page also includes information about target group, enrolment instructions, recommended reading and most importantly **deadlines** for enrollment.
 
+### Enrollment closes 30.6.2022
+
 The following are suggestions on what you should complete before joining the course. These are not mandatory, but it's recommended that you..
 
 - are familiar with containers (probably from <a href="https://courses.helsinki.fi/fi/aytkt21025en">DevOps with Docker</a>).
