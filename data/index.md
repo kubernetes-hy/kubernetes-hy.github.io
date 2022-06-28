@@ -36,7 +36,7 @@ The summer 2022 iteration of the course is open for a shorter time period and in
 | Part   | Opens | Deadline |
 |--------|-------|----------|
 | Part 1 | 16.05 | 01.07    |
-| Part 2 | 23.05 | 01.07    |
+| Part 2 | 23.05 | 10.07    |
 | Part 3 | 30.05 | 31.07    |
 | Part 4 | 06.06 | 31.07    |
 | Part 5 | 13.06 | 31.07    |
