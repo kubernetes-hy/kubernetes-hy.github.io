@@ -38,8 +38,8 @@ The summer 2022 iteration of the course is open for a shorter time period and in
 | Part 1 | 16.05 | 01.07    |
 | Part 2 | 23.05 | 10.07    |
 | Part 3 | 30.05 | 31.07    |
-| Part 4 | 06.06 | 31.07    |
-| Part 5 | 13.06 | 31.07    |
+| Part 4 | 06.06 | 07.08    |
+| Part 5 | 13.06 | 14.08    |
 
 Even though we have locked away some parts, the material is still available on the GitHub page https://github.com/kubernetes-hy/kubernetes-hy.github.io/tree/master/data. However, you won't be able to submit anything early or late!
 
