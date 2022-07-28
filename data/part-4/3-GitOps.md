@@ -47,7 +47,7 @@ To get started we'll need to get a GITHUB_TOKEN. You can follow the GitHub [guid
 Next step isn't a surprise at this point. As with most tools this time we will need to install the Flux CLI.
 
 ```console
-$ curl -s https://toolkit.fluxcd.io/install.sh | sudo bash
+$ curl -s https://fluxcd.io/install.sh | sudo bash
 ```
 
 or if that doesn't work read [installation guide](https://toolkit.fluxcd.io/guides/installation/).
