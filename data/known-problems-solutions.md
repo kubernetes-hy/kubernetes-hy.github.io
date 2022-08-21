@@ -37,6 +37,6 @@ $ kubectl describe pod hashgenerator-dep-cdcc6d567-jd8jr
     Warning  FailedScheduling  <unknown>  default-scheduler  0/3 nodes are available: 3 node(s) had taint {node.kubernetes.io/disk-pressure: }, that the pod didn't tolerate.
 ```
 
-You can read solutions here [https://k3d.io/faq/faq/#pods-evicted-due-to-lack-of-disk-space](https://k3d.io/faq/faq/#pods-evicted-due-to-lack-of-disk-space). Depending on your OS the steps may vary.
+You can read solutions here https://k3d.io/v5.4.4/faq/faq/#pods-evicted-due-to-lack-of-disk-space. Depending on your OS the steps may vary.
 
 ## ##
