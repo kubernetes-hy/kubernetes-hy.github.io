@@ -78,7 +78,7 @@
     "react-scrollspy": "^3.4.2",
     "react-use": "^15.2.2",
     "react-youtube": "^7.11.2",
-    "recharts": "^1.8.5",
+    "recharts": "^2.1.14",
     "redux": "^4.0.5",
     "redux-action-analytics": "0.0.3",
     "redux-devtools-extension": "^2.13.8",
