@@ -49,7 +49,7 @@
     "gatsby-remark-prismjs": "^3.5.4",
     "gatsby-remark-smartypants": "^2.3.4",
     "gatsby-source-filesystem": "^2.3.11",
-    "gatsby-transformer-remark": "^2.8.15",
+    "gatsby-transformer-remark": "^5.25.1",
     "graphql": "^14.6.0",
     "i18next": "^19.4.5",
     "i18next-browser-languagedetector": "^4.2.0",
