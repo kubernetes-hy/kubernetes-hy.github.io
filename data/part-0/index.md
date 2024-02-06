@@ -85,13 +85,13 @@ Running `k3d` as `sudo` leads to problems such as generating the kubeconfig into
 
 Did you find a mistake, issue, typo, or something missing? Maybe you just thought that something was not well written and you could do better? Is it Hacktoberfest? Or maybe you want to share a link to a great blog post? Please go ahead and contribute!
 
-Since the course is open source, you can fork, edit and send a pull request. If you do not know what forking is or how to make a pull request consult the [github guides](https://guides.github.com/activities/hello-world/). It is okay to practice here.
+Since the course is open source, you can fork, edit and send a pull request. If you do not know what forking is or how to make a pull request consult the [GitHub guides](https://guides.github.com/activities/hello-world/). It is okay to practice here.
 
-If you feel like you do not want to be part of the list of [contributors](https://github.com/kubernetes-hy/kubernetes-hy.github.io/graphs/contributors) you can also add an issue. The guide for making an issue in Github is [here](https://help.github.com/en/articles/creating-an-issue).
+If you feel like you do not want to be part of the list of [contributors](https://github.com/kubernetes-hy/kubernetes-hy.github.io/graphs/contributors) you can also add an issue. The guide for making an issue in GitHub is [here](https://help.github.com/en/articles/creating-an-issue).
 
 Here is a link to the repository to find the tabs for issues and pull requests: [https://github.com/kubernetes-hy/kubernetes-hy.github.io](https://github.com/kubernetes-hy/kubernetes-hy.github.io)
 
-## Experience quizz ##
+## Experience quiz ##
 
 Thank you for answering.
 
