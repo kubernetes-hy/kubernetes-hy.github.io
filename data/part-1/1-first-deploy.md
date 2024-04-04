@@ -84,17 +84,17 @@ We will use the term "server node" to refer to nodes with control-plane and "age
 
 #### Starting a cluster with k3d
 
-We'll use k3d to create a group of docker containers that run k3s. The installation instructions, or at least a link to them, are in [part 0](/part-0#installing-k3d). The reason for using k3d is because it is enables us to create a cluster without worrying about virtual machines or physical machines. With k3d our basic cluster will look like this:
+We'll use k3d to create a group of Docker containers that run k3s. The installation instructions, or at least a link to them, are in [part 0](/part-0#installing-k3d). The reason for using k3d is that it enables us to create a cluster without worrying about virtual machines or physical machines. With k3d our basic cluster will look like this:
 
 <img src="../img/with_k3d.png">
 
-Because the nodes are containers we are going to need to do a little bit of configuring to get those working like we want them. We will get to that later. Creating our very own Kubernetes cluster with k3d is done by a single command.
+Because the nodes are containers we are going to need to do a little bit of configuring to get those working like we want. We will get to that later. Creating our very own Kubernetes cluster with k3d is done by a single command.
 
 ```console
 $ k3d cluster create -a 2
 ```
 
-This created a Kubernetes cluster with 2 agent nodes. As they're in docker you can confirm that they exist with `docker ps`.
+This created a Kubernetes cluster with 2 agent nodes. As they're in Docker you can confirm that they exist with `docker ps`.
 
 ```console
 $ docker ps
@@ -106,11 +106,11 @@ $ docker ps
   7191a3bdae7a   rancher/k3s:v1.22.7-k3s1         "/bin/k3d-entrypoint…"   56 seconds ago   Up 52 seconds                                     k3d-k3s-default-server-0
 ```
 
-Here we also see that port 6443 is opened to "k3d-k3s-default-serverlb", a useful "load balancer" proxy, that'll redirect a connection to 6443 into the server node, and that's how we can access the contents of the cluster. The port on our machine, above 50122, is randomly chosen. We could have opted out of the load balancer with `k3d cluster create -a 2 --no-lb` and the port would be open straight to the server node. Having a load balancer will offer us a few features we wouldn't otherwise have, so let's keep it in.
+When scrolling a bit to the left we also see that port 6443 is opened to "k3d-k3s-default-serverlb", a useful "load balancer" proxy, that'll redirect a connection to 6443 into the server node, and that's how we can access the contents of the cluster. The port on our machine, above 50122, is randomly chosen. We could have opted out of the load balancer with `k3d cluster create -a 2 --no-lb` and the port would be open straight to the server node. Having a load balancer will offer us a few features we wouldn't otherwise have, so let's keep it in.
 
-K3d helpfully also set up a _kubeconfig_, the contents of which is output by `k3d kubeconfig get k3s-default`.
+K3d helpfully also set up a [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/), a file that is used to organize information about clusters, users, namespaces, and authentication mechanisms. The contents of the file can be seen with the command `k3d kubeconfig get k3s-default`.
 
-The other tool that we will be using on this course is kubectl. Kubectl is the Kubernetes command-line tool and will allow us to interact with the cluster. Kubectl will read kubeconfig from the location in KUBECONFIG environment value or by default from `~/.kube/config` and use the information to connect to the cluster. The contents include certificates, passwords and the address in which the cluster API. You can set the context with `kubectl config use-context k3d-k3s-default`.
+The other tool that we will be using in this course is [kubectl](https://kubernetes.io/docs/reference/kubectl/). Kubectl is the Kubernetes command-line tool and will allow us to interact with the cluster. Kubectl will read kubeconfig from the location in KUBECONFIG environment value or by default from `~/.kube/config` and use the information to connect to the cluster. The contents include certificates, passwords and the address in which the cluster API. You can set the context with `kubectl config use-context k3d-k3s-default`.
 
 Now kubectl will be able to access the cluster
 
@@ -121,7 +121,7 @@ $ kubectl cluster-info
   Metrics-server is running at https://0.0.0.0:50122/api/v1/namespaces/kube-system/services/https:metrics-server:https/proxy
 ```
 
-We can see that kubectl is connected to the container _k3d-k3s-default-serverlb_ through (in this case) port 57734.
+We can see that kubectl is connected to the container _k3d-k3s-default-serverlb_ through (in this case) port 50122.
 
 If you want to stop / start the cluster you can simply run
 
@@ -155,18 +155,13 @@ For now, **we're going to need the cluster running**, but if we want to remove t
 
 ### Preparing for first deploy
 
-Before we can deploy anything we'll need to do a small application to deploy. During the course, you will develop your own application. The technologies used for the application do not matter - for the examples we're going to use [node.js](https://nodejs.org/en/) but the example application will be offered through GitHub as well as Docker Hub.
+Before we can deploy anything we'll need to do a small application to deploy. During the course, you will develop your own application. The technologies used for the application do not matter - for the examples we're going to use [Node.js](https://nodejs.org/en/) but the example application will be offered through GitHub as well as Docker Hub.
 
 Let's launch an application that generates and outputs a hash every 5 seconds or so.
 
 I have prepared one [here](https://github.com/kubernetes-hy/material-example/tree/master/app1), you can test it with `docker run jakousa/dwk-app1`.
 
-To deploy an image, we need the cluster to have an access to the image. By default, Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but that won't work when we switch to non-k3d solutions. We will use the familiar registry _Docker Hub_, which we also used in [DevOps with Docker](http://devopswithdocker.com/). If you've never used Docker Hub, it is the place Docker client defaults to. E.g. when you run `docker pull nginx`, the nginx comes from Docker Hub. You will need to register an account there and after that you can use `docker login` to authenticate yourself. If you don't wish to use Docker Hub you can also use a local registry: follow the [tutorial here](https://k3d.io/v5.3.0/usage/registries/?h=registries#using-a-local-registry) to set one up.
-
-```console
-$ docker tag _image_ _username_/_image_
-$ docker push _username_/_image_
-```
+To deploy an image, we need the cluster to have access to the image. By default, Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but that won't work when we switch to non-k3d solutions. We will use the familiar registry _Docker Hub_, which we also used in [DevOps with Docker](http://devopswithdocker.com/). If you've never used Docker Hub, it is the place where the Docker client defaults to. E.g. when you run `docker pull nginx`, the nginx image comes from Docker Hub. See the course [DevOps for Docker](https://devopswithdocker.com/) for further details e.g. on pushing your images to Docker Hub if needed.
 
 <text-box name="Example applications" variant="hint">
 In the future, the material will use the offered applications in the commands. You may follow along by changing the image to your application. Almost everything is found in the same repository <a href="https://github.com/kubernetes-hy/material-example">https://github.com/kubernetes-hy/material-example</a>.
@@ -176,14 +171,16 @@ Now we are finally ready to deploy our first app into Kubernetes!
 
 ### Deployment
 
-To deploy an application, we will need to create a _Deployment_ object with the image.
+To deploy an application, we will need to create a [deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) object with the image.
 
 ```console
 $ kubectl create deployment hashgenerator-dep --image=jakousa/dwk-app1
   deployment.apps/hashgenerator-dep created
 ```
 
-This action created a few things for us to look at: a _Deployment_ resource and a _Pod_ resource.
+This action created a few things for us to look at
+- a [deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) resource and
+- a [pod](https://kubernetes.io/docs/concepts/workloads/pods/) resource.
 
 #### What is a Pod?
 
@@ -193,7 +190,7 @@ _Pod_ is an abstraction around one or more containers. Pods provide a context fo
 
 Reading through the documentation or searching the internet are not the only ways to find information about the different resources Kubernetes has. We can get access to simple explanations straight from our command line using `kubectl explain RESOURCE` command.
 
-For example, to get a description what a Pod is and its mandatory fields, we can use the following command.
+For example, to get a description of what a Pod is and its mandatory fields, we can use the following command.
 
 ```console
 $ kubectl explain pod
@@ -205,7 +202,7 @@ $ kubectl explain pod
        created by clients and scheduled onto hosts.
 ```
 
-In Kubernetes, all entities that exist are called objects. You can list all objects of a resource with `kubectl get RESOURCE`.
+In Kubernetes, all entities that exist are called [objects](https://kubernetes.io/docs/concepts/overview/working-with-objects/). You can list all objects of a resource with `kubectl get RESOURCE`.
 
 ```
 $ kubectl get pods
@@ -215,11 +212,11 @@ $ kubectl get pods
 
 #### What is a Deployment resource?
 
-A _Deployment_ resource takes care of deployment. It's a way to tell Kubernetes what container you want, how they should be running and how many of them should be running.
+A [deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) resource takes care of deployment. It's a way to tell Kubernetes what container you want, how they should be running and how many of them should be running.
 
-While we created the Deployment we also created a _ReplicaSet_ object. ReplicaSets are used to tell how many replicas of a Pod you want. It will delete or create Pods until the number of Pods you wanted are running. ReplicaSets are managed by Deployments and you should not have to manually define or modify them. If you want to manage the number of replicas, you can edit the Deployment and it will take care of modifying the ReplicaSet.
+While we created the Deployment we also created a [ReplicaSet](https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/) object. ReplicaSets are used to tell how many replicas of a Pod you want. It will delete or create Pods until the number of Pods you want is running. ReplicaSets are managed by Deployments and you do not need to manually define or modify them. If you want to manage the number of replicas, you can edit the Deployment and it will take care of modifying the ReplicaSet.
 
-You can view the deployment:
+You can view the deployments as follows:
 
 ```console
 $ kubectl get deployments
@@ -388,5 +385,3 @@ Then edit deployment.yaml so that the tag is updated to the \<new_tag\> and
 ```console
 $ kubectl apply -f manifests/deployment.yaml
 ```
-
-<quiz id="7671ddcf-3b5c-4b83-a705-b3b7bb665baf"></quiz>
