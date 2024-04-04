@@ -16,11 +16,11 @@ After this section you
 
 ## What are microservices?
 
-In this course, we'll talk about microservices and create microservices. Before we get started with anything else we'll need to define what a microservice is. Currently there are a many different definitions for microservices.
+In this course, we'll talk about microservices and create microservices. Before we get started with anything else we'll need to define what a microservice is. Currently, there are many different definitions for microservices.
 
-For this course we'll choose the definition set by Sam Newman in [Building Microservices](https://www.oreilly.com/library/view/building-microservices/9781491950340/): "**Microservices are small, autonomous services that work together**". The opposite of a microservice is a service that is self-contained and independent called a [Monolith](https://en.wikipedia.org/wiki/Monolithic_application).
+For this course, we'll choose the definition set by Sam Newman in [Building Microservices](https://www.oreilly.com/library/view/building-microservices/9781491950340/): "**Microservices are small, autonomous services that work together**". The opposite of a microservice is a service that is self-contained and independent called a [Monolith](https://en.wikipedia.org/wiki/Monolithic_application).
 
-The misconception of microservices being a large number of extremely small services is proliferated by large enterprises. If you have an extremely large enterprise where teams don't even know the existence of other teams you may have an unconventionally large number of microservices. Due to the insanity of a large number of small services without any good reasoning we're witnessing the term monolith trending in 2020.
+The misconception of microservices being a large number of extremely small services is proliferated by large enterprises. If you have an extremely large enterprise where teams don't even know the existence of other teams you may have an unconventionally large number of microservices. Due to the insanity of a large number of small services without any good reasoning, we witnessed the term monolith trending in 2020.
 
 - "Monoliths are the future" - Kelsey Hightower, Staff Developer Advocate at Google, ["Monoliths are the Future"](https://changelog.com/posts/monoliths-are-the-future)
 
@@ -46,13 +46,13 @@ A big topic in the video was also the _Distributed Monolith_, where the services
 
 Since it is so hard to define rather than going first into microservices we should listen to the first two takeaways from the video that are "One should use microservices as a means to obtain a desired outcome rather than for the sake of using a new technology" and "Microservices shouldn't be the default option. If you think a service architecture could help, try it with one of the modules from a very simple monolith typology and let it evolve from there".
 
-However, sometimes during this course we'll do **arbitrary** splits to our services just to show the features of Kubernetes. So even though we are doing "[microservices](https://www.youtube.com/watch?v=y8OnoxKotPQ)" in this course, a healthy amount of scepticism is required around microservices in the real world. We will see at least one actual and well-justified use case for microservices with service scaling during the course.
+However, sometimes during this course, we'll do **arbitrary** splits to our services just to show the features of Kubernetes. So even though we are doing "[microservices](https://www.youtube.com/watch?v=y8OnoxKotPQ)" in this course, a healthy amount of skepticism is required around microservices in the real world. We will see at least one actual and well-justified use case for microservices with service scaling during the course.
 
 ## What is Kubernetes?
 
 Let's say you have 3 processes and 2 computers incapable of running all 3 processes. How would you approach this problem?
 
-You'll have to start by deciding which 2 processes go on the same computer and which 1 will be on the different one. How would you fit them? By having the ones demanding most resources and the least resources on the same machine or having the most demanding be on its own? Maybe you want to add one process and now you have to reorganize all of them. What happens when you have more than 2 computers and more than 3 processes? One of the processes is eating all of the memory and you need to get that away from the "critical-bank-application". Should we virtualize everything? Containers would solve that problem, right? Would you move the most important process to a new computer? Maybe some of the processes need to communicate with each other and now you have to deal with networking. What if one of the computers break? What about your Friday plans to visit the local Craft brewery?
+You'll have to start by deciding which 2 processes go on the same computer and which 1 will be on the different one. How would you fit them? By having the ones demanding the most resources and the least resources on the same machine or having the most demanding be on its own? Maybe you want to add one process and now you have to reorganize all of them. What happens when you have more than 2 computers and more than 3 processes? One of the processes is eating all of the memory and you need to get that away from the "critical-bank-application". Should we virtualize everything? Containers would solve that problem, right? Would you move the most important process to a new computer? Maybe some of the processes need to communicate with each other and now you have to deal with networking. What if one of the computers breaks? What about your Friday plans to visit the local Craft brewery?
 
 What if you could just define "This process should have 6 copies using X amount of resources." and have the 2..N computers working as a single entity to fulfill your request? That's just one thing Kubernetes makes possible.
 
@@ -62,9 +62,9 @@ Or more officially:
 
 “Kubernetes (K8s) is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery.” - [kubernetes.io](https://kubernetes.io/)
 
-A container orchestration system such as Kubernetes is often required when maintaining containerized applications. The main responsibility of an orchestration system is the starting and stopping of containers. In addition, they offer networking between containers and health monitoring. Rather than manually doing `docker run critical-bank-application` every time the application crashes, or restart it if it becomes unresponsive, we want the system to keep the application automatically healthy.
+A container orchestration system such as Kubernetes is often required when maintaining containerized applications. The main responsibility of an orchestration system is the starting and stopping of containers. In addition, they offer networking between containers and health monitoring. Rather than manually doing `docker run critical-bank-application` every time the application crashes, or restarting it if it becomes unresponsive, we want the system to keep the application automatically healthy.
 
-A more familiar orchestration system may be docker-compose, which also does the same tasks; starting and stopping, networking and health monitoring. What makes Kubernetes special is the robust feature set for automating all of it.
+You should already know an orchestration system, _docker compose_, which also takes care of the same tasks; starting and stopping, networking and health monitoring. What makes Kubernetes special is the robust feature set for automating all of it.
 
 Read [this comic](https://cloud.google.com/kubernetes-engine/kubernetes-comic/) and watch the video below to get a fast introduction. You may want to revisit these after this part!
 

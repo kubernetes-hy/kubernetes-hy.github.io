@@ -7,11 +7,11 @@ hidden: false
 
 ### Prerequisites ###
 
-Attendees are expected to have completed [DevOps with Docker](https://devopswithdocker.com) or have Docker and docker-compose experience. In addition, experience with web development is required, such as [Full Stack Web Development](https://fullstackopen.com/en/) or equivalent. Attendees need admin/superuser privileges to complete the exercises and the examples of the material on their computers.
+Attendees are expected to have completed [DevOps with Docker](https://devopswithdocker.com) or have Docker and docker compose experience. In addition, experience with web development is required, such as [Full Stack Web Development](https://fullstackopen.com/en/) or equivalent. Attendees need admin/superuser privileges to complete the exercises and the examples of the material on their computers.
 
 ### Course material ###
 
-The course material is meant to be read part by part from start to finish. To get a passing grade, you have to do every exercise. The material contains exercises in such a way that completing each exercise should be possible with an understanding of the preceding material. Do the exercises as you go through the material. As you progress further, you will be increasingly searching for information on the internet. You should also supplement your knowledge with the official documentation!
+The course material is meant to be read part by part from start to finish. To get a passing grade, you have to do every exercise. The material contains exercises, which are placed so that the preceding material provides enough information for solving each exercise. Do the exercises as you go through the material. As you progress further, you will be increasingly searching for information on the internet. You should also supplement your knowledge with the official documentation!
 
 The course material is written using Mac, so some instructions may lack platform-specific details. Please make a pull request to the course material in case you find any mistakes or wish to add something. You can also add an issue through GitHub if you find any problems with the course material.
 
