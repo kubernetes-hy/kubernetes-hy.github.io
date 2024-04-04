@@ -11,7 +11,7 @@ sidebar_priority: 5000
   <img src="./img/kubernetes-cncf.png" alt="kubernetes logo" />
 </div>
 
-_The next course iteration will start at the 2nd half of year 2024. Stay tuned!_
+_The next course iteration will start in the 2nd half of the year 2024. Stay tuned!_
 
 This course is an introductory course to Kubernetes with K3s and GKE. In this course, you will develop software with a microservice architecture that utilizes Kubernetes to serve software that scales and deploys automatically. And learn how to manage it all.
 
