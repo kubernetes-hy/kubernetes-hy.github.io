@@ -14,7 +14,7 @@ After this section you
 
 </text-box>
 
-Kubernetes is a "self-healing" system, and we'll get back to what Kubernetes consists of and how it actually works in part 5. But at this stage "self-healing" is an excellent concept: Often you (the maintainer or developer) don't have to do anything in case something goes wrong with a pod or a container.
+Kubernetes is a "self-healing" system, and we'll get back to what Kubernetes consists of and how it actually works in part 5. But at this stage "self-healing" is an excellent concept: usually, you (the maintainer or te developer) don't have to do anything in case something goes wrong with a pod or a container.
 
 Sometimes you need to interfere, or you might have problems with your own configuration. As you are trying to find bugs in your configuration start by eliminating all possibilities one by one. The key is to be systematic and **to question everything**. Here are the preliminary tools to solve problems.
 
@@ -39,7 +39,7 @@ $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-exam
 $ kubectl describe deployment hashgenerator-dep
   Name:                   hashgenerator-dep
   Namespace:              default
-  CreationTimestamp:      Wed, 16 Sep 2020 16:17:39 +0300
+  CreationTimestamp:      Fri, 05 Apr 2024 10:42:30 +0300
   Labels:                 <none>
   Annotations:            deployment.kubernetes.io/revision: 1
   Selector:               app=hashgenerator
@@ -70,7 +70,7 @@ $ kubectl describe deployment hashgenerator-dep
     Normal  ScalingReplicaSet  8m39s  deployment-controller  Scaled up replica set hashgenerator-dep-75bdcc94c to 1
 ```
 
-There's a lot of information we are not ready to evaluate yet. But take a moment to read through everything. There're at least a few key information pieces we know, mostly because we defined them earlier in the yaml. The events are often the place to look for errors.
+There's a lot of information we are not ready to evaluate yet. Take a moment to read through everything. There're at least a few key information pieces we know, mostly because we defined them earlier in the yaml. The _Events_ is quite often the place to look for errors.
 
 The command `describe` can be used for other resources as well. Let's see the pod next:
 
@@ -80,14 +80,14 @@ $ kubectl describe pod hashgenerator-dep-75bdcc94c-whwsm
   Events:
     Type    Reason     Age   From                              Message
     ----    ------     ----  ----                              -------
-    Normal  Scheduled  15m   default-scheduler                 Successfully assigned default/hashgenerator-dep-75bdcc94c-whwsm to k3d-k3s-default-agent-0
-    Normal  Pulling    15m   kubelet, k3d-k3s-default-agent-0  Pulling image "jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64"
-    Normal  Pulled     15m   kubelet, k3d-k3s-default-agent-0  Successfully pulled image "jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64"
-    Normal  Created    15m   kubelet, k3d-k3s-default-agent-0  Created container hashgenerator
-    Normal  Started    15m   kubelet, k3d-k3s-default-agent-0  Started container hashgenerator
+    Normal  Scheduled  26s   default-scheduler  Successfully assigned default/hashgenerator-dep-7877df98df-qmck9 to k3d-k3s-default-server-0
+    Normal  Pulling    15m   kubelet            Pulling image "jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64"
+    Normal  Pulled     26s   kubelet            Container image "jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64"
+    Normal  Created    26s   kubelet            Created container hashgenerator
+    Normal  Started    26s   kubelet            Started container hashgenerator
 ```
 
-There's again a lot of information but let's focus on the events this time. Here we can see everything that happened. Scheduler put the pod to the node with the name "k3d-k3s-default-agent-0" successfully pulled the image and started the container. Everything is working as intended, excellent. The application is running.
+There's again a lot of information but let's focus on the events this time. Here we can see everything that happened. Scheduler successfully pulled the image and started the container in node called "k3d-k3s-default-server-0". Everything is working as intended, excellent. The application is running.
 
 Next, let's check that the application is actually doing what it should by reading the logs.
 
@@ -120,5 +120,3 @@ The view shows us the same information as was in the description. But the GUI of
 In addition, at the bottom, you can open a terminal with the correct context.
 
 "The best feature in my opinion is that when I do kubectl get pod in the terminal, the dashboard you are looking at is always in the right context. Additionally, I don't need to worry about working with stale information because everything is real-time." - [Matti Paksula](http://github.com/matti)
-
-<quiz id="2dc3ffa9-6a47-4c08-857b-f87f87b9dd9e"></quiz>

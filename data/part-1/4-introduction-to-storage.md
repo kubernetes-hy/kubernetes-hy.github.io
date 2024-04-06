@@ -22,15 +22,15 @@ There are multiple types of volumes and we'll get started with two of them.
 
 ### Simple Volume ###
 
-Where in docker and docker-compose it would essentially mean that we had something persistent, here that is not the case. *emptyDir* volumes are shared filesystems inside a pod, this means that their lifecycle is tied to a pod. When the pod is destroyed the data is lost. In addition, simply moving the pod from another node will destroy the contents of the volume as the space is reserved from the node the pod is running on. Even with the limitations it may be used as a cache as it persists between container restarts or it can be used to share files between two containers in a pod.
+A [volume](https://docs.docker.com/storage/volumes/) in Docker and Docker compose is the way to persist the data the containers are using. With Kubernetes [the simple volumes](https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/) that is not quite the case.
 
-Before we can get started with this, we need an application that shares data with another application. In this case, it will work as a method to share simple log files with each other. We'll need to develop the apps:
+The simple Kubernetes volumes, in technical terms *emptyDir* volumes, are shared filesystems _inside a pod_, this means that their lifecycle is tied to a pod. When the pod is destroyed the data is lost. In addition, simply moving the pod from another node will destroy the contents of the volume as the space is reserved from the node the pod is running on. So surely you should not use [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir)volumes e.g. for backing up a database. Even with the limitations it may be used as a cache as it persists between container restarts or it can be used to share files between two containers in a pod.
 
-App 1 will check if /usr/src/app/files/image.jpg exists and if not download a random image and save it as image.jpg. Any HTTP request will trigger a new image generation.
+Before we can get started with this, we need an application that shares data with another application. In this case, it will work as a method to share simple log files with each other. We'll need to develop:
+- App 1 that will check if /usr/src/app/files/image.jpg exists and if not, it downloads a random image and saves it as image.jpg. Any HTTP request will trigger a new image generation.
+- App 2 that will check for the file /usr/src/app/files/image.jpg and shows it, if it is available.
 
-App 2 will check for /usr/src/app/files/image.jpg and show it if it is available.
-
-They share a deployment so that both of them are inside the same pod. My version is available for you to use [here](https://github.com/kubernetes-hy/material-example/blob/b9ff709b4af7ca13643635e07df7367b54f5c575/app3/manifests/deployment.yaml). The example includes ingress and service to access the application.
+Apps share a deployment so that both of them are **inside the same pod**. My version is available for you to use [here](https://github.com/kubernetes-hy/material-example/blob/b9ff709b4af7ca13643635e07df7367b54f5c575/app3/manifests/deployment.yaml). The example includes ingress and service to access the application.
 
 **deployment.yaml**
 
@@ -65,7 +65,7 @@ spec:
             mountPath: /usr/src/app/files
 ```
 
-As the display is dependant on the volume we can confirm that it works by accessing the image-response and getting the image. The provided ingress used the previously opened port 8081 <http://localhost:8081>
+As the display is dependent on the volume we can confirm that it works by accessing the image-response and getting the image. The provided ingress used the previously opened port 8081 <http://localhost:8081>
 
 Note that all data is lost when the pod goes down.
 
@@ -79,13 +79,15 @@ Note that all data is lost when the pod goes down.
 
   Either application can generate the hash. The reader or the writer.
 
+  You may find [this](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_logs/) helpful now since there are more than one container running inside a pod.
+
 </exercise>
 
 ### Persistent Volumes ###
 
 This type of storage is what you probably had in mind when we started talking about volumes. Unfortunately, we're quite limited with the options here and will return to *PersistentVolumes* briefly in Part 2 and again in Part 3 with GKE.
 
-The reason for the difficulty is because you should not store data with the application or create a dependency on the filesystem by the application. Kubernetes supports cloud providers very well and you can run your own storage system. During this course, we are not going to run our own storage system as that would be a huge undertaking and most likely "in real life" you are going to use something hosted by a cloud provider. This topic would probably be a part of its own, but let's scratch the surface and try something you can use to run something at home.
+The reason for the difficulty is that you should not store data with the application or create a dependency on the filesystem by the application. Kubernetes supports cloud providers very well and you can run your own storage system. During this course, we are not going to run our own storage system as that would be a huge undertaking and most likely "in real life" you are going to use something hosted by a cloud provider. This topic would probably be a part of its own, but let's scratch the surface and try something you can use to run something at home.
 
 A *local* volume is a *PersistentVolume* that binds a path from the node to use as a storage. This ties the volume to the node.
 
@@ -166,7 +168,7 @@ And apply it with persistentvolume.yaml and persistentvolumeclaim.yaml.
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
 ```
 
-With the previous service and ingress we can access it from http://localhost:8081. To confirm that the data is persistent we can run
+With the previous service and ingress, we can access it from http://localhost:8081. To confirm that the data is persistent we can run
 
 ```console
 $ kubectl delete -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
@@ -210,19 +212,19 @@ If you are interested in learning more about running your own storage you can ch
 
   Make sure to cache the image into a volume so that the API isn't needed for new images every time we access the application or the container crashes.
 
-  Best way to test what happens when your container shuts down is likely by shutting down the container, so you can add logic for that as well, for testing purposes.
+  The best way to test what happens when your container shuts down is likely by shutting down the container, so you can add logic for that as well, for testing purposes.
 
 </exercise>
 
 <exercise name='Exercise 1.13: Project v0.7'>
 
-  For the project we'll need to do some coding to start seeing results in the next part.
+  For the project, we'll need to do some coding to start seeing results in the next part.
 
   1. Add an input field. The input should not take todos that are over 140 characters long.
 
   2. Add a send button. It does not have to send the todo yet.
 
-  3. Add a list for the existing todos with some hardcoded todos.
+  3. Add a list of the existing todos with some hardcoded todos.
 
   Maybe something similar to this:
   <img src="../img/project-ex-113.png">
