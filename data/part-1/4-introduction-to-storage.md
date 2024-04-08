@@ -207,7 +207,7 @@ If you are interested in learning more about running your own storage you can ch
 
 <exercise name='Exercise 1.11: Persisting data'>
 
-  Let's share data between "Ping-pong" and "Log output" applications using persistent volumes. Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment* to utilize it. As *PersistentVolume* is often maintained by cluster administrators rather than developers and are not application specific you should keep the definition for that separated.
+  Let's share data between "Ping-pong" and "Log output" applications using persistent volumes. Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment* to utilize it. As PersistentVolumes are often maintained by cluster administrators rather than developers and those are not application-specific you should keep the definition for those separated, perhaps in own folder.
 
   Save the number of requests to "Ping-pong" application into a file in the volume and output it with the timestamp and hash when sending a request to our "Log output" application. In the end, the two pods should share a persistent volume between the two applications. So the browser should display the following when accessing the "Log output" application:
 
