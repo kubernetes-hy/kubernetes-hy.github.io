@@ -415,4 +415,3 @@ Kubernetes supports Recreate strategy which takes down the previous pods and rep
 
 </exercise>
 
-<quiz id="76e960b7-c5df-4cf4-ae58-e4bc486d02b2"></quiz>

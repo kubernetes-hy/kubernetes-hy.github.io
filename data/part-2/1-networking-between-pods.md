@@ -14,11 +14,11 @@ After this section
 
 </text-box>
 
-In part 1 we managed to setup networking configuration to enable routing traffic from outside of the cluster to a container inside a pod. In Part 2 we'll focus on communication between applications.
+In part 1 we managed to setup networking configuration to enable routing traffic from outside of the cluster to a container inside a pod. In Part 2 we'll focus on communication between pods.
 
-Kubernetes includes a DNS service so communication between pods and containers in Kubernetes is as much of a challenge as it was with containers in docker-compose. Containers in a pod share the network. As such every other container inside a pod is accessible from `localhost`. For communication between Pods a _Service_ is used as they expose the Pods as a network service.
+Kubernetes includes a DNS service so communication between pods and containers in Kubernetes is pretty simillar as it was with containers in Docker compose. Containers in a pod share the network. As such every other container inside a pod is accessible from `localhost`. For communication between Pods a _Service_ is used as they expose the Pods as a network service.
 
-The following creates a cluster-internal IP which will enable other pods in the cluster to access the port 8080 of "example" application from http://example-service. ClusterIP is the default type for a Service.
+The following service, taken from an exercise in last part, creates a cluster-internal IP which will enable other pods in the cluster to access the port 3000 of _todo-backend_ application in http://todo-backend-svc:2345.
 
 **service.yaml**
 
@@ -26,35 +26,90 @@ The following creates a cluster-internal IP which will enable other pods in the 
 apiVersion: v1
 kind: Service
 metadata:
-  name: example-service
+  name: todo-backend-svc
 spec:
   type: ClusterIP
   selector:
-    app: example
+    app: todo-backend
   ports:
-    - name: http
+    - port: 2345
       protocol: TCP
-      port: 80
-      targetPort: 8080
+      targetPort: 3000
 ```
 
 Alternatively each Pod has an IP created by Kubernetes.
 
-<text-box name="Debugging hint" variant="hint">
+### A debugging pod
 
-Sometimes, the best way to debug is to manually test what is going on. You can just go inside a pod or send a request manually from another pod.
+Sometimes, the best way to debug is to manually test what is going on. You can just go inside a pod or send a request manually from another pod. You can use eg. [busybox](https://en.wikipedia.org/wiki/BusyBox), that is a light wight Linux distro for debugging.
 
-For example, you can use [busybox](https://en.wikipedia.org/wiki/BusyBox)
+Let us start a busybox pod by applying the following yaml:
 
-Try applying [this yaml](https://raw.githubusercontent.com/kubernetes/kubernetes/master/hack/testdata/recursive/pod/pod/busybox.yaml)
+**pod_for_debugging.yaml**
 
-And then just exec the command like so:
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-busybox
+  labels:
+    app: my-busybox
+spec:
+  containers:
+  - image: busybox
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+    name: busybox
+  restartPolicy: Always
+```
+
+Now we can just exec a command:
 
 ```
-$ kubectl exec -it busybox1 -- wget -qO - http://google.fi
+$ kubectl exec -it my-busybox -- wget -qO - http://todo-backend-svc:2345
 ```
 
-Note that as the busybox yaml above is for a Pod resource, it will create a single pod, and you will have to manually destroy it. Something like this works excellently in manual testing.
+We used the [wget](https://www.gnu.org/software/wget/) command since our usual tool for the purposes curl is not readily available in busybox.
+
+We can also open a shell to the pod with command [kubectl exec](https://kubernetes.io/docs/tasks/debug/debug-application/get-shell-running-container/) to run several commands:
+
+
+```yaml
+$ kubectl exec -it my-busybox sh
+/ # wget -qO - http://todo-backend-svc:2345
+<html>
+   <body>
+      <h1>Kube todo</h1>
+      <img src="/picture.jpg" alt="rndpic" width="200" height="200">
+
+      <form action="/create-todo" method="POST">
+         <input type="text" name="todo" maxlength="140" placeholder="Enter todo">
+         <button type="submit">Create</button>
+      </form>
+
+      <ul>
+
+            <li>Buy milk</li>
+
+            <li>Send a letter</li>
+
+            <li>Pay bills</li>
+
+      </ul>
+   </body>
+</html>/ #
+$ exit
+```
+
+Note that in contrast to the last part, we have now created a stand-alone pod in our cluster, there was no deployment object at all. Once we are done, we should destroy the pod, eg. with the command
+
+```yaml
+$ kubectl delete pod/my-busybox
+```
+
+In general, these kinds of "stand-alone" pods are good for debugging but all application pods should be created by using a deployment. The reason for this is that if a node where the pod resides crashes, the stand-alone pods are gone. When a pod is controlled by a deployment, Kubernetes takes care of redeployment in case of node failures.
 
 </text-box>
 
@@ -86,5 +141,3 @@ The todos can be saved into memory, we'll add database later.
 Frontend already has an input field. Connect it into our backend so that inputting data and pressing send will add a new todo into the list.
 
 </exercise>
-
-<quiz id="f898b7ea-47a3-49ec-aedf-eb126e8eccb6"></quiz>

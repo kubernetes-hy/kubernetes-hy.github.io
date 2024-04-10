@@ -250,4 +250,3 @@ $ kubectl logs countdown-controller-dep-7ff598ffbf-q2rp5
 
 </exercise>
 
-<quiz id="73511574-ffe1-4a19-86fd-232a5159d3a2"></quiz>

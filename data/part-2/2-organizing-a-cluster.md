@@ -143,4 +143,3 @@ _nodeSelector_ is a blunt tool. It's great when you want to define binary qualit
 
 See [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) and [taints and tolerances](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for detailed information. We will not be assigning pods to specific nodes on this course, as we have a homogeneous cluster.
 
-<quiz id="7dff6967-da9e-492c-8c5a-fab605868215"></quiz>

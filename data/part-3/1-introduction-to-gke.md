@@ -234,4 +234,3 @@ Now the address here will be the way to access the application. This will take a
 
 </exercise>
 
-<quiz id="419b91fc-769c-4964-b679-e7790f70799b"></quiz>

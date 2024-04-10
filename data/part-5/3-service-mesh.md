@@ -152,4 +152,3 @@ Service meshes can be powerful tools as they can help you connect and observe yo
 
 </exercise>
 
-<quiz id="5094dd11-8c82-4b61-8083-967a1ea1a409"></quiz>
