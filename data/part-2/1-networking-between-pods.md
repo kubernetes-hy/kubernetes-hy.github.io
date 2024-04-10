@@ -67,14 +67,13 @@ spec:
 
 Now we can just exec a command:
 
-```
+```bash
 $ kubectl exec -it my-busybox -- wget -qO - http://todo-backend-svc:2345
 ```
 
 We used the [wget](https://www.gnu.org/software/wget/) command since our usual tool for the purposes curl is not readily available in busybox.
 
 We can also open a shell to the pod with command [kubectl exec](https://kubernetes.io/docs/tasks/debug/debug-application/get-shell-running-container/) to run several commands:
-
 
 ```yaml
 $ kubectl exec -it my-busybox sh
@@ -90,17 +89,50 @@ $ kubectl exec -it my-busybox sh
       </form>
 
       <ul>
-
             <li>Buy milk</li>
-
             <li>Send a letter</li>
-
             <li>Pay bills</li>
-
       </ul>
    </body>
 </html>/ #
 $ exit
+```
+
+You get the same result by using the service cluster IP address. Let us check the address:
+
+```bash
+$ kubectl get svc
+NAME               TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+todo-backend-svc   ClusterIP   10.43.89.182   <none>        2345/TCP   2d1h
+```
+
+The following shows the main page of the todo-app:
+
+```bash
+$ kubectl exec -it my-busybox -- wget -qO - http://10.43.89.182:2345
+```
+
+Let us try to access a pod directly. We can get the IP address with _kubectl describe_ command:
+
+```bash
+$ kubectl describe pod todo-backend-dep-84fcdff4cc-2x9wl
+Name:             todo-backend-dep-84fcdff4cc-2x9wl
+Namespace:        default
+Priority:         0
+Service Account:  default
+Node:             k3d-k3s-default-agent-0/192.168.176.5
+Start Time:       Mon, 08 Apr 2024 23:27:00 +0300
+Labels:           app=todo-backend
+                  pod-template-hash=84fcdff4cc
+Annotations:      <none>
+Status:           Running
+IP:               10.42.0.63
+```
+
+So one of the pods that is running the todo-app has cluster internal IP address _10.42.0.63_. We can wget to this address, but this time we have to remember that the port in the pod is 3000:
+
+```bash
+$ kubectl exec -it my-busybox wget -qO - http://10.42.0.63:3000
 ```
 
 Note that in contrast to the last part, we have now created a stand-alone pod in our cluster, there was no deployment object at all. Once we are done, we should destroy the pod, eg. with the command
@@ -108,7 +140,6 @@ Note that in contrast to the last part, we have now created a stand-alone pod in
 ```yaml
 $ kubectl delete pod/my-busybox
 ```
-
 In general, these kinds of "stand-alone" pods are good for debugging but all application pods should be created by using a deployment. The reason for this is that if a node where the pod resides crashes, the stand-alone pods are gone. When a pod is controlled by a deployment, Kubernetes takes care of redeployment in case of node failures.
 
 </text-box>
@@ -128,9 +159,7 @@ Ping / Pongs: 3
 
 <exercise name='Exercise 2.02: Project v1.0'>
 
-Create a new container for the backend of the todo application.
-
-You can use graphql or other solutions if you want.
+Create a new image for the *backend of the todo application*.
 
 Use ingress routing to enable access to the backend.
 
