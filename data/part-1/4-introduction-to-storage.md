@@ -224,7 +224,7 @@ If you are interested in learning more about running your own storage you can ch
 
   The goal is to add a daily image to the project. And every day a new image is fetched on the first request.
 
-  Get a random picture from Lorem Picsum like `https://picsum.photos/1200` and display it in the project. Find a way to store the image so it stays the same for an entire day.
+  Get a random picture from Lorem Picsum like `https://picsum.photos/1200` and display it in the project. Find a way to store the image so it stays the same for 60 minutes.
 
   Make sure to cache the image into a volume so that the API isn't needed for new images every time we access the application or the container crashes.
 
