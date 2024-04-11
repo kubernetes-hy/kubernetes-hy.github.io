@@ -114,7 +114,7 @@ $ kubectl get pod -l importance=great
   hashgenerator-dep-7b9b88f8bf-lvcv4   1/1     Running   0          17m
 ```
 
-With labels we can even move pods to labeled nodes. Let's say we have a few nodes which have qualities that we wish to avoid. For example they might have a slower network. With labels and _nodeSelector_ configured to deployment we can do just that. First add _nodeSelector_ to the deployment and then label the node(s):
+With labels, we can even move pods to labeled nodes. Let's say we have a few nodes which have qualities that we wish to avoid. For example, those might have a slower network. With labels and [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) configured for deployment, we can do just that. First, add a _nodeSelector_ to the deployment and then label the node(s):
 
 **deployment.yaml**
 
@@ -128,7 +128,7 @@ With labels we can even move pods to labeled nodes. Let's say we have a few node
         networkquality: excellent
 ```
 
-If you already had it running, it won't close the pod to avoid unwanted changes in the system.
+If you already have the pod running, it won't terminate the pod to avoid unwanted changes in the system, instead a new pod is scheduled:
 
 ```console
 $ kubectl get po
@@ -137,7 +137,9 @@ $ kubectl get po
   hashgenerator-dep-7586cb6456-mktcl   0/1     Pending   0          23s
 ```
 
-Now the status is "Pending" as there are no nodes with excellent network quality. Next, label the agent-1 as being one with excellent network quality and Kubernetes will know where the pod is able to run .
+The status of the new pod is "Pending" since there are no nodes with excellent network quality yet.
+
+Next, label the _agent-1_ as being one with excellent network quality and Kubernetes will know where the pod is able to run:
 
 ```
 $ kubectl label nodes k3d-k3s-default-agent-1 networkquality=excellent
@@ -148,7 +150,7 @@ $ kubectl get po
   hashgenerator-dep-7b9b88f8bf-mktcl   1/1     Running   0          5m30s
 ```
 
-_nodeSelector_ is a blunt tool. It's great when you want to define binary qualities, like "don't run this application if the node is using an HDD instead of an SSD" by labeling the nodes according to disk types. There are more sophisticated tools you should use when you have a cluster of various machines, ranging from a [fighter jet](https://gcn.com/articles/2020/01/07/af-kubernetes-f16.aspx) to a toaster to a supercomputer. Kubernetes can use _affinity_ and _anti-affinity_ to select which nodes are prioritized for which applications and _taints_ with _tolerances_ so that a pod can avoid certain nodes. For example, if a machine has a high network latency and we wouldn't want it to do some latency-critical tasks.
+_nodeSelector_ is a blunt tool. It's great when you want to define binary qualities, like _"don't run this application if the node is using an HDD instead of an SSD"_ by labeling the nodes according to disk types. There are more sophisticated tools you should use when you have a cluster of various machines, ranging from a [fighter jet](https://gcn.com/articles/2020/01/07/af-kubernetes-f16.aspx) to a toaster to a supercomputer. Kubernetes can use [affinity](https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/) and _anti-affinity_ to select which nodes are prioritized for which applications and [taints with tolerances](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) so that a pod can avoid certain nodes. For example, if a machine has a high network latency and we wouldn't want it to do some latency-critical tasks.
 
 See [affinity and anti-affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) and [taints and tolerances](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for detailed information. We will not be assigning pods to specific nodes on this course, as we have a homogeneous cluster.
 
