@@ -16,11 +16,11 @@ After this section you
 
 ## What are microservices?
 
-In this course, we'll talk about microservices and create microservices. Before we get started with anything else we'll need to define what a microservice is. Currently there are a many different definitions for microservices.
+In this course, we'll talk about microservices and create microservices. Before we get started with anything else we'll need to define what a microservice is. Currently, there are many different definitions for microservices.
 
-For this course we'll choose the definition set by Sam Newman in [Building Microservices](https://www.oreilly.com/library/view/building-microservices/9781491950340/): "**Microservices are small, autonomous services that work together**". The opposite of a microservice is a service that is self-contained and independent called a [Monolith](https://en.wikipedia.org/wiki/Monolithic_application).
+For this course, we'll choose the definition set by Sam Newman in [Building Microservices](https://www.oreilly.com/library/view/building-microservices/9781491950340/): "**Microservices are small, autonomous services that work together**". The opposite of a microservice is a service that is self-contained and independent called a [Monolith](https://en.wikipedia.org/wiki/Monolithic_application).
 
-The misconception of microservices being a large number of extremely small services is proliferated by large enterprises. If you have an extremely large enterprise where teams don't even know the existence of other teams you may have an unconventionally large number of microservices. Due to the insanity of a large number of small services without any good reasoning we're witnessing the term monolith trending in 2020.
+The misconception of microservices being a large number of extremely small services is proliferated by large enterprises. If you have an extremely large enterprise where teams don't even know the existence of other teams you may have an unconventionally large number of microservices. Due to the insanity of a large number of small services without any good reasoning, we witnessed the term monolith trending in 2020.
 
 - "Monoliths are the future" - Kelsey Hightower, Staff Developer Advocate at Google, ["Monoliths are the Future"](https://changelog.com/posts/monoliths-are-the-future)
 
@@ -46,13 +46,13 @@ A big topic in the video was also the _Distributed Monolith_, where the services
 
 Since it is so hard to define rather than going first into microservices we should listen to the first two takeaways from the video that are "One should use microservices as a means to obtain a desired outcome rather than for the sake of using a new technology" and "Microservices shouldn't be the default option. If you think a service architecture could help, try it with one of the modules from a very simple monolith typology and let it evolve from there".
 
-However, sometimes during this course we'll do **arbitrary** splits to our services just to show the features of Kubernetes. So even though we are doing "[microservices](https://www.youtube.com/watch?v=y8OnoxKotPQ)" in this course, a healthy amount of scepticism is required around microservices in the real world. We will see at least one actual and well-justified use case for microservices with service scaling during the course.
+However, sometimes during this course, we'll do **arbitrary** splits to our services just to show the features of Kubernetes. So even though we are doing "[microservices](https://www.youtube.com/watch?v=y8OnoxKotPQ)" in this course, a healthy amount of skepticism is required around microservices in the real world. We will see at least one actual and well-justified use case for microservices with service scaling during the course.
 
 ## What is Kubernetes?
 
 Let's say you have 3 processes and 2 computers incapable of running all 3 processes. How would you approach this problem?
 
-You'll have to start by deciding which 2 processes go on the same computer and which 1 will be on the different one. How would you fit them? By having the ones demanding most resources and the least resources on the same machine or having the most demanding be on its own? Maybe you want to add one process and now you have to reorganize all of them. What happens when you have more than 2 computers and more than 3 processes? One of the processes is eating all of the memory and you need to get that away from the "critical-bank-application". Should we virtualize everything? Containers would solve that problem, right? Would you move the most important process to a new computer? Maybe some of the processes need to communicate with each other and now you have to deal with networking. What if one of the computers break? What about your Friday plans to visit the local Craft brewery?
+You'll have to start by deciding which 2 processes go on the same computer and which 1 will be on the different one. How would you fit them? By having the ones demanding the most resources and the least resources on the same machine or having the most demanding be on its own? Maybe you want to add one process and now you have to reorganize all of them. What happens when you have more than 2 computers and more than 3 processes? One of the processes is eating all of the memory and you need to get that away from the "critical-bank-application". Should we virtualize everything? Containers would solve that problem, right? Would you move the most important process to a new computer? Maybe some of the processes need to communicate with each other and now you have to deal with networking. What if one of the computers breaks? What about your Friday plans to visit the local Craft brewery?
 
 What if you could just define "This process should have 6 copies using X amount of resources." and have the 2..N computers working as a single entity to fulfill your request? That's just one thing Kubernetes makes possible.
 
@@ -62,9 +62,9 @@ Or more officially:
 
 “Kubernetes (K8s) is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery.” - [kubernetes.io](https://kubernetes.io/)
 
-A container orchestration system such as Kubernetes is often required when maintaining containerized applications. The main responsibility of an orchestration system is the starting and stopping of containers. In addition, they offer networking between containers and health monitoring. Rather than manually doing `docker run critical-bank-application` every time the application crashes, or restart it if it becomes unresponsive, we want the system to keep the application automatically healthy.
+A container orchestration system such as Kubernetes is often required when maintaining containerized applications. The main responsibility of an orchestration system is the starting and stopping of containers. In addition, they offer networking between containers and health monitoring. Rather than manually doing `docker run critical-bank-application` every time the application crashes, or restarting it if it becomes unresponsive, we want the system to keep the application automatically healthy.
 
-A more familiar orchestration system may be docker-compose, which also does the same tasks; starting and stopping, networking and health monitoring. What makes Kubernetes special is the robust feature set for automating all of it.
+You should already know an orchestration system, _docker compose_, which also takes care of the same tasks; starting and stopping, networking and health monitoring. What makes Kubernetes special is the robust feature set for automating all of it.
 
 Read [this comic](https://cloud.google.com/kubernetes-engine/kubernetes-comic/) and watch the video below to get a fast introduction. You may want to revisit these after this part!
 
@@ -84,17 +84,17 @@ We will use the term "server node" to refer to nodes with control-plane and "age
 
 #### Starting a cluster with k3d
 
-We'll use k3d to create a group of docker containers that run k3s. The installation instructions, or at least a link to them, are in [part 0](/part-0#installing-k3d). The reason for using k3d is because it is enables us to create a cluster without worrying about virtual machines or physical machines. With k3d our basic cluster will look like this:
+We'll use k3d to create a group of Docker containers that run k3s. The installation instructions, or at least a link to them, are in [part 0](/part-0#installing-k3d). The reason for using k3d is that it enables us to create a cluster without worrying about virtual machines or physical machines. With k3d our basic cluster will look like this:
 
 <img src="../img/with_k3d.png">
 
-Because the nodes are containers we are going to need to do a little bit of configuring to get those working like we want them. We will get to that later. Creating our very own Kubernetes cluster with k3d is done by a single command.
+Because the nodes are containers we are going to need to do a little bit of configuring to get those working like we want. We will get to that later. Creating our very own Kubernetes cluster with k3d is done by a single command.
 
 ```console
 $ k3d cluster create -a 2
 ```
 
-This created a Kubernetes cluster with 2 agent nodes. As they're in docker you can confirm that they exist with `docker ps`.
+This created a Kubernetes cluster with 2 agent nodes. As they're in Docker you can confirm that they exist with `docker ps`.
 
 ```console
 $ docker ps
@@ -106,11 +106,11 @@ $ docker ps
   7191a3bdae7a   rancher/k3s:v1.22.7-k3s1         "/bin/k3d-entrypoint…"   56 seconds ago   Up 52 seconds                                     k3d-k3s-default-server-0
 ```
 
-Here we also see that port 6443 is opened to "k3d-k3s-default-serverlb", a useful "load balancer" proxy, that'll redirect a connection to 6443 into the server node, and that's how we can access the contents of the cluster. The port on our machine, above 50122, is randomly chosen. We could have opted out of the load balancer with `k3d cluster create -a 2 --no-lb` and the port would be open straight to the server node. Having a load balancer will offer us a few features we wouldn't otherwise have, so let's keep it in.
+When scrolling a bit to the left we also see that port 6443 is opened to "k3d-k3s-default-serverlb", a useful "load balancer" proxy, that'll redirect a connection to 6443 into the server node, and that's how we can access the contents of the cluster. The port on our machine, above 50122, is randomly chosen. We could have opted out of the load balancer with `k3d cluster create -a 2 --no-lb` and the port would be open straight to the server node. Having a load balancer will offer us a few features we wouldn't otherwise have, so let's keep it in.
 
-K3d helpfully also set up a _kubeconfig_, the contents of which is output by `k3d kubeconfig get k3s-default`.
+K3d helpfully also set up a [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/), a file that is used to organize information about clusters, users, namespaces, and authentication mechanisms. The contents of the file can be seen with the command `k3d kubeconfig get k3s-default`.
 
-The other tool that we will be using on this course is kubectl. Kubectl is the Kubernetes command-line tool and will allow us to interact with the cluster. Kubectl will read kubeconfig from the location in KUBECONFIG environment value or by default from `~/.kube/config` and use the information to connect to the cluster. The contents include certificates, passwords and the address in which the cluster API. You can set the context with `kubectl config use-context k3d-k3s-default`.
+The other tool that we will be using in this course is [kubectl](https://kubernetes.io/docs/reference/kubectl/). Kubectl is the Kubernetes command-line tool and will allow us to interact with the cluster. Kubectl will read kubeconfig from the location in KUBECONFIG environment value or by default from `~/.kube/config` and use the information to connect to the cluster. The contents include certificates, passwords and the address in which the cluster API. You can set the context with `kubectl config use-context k3d-k3s-default`.
 
 Now kubectl will be able to access the cluster
 
@@ -121,7 +121,7 @@ $ kubectl cluster-info
   Metrics-server is running at https://0.0.0.0:50122/api/v1/namespaces/kube-system/services/https:metrics-server:https/proxy
 ```
 
-We can see that kubectl is connected to the container _k3d-k3s-default-serverlb_ through (in this case) port 57734.
+We can see that kubectl is connected to the container _k3d-k3s-default-serverlb_ through (in this case) port 50122.
 
 If you want to stop / start the cluster you can simply run
 
@@ -155,18 +155,13 @@ For now, **we're going to need the cluster running**, but if we want to remove t
 
 ### Preparing for first deploy
 
-Before we can deploy anything we'll need to do a small application to deploy. During the course, you will develop your own application. The technologies used for the application do not matter - for the examples we're going to use [node.js](https://nodejs.org/en/) but the example application will be offered through GitHub as well as Docker Hub.
+Before we can deploy anything we'll need to do a small application to deploy. During the course, you will develop your own application. The technologies used for the application do not matter - for the examples we're going to use [Node.js](https://nodejs.org/en/) but the example application will be offered through GitHub as well as Docker Hub.
 
 Let's launch an application that generates and outputs a hash every 5 seconds or so.
 
 I have prepared one [here](https://github.com/kubernetes-hy/material-example/tree/master/app1), you can test it with `docker run jakousa/dwk-app1`.
 
-To deploy an image, we need the cluster to have an access to the image. By default, Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but that won't work when we switch to non-k3d solutions. We will use the familiar registry _Docker Hub_, which we also used in [DevOps with Docker](http://devopswithdocker.com/). If you've never used Docker Hub, it is the place Docker client defaults to. E.g. when you run `docker pull nginx`, the nginx comes from Docker Hub. You will need to register an account there and after that you can use `docker login` to authenticate yourself. If you don't wish to use Docker Hub you can also use a local registry: follow the [tutorial here](https://k3d.io/v5.3.0/usage/registries/?h=registries#using-a-local-registry) to set one up.
-
-```console
-$ docker tag _image_ _username_/_image_
-$ docker push _username_/_image_
-```
+To deploy an image, we need the cluster to have access to the image. By default, Kubernetes is intended to be used with a registry. K3d offers `import-images` command, but that won't work when we switch to non-k3d solutions. We will use the familiar registry _Docker Hub_, which we also used in [DevOps with Docker](http://devopswithdocker.com/). If you've never used Docker Hub, it is the place where the Docker client defaults to. E.g. when you run `docker pull nginx`, the nginx image comes from Docker Hub. See the course [DevOps for Docker](https://devopswithdocker.com/) for further details e.g. on pushing your images to Docker Hub if needed.
 
 <text-box name="Example applications" variant="hint">
 In the future, the material will use the offered applications in the commands. You may follow along by changing the image to your application. Almost everything is found in the same repository <a href="https://github.com/kubernetes-hy/material-example">https://github.com/kubernetes-hy/material-example</a>.
@@ -176,14 +171,16 @@ Now we are finally ready to deploy our first app into Kubernetes!
 
 ### Deployment
 
-To deploy an application, we will need to create a _Deployment_ object with the image.
+To deploy an application, we will need to create a [deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) object with the image.
 
 ```console
 $ kubectl create deployment hashgenerator-dep --image=jakousa/dwk-app1
   deployment.apps/hashgenerator-dep created
 ```
 
-This action created a few things for us to look at: a _Deployment_ resource and a _Pod_ resource.
+This action created a few things for us to look at
+- a [deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) resource and
+- a [pod](https://kubernetes.io/docs/concepts/workloads/pods/) resource.
 
 #### What is a Pod?
 
@@ -193,7 +190,7 @@ _Pod_ is an abstraction around one or more containers. Pods provide a context fo
 
 Reading through the documentation or searching the internet are not the only ways to find information about the different resources Kubernetes has. We can get access to simple explanations straight from our command line using `kubectl explain RESOURCE` command.
 
-For example, to get a description what a Pod is and its mandatory fields, we can use the following command.
+For example, to get a description of what a Pod is and its mandatory fields, we can use the following command.
 
 ```console
 $ kubectl explain pod
@@ -205,7 +202,7 @@ $ kubectl explain pod
        created by clients and scheduled onto hosts.
 ```
 
-In Kubernetes, all entities that exist are called objects. You can list all objects of a resource with `kubectl get RESOURCE`.
+In Kubernetes, all entities that exist are called [objects](https://kubernetes.io/docs/concepts/overview/working-with-objects/). You can list all objects of a resource with `kubectl get RESOURCE`.
 
 ```
 $ kubectl get pods
@@ -215,11 +212,11 @@ $ kubectl get pods
 
 #### What is a Deployment resource?
 
-A _Deployment_ resource takes care of deployment. It's a way to tell Kubernetes what container you want, how they should be running and how many of them should be running.
+A [deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) resource takes care of deployment. It's a way to tell Kubernetes what container you want, how they should be running and how many of them should be running.
 
-While we created the Deployment we also created a _ReplicaSet_ object. ReplicaSets are used to tell how many replicas of a Pod you want. It will delete or create Pods until the number of Pods you wanted are running. ReplicaSets are managed by Deployments and you should not have to manually define or modify them. If you want to manage the number of replicas, you can edit the Deployment and it will take care of modifying the ReplicaSet.
+While we created the Deployment we also created a [ReplicaSet](https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/) object. ReplicaSets are used to tell how many replicas of a Pod you want. It will delete or create Pods until the number of Pods you want is running. ReplicaSets are managed by Deployments and you do not need to manually define or modify them. If you want to manage the number of replicas, you can edit the Deployment and it will take care of modifying the ReplicaSet.
 
-You can view the deployment:
+You can view the deployments as follows:
 
 ```console
 $ kubectl get deployments
@@ -270,7 +267,7 @@ Keep this in mind if you want to avoid doing more work than necessary.
 
 Let's get started!
 
-Create a web server that outputs "Server started in port NNNN" when it is started and deploy it into your Kubernetes cluster. Please make it so that an environment variable PORT can be used to choose that port. You will not have access to the port when it is running in Kuberetes yet. We will configure the access when we get to networking.
+Create a web server that outputs "Server started in port NNNN" when it is started and deploy it into your Kubernetes cluster. Please make it so that an environment variable PORT can be used to choose that port. You will not have access to the port when it is running in Kubernetes yet. We will configure the access when we get to networking.
 
 </exercise>
 
@@ -290,7 +287,7 @@ $ kubectl scale deployment/hashgenerator-dep --replicas=4
 $ kubectl set image deployment/hashgenerator-dep dwk-app1=jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
 ```
 
-Things start to get really cumbersome. It is hard to imagine how someone in their right mind could be maintaining multiple applications like that. Thankfully we will now use a declarative approach where we define how things should be rather than how they should change. This is more sustainable in the long term than the iterative approach and will let us keep our sanity.
+Things start to get really cumbersome. It is hard to imagine how someone in their right mind could be maintaining multiple applications like that. Thankfully we will now use a _declarative_ approach where we define how things should be rather than how they should change. This is more sustainable in the long run than the imperative approach and will let us keep our sanity.
 
 Before redoing the previous steps via the declarative approach, let's take the existing deployment down.
 
@@ -323,11 +320,12 @@ spec:
           image: jakousa/dwk-app1:b7fc18de2376da80ff0cfc72cf581a9f94d10e64
 ```
 
+
 <text-box name="Text editor of choice" variant="hint">
-  I personally use vscode to create these yaml files. It has helpful autofill, definitions, and syntax check for Kubernetes with the extension Kubernetes by Microsoft. Even now it helpfully warns us that we haven't defined resource limitations. I won't care about that warning yet, but you can figure it out if you want to.
+  I personally use Visual studio code to create these yaml files. It has helpful autofill, definitions, and syntax check for Kubernetes with the extension Kubernetes by Microsoft. Even now it helpfully warns us that we haven't defined resource limitations. I won't care about that warning yet, but you can figure it out if you want to.
 </text-box>
 
-This looks a lot like the docker-compose.yamls we have previously written. Let's ignore what we don't know for now, which is mainly labels, and focus on the things that we know:
+This looks a lot like the docker-compose.yaml files we have previously written. Let's ignore what we don't know for now, which is mainly labels, and focus on the things that we know:
 
 - We're declaring what kind it is (kind: Deployment)
 - We're declaring it a name as metadata (name: hashgenerator-dep)
@@ -353,7 +351,7 @@ $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-exam
 
 Woah! The fact that you can apply manifest from the internet just like that will come in handy.
 
-Instead of deleting the deployment we could just apply a modified deployment on top of what we already have. Kubernetes will take care of rolling out a new version. By using tags (e.g. `dwk/image:tag`) with the deployments each time we update the image we can modify and apply the new deployment yaml. Previously you may have always used the 'latest' tag, or not thought about tags at all. From the tag Kubernetes will know that the image is a new one and pulls it.
+Instead of deleting the deployment, we could just apply a modified deployment on top of what we already have. Kubernetes will take care of rolling out a new version. By using tags (e.g. `dwk/image:tag`) in the deployments, each time we update the image we can modify and apply the new deployment yaml. Previously you may have always used the 'latest' tag, or not thought about tags at all. From the tag Kubernetes will know that the image is a new one and pulls it.
 
 When updating anything in Kubernetes the usage of delete is actually an anti-pattern and you should use it only as the last option. As long as you don't delete the resource Kubernetes will do a rolling update, ensuring minimum (or none) downtime for the application. On the topic of anti-patterns: you should also always avoid doing anything imperatively! If your files don't tell Kubernetes and your team what the state should be and instead you run commands that edit the state you are just lowering the [bus factor](https://en.wikipedia.org/wiki/Bus_factor) for your cluster and application.
 
@@ -388,5 +386,3 @@ Then edit deployment.yaml so that the tag is updated to the \<new_tag\> and
 ```console
 $ kubectl apply -f manifests/deployment.yaml
 ```
-
-<quiz id="7671ddcf-3b5c-4b83-a705-b3b7bb665baf"></quiz>

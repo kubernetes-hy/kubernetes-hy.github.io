@@ -20,17 +20,17 @@ In part 1 we will look into a very basic method of using storage and return to t
 
 There are multiple types of volumes and we'll get started with two of them.
 
-### Simple Volume ###
+### Volumes ###
 
-Where in docker and docker-compose it would essentially mean that we had something persistent, here that is not the case. *emptyDir* volumes are shared filesystems inside a pod, this means that their lifecycle is tied to a pod. When the pod is destroyed the data is lost. In addition, simply moving the pod from another node will destroy the contents of the volume as the space is reserved from the node the pod is running on. Even with the limitations it may be used as a cache as it persists between container restarts or it can be used to share files between two containers in a pod.
+A [volume](https://docs.docker.com/storage/volumes/) in Docker and Docker compose is the way to persist the data the containers are using. With Kubernetes [the simple volumes](https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/) that is not quite the case.
 
-Before we can get started with this, we need an application that shares data with another application. In this case, it will work as a method to share simple log files with each other. We'll need to develop the apps:
+The Kubernetes volumes, in technical terms *emptyDir* volumes, are shared filesystems _inside a pod_, this means that their lifecycle is tied to a pod. When the pod is destroyed the data is lost. In addition, simply moving the pod from another node will destroy the contents of the volume as the space is reserved from the node the pod is running on. So surely you should not use [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir)volumes e.g. for backing up a database. Even with the limitations it may be used as a cache as it persists between container restarts or it can be used to share files between two containers in a pod.
 
-App 1 will check if /usr/src/app/files/image.jpg exists and if not download a random image and save it as image.jpg. Any HTTP request will trigger a new image generation.
+Before we can get started with this, we need an application that shares data with another application. In this case, it will work as a method to share simple log files with each other. We'll need to develop:
+- App 1 that will check if /usr/src/app/files/image.jpg exists and if not, it downloads a random image and saves it as image.jpg. Any HTTP request will trigger a new image generation.
+- App 2 that will check for the file /usr/src/app/files/image.jpg and shows it, if it is available.
 
-App 2 will check for /usr/src/app/files/image.jpg and show it if it is available.
-
-They share a deployment so that both of them are inside the same pod. My version is available for you to use [here](https://github.com/kubernetes-hy/material-example/blob/b9ff709b4af7ca13643635e07df7367b54f5c575/app3/manifests/deployment.yaml). The example includes ingress and service to access the application.
+Apps share a deployment so that both of them are **inside the same pod**. My version is available for you to use [here](https://github.com/kubernetes-hy/material-example/blob/b9ff709b4af7ca13643635e07df7367b54f5c575/app3/manifests/deployment.yaml). The example includes ingress and service to access the application.
 
 **deployment.yaml**
 
@@ -65,7 +65,7 @@ spec:
             mountPath: /usr/src/app/files
 ```
 
-As the display is dependant on the volume we can confirm that it works by accessing the image-response and getting the image. The provided ingress used the previously opened port 8081 <http://localhost:8081>
+As the display is dependent on the volume we can confirm that it works by accessing the image-response and getting the image. The provided ingress used the previously opened port 8081 <http://localhost:8081>
 
 Note that all data is lost when the pod goes down.
 
@@ -79,17 +79,27 @@ Note that all data is lost when the pod goes down.
 
   Either application can generate the hash. The reader or the writer.
 
+  You may find [this](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_logs/) helpful now since there are more than one container running inside a pod.
+
 </exercise>
 
 ### Persistent Volumes ###
 
-This type of storage is what you probably had in mind when we started talking about volumes. Unfortunately, we're quite limited with the options here and will return to *PersistentVolumes* briefly in Part 2 and again in Part 3 with GKE.
+In contrast to the emptyDir volumes, a [Persistent Voulme](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) is something you probably had in mind when we started talking about volumes.
 
-The reason for the difficulty is because you should not store data with the application or create a dependency on the filesystem by the application. Kubernetes supports cloud providers very well and you can run your own storage system. During this course, we are not going to run our own storage system as that would be a huge undertaking and most likely "in real life" you are going to use something hosted by a cloud provider. This topic would probably be a part of its own, but let's scratch the surface and try something you can use to run something at home.
+A Persistent Volume (PV) is a cluster-wide resource, that represents a piece of storage in the cluster that has been provisioned by the cluster administrator or is [dynamically](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/) provisioned. Persistent Volumes can be backed by various types of storage such as local disk, NFS, cloud storage, etc.
 
-A *local* volume is a *PersistentVolume* that binds a path from the node to use as a storage. This ties the volume to the node.
+PVs have a lifecycle independent of any individual pod that uses the PV. This means that the data in the PV can outlive the pod that it was attached to.
 
-For the _PersistentVolume_ to work you first need to create the local path in the node we are binding it to. Since our k3d cluster runs via docker let's create a directory at `/tmp/kube` in the `k3d-k3s-default-agent-0` container. This can simply be done via `docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/kube`
+When using a cloud provider, such as Google Kubernetes Engine which we shall use in parts 3 and 4, it is the cloud provider that takes care of backing storage and the Persistent Volumes that you can use. If you run your own cluster or use a local cluster such as k3s for development, you need to take care of the storage system and Persistent Volumes by yourself.
+
+An easy option that we can use with K3s is a [local](https://kubernetes.io/docs/concepts/storage/volumes/#local) PersistentVolume that uses a path in a cluster node as the storage. This solution ties the volume to a particular node and if the node becomes unavailable, the storage is not usable.
+
+So the local Persistent Volumes are **not** the solution to be used in production!
+
+For the _PersistentVolume_ to work you first need to create the local path in the node we are binding it to. Since our cluster runs via Docker let's create a directory at `/tmp/kube` in the container `k3d-k3s-default-agent-0`. This can simply be done via `docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/kube`
+
+The Persistent Volume definition is created as follows:
 
 **persistentvolume.yaml**
 
@@ -99,7 +109,7 @@ kind: PersistentVolume
 metadata:
   name: example-pv
 spec:
-  storageClassName: manual
+  storageClassName: my-example-pv # this is the name you are using later to claim this volume
   capacity:
     storage: 1Gi # Could be e.q. 500Gi. Small amount is to preserve space when testing locally
   volumeMode: Filesystem # This declares that it will be mounted into pods as a directory
@@ -117,9 +127,17 @@ spec:
           - k3d-k3s-default-agent-0
 ```
 
-As this is bound into that node avoid using this in production.
+[Persistent Volume Claim](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) (PVC) is a request for storage by a user.
 
-The type of *local* we're using now can not be dynamically provisioned. A new *PersistentVolume* needs to be defined only rarely, for example to your personal cluster once a new physical disk is added. After that, a *PersistentVolumeClaim* is used to claim a part of the storage for an application. If we create multiple *PersistentVolumeClaims* the rest will stay in Pending state, waiting for a suitable *PersistentVolume*.
+When a user creates a PVC, Kubernetes finds an appropriate PV that satisfies the claim's requirements and binds them together. If no PV is available, depending on the configuration, the cluster might dynamically create a PV that meets the claim's needs.
+
+Once bound, the PersistentVolumeClaim is "locked" and can only be used by one Pod (depending on the access mode specified). This ensures that the PV resource is exclusively used by the pod it's bound to.
+
+If there is no suitable Persistent Volume available, the PVC will stay in the "Pending" state, waiting for a suitable PV.
+
+Conceptually, you can think of PVs as the physical volume (the actual storage in your infrastructure), whereas PVCs are the means by which pods claim this storage for their use.
+
+Let us now create a claim for our app:
 
 **persistentvolumeclaim.yaml**
 
@@ -127,9 +145,9 @@ The type of *local* we're using now can not be dynamically provisioned. A new *P
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: image-claim
+  name: image-claim # name of ther volume claim, this will be used in the deployment
 spec:
-  storageClassName: manual
+  storageClassName: my-example-pv # this is the name of the persisten volume we are claiming
   accessModes:
     - ReadWriteOnce
   resources:
@@ -166,7 +184,7 @@ And apply it with persistentvolume.yaml and persistentvolumeclaim.yaml.
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
 ```
 
-With the previous service and ingress we can access it from http://localhost:8081. To confirm that the data is persistent we can run
+With the previous service and ingress, we can access the app in http://localhost:8081. To confirm that the data is persistent we can run
 
 ```console
 $ kubectl delete -f https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app3/manifests/deployment-persistent.yaml
@@ -175,9 +193,9 @@ $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-exam
   deployment.apps/images-dep created
 ```
 
-And the same file is available again.
+The same file is available again!
 
-If you are interested in learning more about running your own storage you can check out.
+If you are interested in learning more about running your own storage you can check out eg. the following:
 
 * [Rook](https://rook.io/)
 
@@ -189,7 +207,7 @@ If you are interested in learning more about running your own storage you can ch
 
 <exercise name='Exercise 1.11: Persisting data'>
 
-  Let's share data between "Ping-pong" and "Log output" applications using persistent volumes. Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment* to utilize it. As *PersistentVolume* is often maintained by cluster administrators rather than developers and are not application specific you should keep the definition for that separated.
+  Let's share data between "Ping-pong" and "Log output" applications using persistent volumes. Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment* to utilize it. As PersistentVolumes are often maintained by cluster administrators rather than developers and those are not application-specific you should keep the definition for those separated, perhaps in own folder.
 
   Save the number of requests to "Ping-pong" application into a file in the volume and output it with the timestamp and hash when sending a request to our "Log output" application. In the end, the two pods should share a persistent volume between the two applications. So the browser should display the following when accessing the "Log output" application:
 
@@ -206,27 +224,25 @@ If you are interested in learning more about running your own storage you can ch
 
   The goal is to add a daily image to the project. And every day a new image is fetched on the first request.
 
-  Get a random picture from Lorem Picsum like `https://picsum.photos/1200` and display it in the project. Find a way to store the image so it stays the same for an entire day.
+  Get a random picture from Lorem Picsum like `https://picsum.photos/1200` and display it in the project. Find a way to store the image so it stays the same for 60 minutes.
 
   Make sure to cache the image into a volume so that the API isn't needed for new images every time we access the application or the container crashes.
 
-  Best way to test what happens when your container shuts down is likely by shutting down the container, so you can add logic for that as well, for testing purposes.
+  The best way to test what happens when your container shuts down is likely by shutting down the container, so you can add logic for that as well, for testing purposes.
 
 </exercise>
 
 <exercise name='Exercise 1.13: Project v0.7'>
 
-  For the project we'll need to do some coding to start seeing results in the next part.
+  For the project, we'll need to do some coding to start seeing results in the next part.
 
   1. Add an input field. The input should not take todos that are over 140 characters long.
 
   2. Add a send button. It does not have to send the todo yet.
 
-  3. Add a list for the existing todos with some hardcoded todos.
+  3. Add a list of the existing todos with some hardcoded todos.
 
   Maybe something similar to this:
   <img src="../img/project-ex-113.png">
 
 </exercise>
-
-<quiz id="23c1e0c1-debe-4c86-9bf8-5f0786b0118e"></quiz>

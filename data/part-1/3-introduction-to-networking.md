@@ -52,26 +52,26 @@ Now we can view the response from http://localhost:3003 and confirm that it is w
 
 </exercise>
 
-External connections with docker used the flag -p `-p 3003:3000` or in docker-compose ports declaration. Unfortunately, Kubernetes isn't as simple. We're going to use either a *Service* resource or an *Ingress* resource.
+External connections with Docker used the flag -p `-p 3003:3000` or in Docker compose ports the declaration. Unfortunately, Kubernetes isn't as simple. We're going to use either a *Service* resource or an *Ingress* resource.
 
 #### Before anything else ####
 
-Because we are running our cluster inside docker with k3d we will have to do some preparations.
+Because we are running our cluster inside Docker with k3d we will have to do some preparations.
 
 Opening a route from outside of the cluster to the pod will not be enough if we have no means of accessing the cluster inside the containers!
 
 ```console
 $ docker ps
-  CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS              PORTS                             NAMES
-  b60f6c246ebb        rancher/k3d-proxy:v3.0.0   "/bin/sh -c nginx-pr…"   2 hours ago         Up 2 hours          80/tcp, 0.0.0.0:58264->6443/tcp   k3d-k3s-default-serverlb
-  553041f96fc6        rancher/k3s:latest         "/bin/k3s agent"         2 hours ago         Up 2 hours                                            k3d-k3s-default-agent-1
-  aebd23c2ef99        rancher/k3s:latest         "/bin/k3s agent"         2 hours ago         Up 2 hours                                            k3d-k3s-default-agent-0
-  a34e49184d37        rancher/k3s:latest         "/bin/k3s server --t…"   2 hours ago         Up 2 hours                                            k3d-k3s-default-server-0
+  CONTAINER ID    IMAGE                      COMMAND                  CREATED             STATUS              PORTS                             NAMES
+  b60f6c246ebb    ghcr.io/k3d-io/k3d-proxy:5 "/bin/sh -c nginx-pr…"   2 hours ago         Up 2 hours          80/tcp, 0.0.0.0:58264->6443/tcp   k3d-k3s-default-serverlb
+  553041f96fc6    rancher/k3s:latest         "/bin/k3s agent"         2 hours ago         Up 2 hours                                            k3d-k3s-default-agent-1
+  aebd23c2ef99    rancher/k3s:latest         "/bin/k3s agent"         2 hours ago         Up 2 hours                                            k3d-k3s-default-agent-0
+  a34e49184d37    rancher/k3s:latest         "/bin/k3s server --t…"   2 hours ago         Up 2 hours                                            k3d-k3s-default-server-0
 ```
 
-K3d has helpfully prepared us a port to access the API in 6443 and, in addition, has opened a port to 80. All requests to the load balancer here will be proxied to the same ports of all server nodes of the cluster. However, for testing purposes, we'll want an individual port open for a single node. Let's delete our old cluster and create a new one with port some ports open.
+Be scrolling a bit right we see that K3d has helpfully prepared us the port 6443 to access the API. Also the port 80 is open. All requests to the load balancer here will be proxied to the same ports of all server nodes of the cluster. However, for testing purposes, we'll want _an individual port open for a single node_. Let's delete our old cluster and create a new one with some ports open.
 
-K3d documentation tells us how the ports are opened, we'll open local 8081 to 80 in k3d-k3s-default-serverlb and local 8082 to 30080 in k3d-k3s-default-agent-0. The 30080 is chosen almost completely randomly, but needs to be a value between 30000-32767 for the next step:
+K3d [documentation](https://k3d.io/v5.3.0/usage/commands/k3d_cluster_create/) tells us how the ports are opened, we'll open local 8081 to 80 in k3d-k3s-default-serverlb and local 8082 to 30080 in k3d-k3s-default-agent-0. The 30080 is chosen almost completely randomly, but needs to be a value between 30000-32767 for the next step:
 
 ```console
 $ k3d cluster delete
@@ -104,7 +104,7 @@ Your OS may support using the host network so no ports need to be opened. Howeve
 
 #### What is a Service? ####
 
-As *Deployment* resources took care of deployments for us. *Service* resource will take care of serving the application to connections from outside of the cluster.
+As *Deployment* resources took care of deployments for us. *Service* resources will take care of serving the application to connections from outside (and also inside!) of the cluster.
 
 Create a file service.yaml into the manifests folder and we need the service to do the following things:
 
@@ -141,7 +141,7 @@ $ kubectl apply -f manifests/service.yaml
 
 As we've published 8082 as 30080 we can access it now via http://localhost:8082.
 
-We've now defined a nodeport with `type: NodePort`. *NodePorts* simply ports that are opened by Kubernetes to **all of the nodes** and the service will handle requests in that port. NodePorts are not flexible and require you to assign a different port for every application. As such NodePorts are not used in production but are helpful to know about.
+We've now defined a nodeport with `type: NodePort`. [NodePorts](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport) are simply ports that are opened by Kubernetes to **all of the nodes** and the service will handle requests in that port. NodePorts are not flexible and require you to assign a different port for every application. As such NodePorts are not used in production but are helpful to know about.
 
 What we'd want to use instead of NodePort would be a *LoadBalancer* type service but this "only" works with cloud providers as it configures a, possibly costly, load balancer for it. We'll get to know them in part 3.
 
@@ -155,9 +155,9 @@ There's one additional resource that will help us with serving the application, 
 
 #### What is an Ingress? ####
 
-Incoming Network Access resource *Ingress* is a completely different type of resource from *Services*. If you've got your OSI model memorized, it works in layer 7 while services work on layer 4. You could see these used together: first the aforementioned *LoadBalancer* and then Ingress to handle routing. In our case, as we don't have a load balancer available we can use the Ingress as the first stop. If you're familiar with reverse proxies like Nginx, Ingress should seem familiar.
+Incoming Network Access resource [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) is a completely different type of resource from *Services*. If you've got your [OSI model](https://en.wikipedia.org/wiki/OSI_model) memorized, it works in layer 7 while services work on layer 4. You could see these used together: first the aforementioned *LoadBalancer* and then Ingress to handle routing. In our case, as we don't have a load balancer available we can use the Ingress as the first stop. If you're familiar with reverse proxies like Nginx, Ingress should seem familiar.
 
-Ingresses are implemented by various different "controllers". This means that ingresses do not automatically work in a cluster, but gives you the freedom of choosing which ingress controller works for you the best. K3s has [Traefik](https://containo.us/traefik/) installed already. Other options include Istio and Nginx Ingress Controller, [more here](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/).
+Ingresses are implemented by various different "controllers". This means that ingresses do not automatically work in a cluster, but give you the freedom of choosing which ingress controller works for you the best. K3s has [Traefik](https://containo.us/traefik/) installed already. Other options include Istio and Nginx Ingress Controller, [more here](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/).
 
 Switching to Ingress will require us to create an Ingress resource. Ingress will route incoming traffic forward to a *Services*, but the old *NodePort* Service won't do.
 
@@ -166,7 +166,7 @@ $ kubectl delete -f manifests/service.yaml
   service "hashresponse-svc" deleted
 ```
 
-A ClusterIP type Service resource gives the Service an internal IP that'll be accessible in the cluster.
+A [ClusterIP](https://kubernetes.io/docs/concepts/services-networking/service/#type-clusterip) type Service resource gives the Service an internal IP that'll be accessible within the cluster.
 
 The following will let TCP traffic from port 2345 to port 3000.
 
@@ -187,7 +187,7 @@ spec:
       targetPort: 3000
 ```
 
-For resource 2 the new *Ingress*.
+The second resource we need is the new *Ingress*.
 
 1. Declare that it should be an Ingress
 2. And route all traffic to our service
@@ -256,5 +256,3 @@ We can see that the ingress is listening on port 80. As we already opened port t
   The ping-pong application will need to listen requests on '/pingpong', so you may have to make changes to its code. This can be avoided by configuring the ingress to rewrite the path, but we will leave that as an optional exercise. You can check out https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource
 
 </exercise>
-
-<quiz id="3ac75f4c-037e-4319-b581-0545bd3b76d9"></quiz>

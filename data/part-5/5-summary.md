@@ -19,7 +19,3 @@ Please press the following button to end the course. It's right below the certif
 It needs to be pressed twice.
 
 <img src="../img/coursestats_credits_2.png">
-
-<quiz id="e0d0bf63-d655-4b46-a887-72c14fa52cbe"></quiz>
-
-<quiz id="a9e3d83c-1d6c-41db-aa56-c26810a854b7"></quiz>

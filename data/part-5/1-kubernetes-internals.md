@@ -169,4 +169,3 @@ What did just happen? Read [this explanation on how kubernetes handles offline n
 
 Well then, what happens if you delete the only control-plane node? Nothing good. In our local cluster it's our single point of failure. See Kubernetes documentation for "[Options for Highly Available topology](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/ha-topology/)" to avoid getting the whole cluster crippled by a single faulty hardware.
 
-<quiz id="f4ad98ef-f8de-448b-ac0f-1971374d5c05"></quiz>

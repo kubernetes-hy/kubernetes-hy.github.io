@@ -263,4 +263,3 @@ $ curl -H "Host: tester-route.default.example.com" http://localhost:8081
 
 </exercise>
 
-<quiz id="ee5f4303-5634-4157-b928-cd8e2014220b"></quiz>

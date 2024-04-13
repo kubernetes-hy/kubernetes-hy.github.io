@@ -222,4 +222,3 @@ _Side note:_ Kubernetes also offers the possibility to limit resources per names
 
 </exercise>
 
-<quiz id="cdd5ff16-6883-403a-8eb7-2cab7b8aa364"></quiz>

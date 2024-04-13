@@ -41,3 +41,5 @@ I personally had a hobby cluster in [Hetzner](https://www.hetzner.com/) that I s
 ### How to get the DwK certificate?
 
 Submission application will have the certificate for you when you have submitted all of the exercises.
+
+_The next course iteration will start in the 2nd half of the year 2024_ Certificate will only be available when the course starts.

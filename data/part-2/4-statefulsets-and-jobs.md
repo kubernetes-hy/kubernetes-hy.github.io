@@ -236,4 +236,3 @@ _CronJobs_ run a _Job_ on schedule. You may have used cron before, these are ess
 
 </exercise>
 
-<quiz id="53e3f0c3-0e40-4c22-9efe-a5367bfb4f60"></quiz>

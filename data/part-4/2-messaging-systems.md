@@ -286,5 +286,3 @@ This is now the final configuration:
   You should not write the API key in plain text.
 
 </exercise>
-
-<quiz id="de114052-aefa-47ca-880c-87f2350a63b6"></quiz>
