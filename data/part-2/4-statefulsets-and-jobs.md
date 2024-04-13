@@ -16,19 +16,19 @@ After this section you
 
 ## StatefulSets ##
 
-In part 1 we learned how volumes are used with PersistentVolumes and PersistentVolumeClaims. We used *Deployment* with them and everything worked well enough for our testing purposes. The problem is that *Deployment* creates and scales pods that are *replicas* - they are a new copy of the same thing. With PersistentVolumeClaims, the method through which a pod reserves persistent storage, this creates a possibly non-desired effect as the claims are **not** pod specific. The claim is shared by all pods in that deployment.
+In [part 1](/part-1/4-introduction-to-storage) we learned how volumes are used with PersistentVolumes and PersistentVolumeClaims. We used *Deployment* with them and everything worked well enough for our testing purposes. The problem is that *Deployment* creates and scales pods that are *replicas* - they are new copies of the same container that are running in parallel. So the claim is shared by all pods in that deployment, and this might cause non-desired side-effects that could lead e.g. to data corruption.
 
-*StatefulSets* are like *Deployments* except it makes sure that if a pod dies the replacement is identical, with the same network identity and name. In addition if the pod is scaled the copies will have their own storage. StatefulSets are for stateful applications. You could use StatefulSets to scale video game servers that require state, such as a Minecraft server. Or run a database. For data safety when deleted StatefulSets will not delete the volumes they are associated with.
+[StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/) are simillar to *Deployments* except those make sure that if a pod dies the replacement is identical, with the same network identity and name. In addition, if the pod is scaled, each copy will have its own storage. So StatefulSets are for _stateful applications_, where the state is stored inside the app, not outside, such as in a database. You could use StatefulSets to scale video game servers that require state, such as a Minecraft server. Or run a database. For data safety when deleted, StatefulSets will not delete the volumes they are associated with.
 
 <text-box name="ReplicaSets" variant="hint">
 Deployment creates pods using a Resource called "ReplicaSet". We're using ReplicaSets through Deployments so we haven't really had to talk about them.
 </text-box>
 
-Let's run [Redis](https://redis.io) and save some information there. We're going to need a PersistentVolume as well as an application that utilizes the Redis. In part 1 we jumped through a few hurdles to get ourselves storage but k3s includes a helpful _storageclass_ that will streamline local testing.
+Let's run the key-value database [Redis](https://redis.io) and save some data there. We're going to need a PersistentVolume as well as an application that utilizes the Redis.
 
-You can apply the _StatefulSet_ from `https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app5/manifests/statefulset.yaml`
+StatefulSets require a "Headless Service" to be responsible for the network identity. Let us start by defining a headless service" with `clusterIP: None`, this will instruct Kubernetes not to do proxying or load balancing and instead allow a direct access to the Pods:
 
-**statefulset.yaml**
+**service.yaml**
 
 ```yaml
 apiVersion: v1 # Includes the Service for lazyness
@@ -44,11 +44,17 @@ spec:
   clusterIP: None
   selector:
     app: redisapp
----
+```
+
+The stateful set with two containers, Redis and [redisfiller](https://github.com/kubernetes-hy/material-example/tree/master/app5), that is a simple app that uses Redis:
+
+**statefulset.yaml**
+
+```yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: redis-ss
+  name: redis-stset
 spec:
   serviceName: redis-svc
   replicas: 2
@@ -82,18 +88,24 @@ spec:
             storage: 100Mi
 ```
 
-Looks a lot like *Deployment* but uses volumeClaimTemplate to claim a volume for each pod. StatefulSets require a "Headless Service" to be responsible for the network identity. We define a "Headless Service" with `clusterIP: None` - this will instruct Kubernetes to not do proxying or load balancing and instead to allow access straight to the Pods.
+Note that since the containers are now inside the same pod, those share the network and the redisfiller app sees Redis in address _localhost:6379_.
 
-The storageClassName here, `storageClassName: local-path` is a k3d specific *dynamically* provisioned Claim. So we don't need to create PersistentVolume. To learn more, see [Rancher documentation](https://rancher.com/docs/k3s/latest/en/storage/) and read more about [dynamic provisioning](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#dynamic). You can revisit the examples and exercises of part 1 and use dynamic provisioning instead of manual provisioning in your applications!
+The stateful set looks a lot like a *Deployment* but uses a [volumeClaimTemplate](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#volume-claim-templates) to claim a volume for each pod.
 
-You can now open two terminals and run `$ kubectl logs -f redis-ss-X redisfiller` where X is 0 or 1. To confirm it's working we can delete a pod and it will restart and continue right where you left off. In addition we can delete the StatefulSet and the volume will stay and bind back when you apply the StatefulSet back.
+In part 1 we jumped through a few hurdles to get ourselves storage, but now we use a K3s-provided *dynamically* provisioned storage by specifying `storageClassName: local-path`
+
+Since the [local-path storage](https://docs.k3s.io/storage#setting-up-the-local-storage-provider) is dynamically provisioned, we don't need to create PersistentVolume for the volume, K3s takes care of that for us.
+
+To learn more, see [Rancher documentation](https://rancher.com/docs/k3s/latest/en/storage/) and read more about [dynamic provisioning](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#dynamic). If you want, you can revisit the examples and exercises of part 1 and use dynamic provisioning instead of manual provisioning in your applications!
+
+You can now open two terminals and run `$ kubectl logs -f redis-stset-X redisfiller` where X is 0 or 1. To confirm it's working we can delete a pod and it will restart and continue right where you left off. In addition, we can delete the StatefulSet and the volume will stay and bind back when you apply the StatefulSet again.
 
 <exercise name='Exercise 2.07: Stateful applications'>
 
-  Run a postgres database and save the Ping-pong application counter into the database.
+  Run a Postgres database and save the Ping-pong application counter into the database.
 
-  The postgres database and Ping-pong application should not be in the same pod.
-  A single postgres database is enough and it may disappear with the cluster but it should survive even if all pods are taken down.
+  The Postgres database and Ping-pong application should **not be** in the same pod.
+  A single Postgres database is enough and it may disappear with the cluster but it should survive even if all pods are taken down.
 
   You should not write the database password in plain text.
 
@@ -101,7 +113,7 @@ You can now open two terminals and run `$ kubectl logs -f redis-ss-X redisfiller
 
 <exercise name='Exercise 2.08: Project v1.2'>
 
-  Create a database and save the todos there.
+  Create a database and save the todos there, again, the database should have its own pod.
 
   Use Secrets and/or ConfigMaps to have the backend access the database.
 
