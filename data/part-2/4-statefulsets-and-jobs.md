@@ -16,9 +16,9 @@ After this section you
 
 ## StatefulSets ##
 
-In [part 1](/part-1/4-introduction-to-storage) we learned how volumes are used with PersistentVolumes and PersistentVolumeClaims. We used *Deployment* with them and everything worked well enough for our testing purposes. The problem is that *Deployment* creates and scales pods that are *replicas* - they are new copies of the same container that are running in parallel. So the claim is shared by all pods in that deployment, and this might cause non-desired side-effects that could lead e.g. to data corruption.
+In [part 1](/part-1/4-introduction-to-storage) we learned how volumes are used with PersistentVolumes and PersistentVolumeClaims. We used *Deployment* with them and everything worked well enough for our testing purposes. If there is just one pod in a deployment, all is fine. When scaling, things might be different. The problem is that *Deployment* creates and scales pods that are *replicas* - they are new copies of the same container that are running in parallel. So the volume is shared by all pods in that deployment. For read-only volumes this is ok, but for volumes that have read-write access, this might cause problems and can in the worst case cause even data corruption.
 
-[StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/) are simillar to *Deployments* except those make sure that if a pod dies the replacement is identical, with the same network identity and name. In addition, if the pod is scaled, each copy will have its own storage. So StatefulSets are for _stateful applications_, where the state is stored inside the app, not outside, such as in a database. You could use StatefulSets to scale video game servers that require state, such as a Minecraft server. Or run a database. For data safety when deleted, StatefulSets will not delete the volumes they are associated with.
+[StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/) are similar to *Deployments* except those make sure that if a pod dies the replacement is identical, with the same network identity and name. In addition, if the pod is scaled, each copy will have its own storage. So StatefulSets are for _stateful applications_, where the state is stored inside the app, not outside, such as in a database. You could use StatefulSets to scale video game servers that require state, such as a Minecraft server. Or run a database. For data safety when deleted, StatefulSets will not delete the volumes they are associated with.
 
 <text-box name="ReplicaSets" variant="hint">
 Deployment creates pods using a Resource called "ReplicaSet". We're using ReplicaSets through Deployments so we haven't really had to talk about them.
@@ -26,12 +26,12 @@ Deployment creates pods using a Resource called "ReplicaSet". We're using Replic
 
 Let's run the key-value database [Redis](https://redis.io) and save some data there. We're going to need a PersistentVolume as well as an application that utilizes the Redis.
 
-StatefulSets require a "Headless Service" to be responsible for the network identity. Let us start by defining a headless service" with `clusterIP: None`, this will instruct Kubernetes not to do proxying or load balancing and instead allow a direct access to the Pods:
+StatefulSet requires a "Headless Service" to be responsible for the network identity. Let us start by defining a headless service" with `clusterIP: None`, this will instruct Kubernetes not to do proxying or load balancing and instead allow direct access to the Pods:
 
 **service.yaml**
 
 ```yaml
-apiVersion: v1 # Includes the Service for lazyness
+apiVersion: v1
 kind: Service
 metadata:
   name: redis-svc
@@ -75,11 +75,11 @@ spec:
             - name: web
               containerPort: 6379
           volumeMounts:
-            - name: data
+            - name: redis-data-storage
               mountPath: /data
   volumeClaimTemplates:
     - metadata:
-        name: data
+        name: redis-data-storage
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: local-path
@@ -88,9 +88,9 @@ spec:
             storage: 100Mi
 ```
 
-Note that since the containers are now inside the same pod, those share the network and the redisfiller app sees Redis in address _localhost:6379_.
+Note that since the containers are now inside the same pod, those share the network and the _redisfiller_ app sees Redis in address _localhost:6379_.
 
-The stateful set looks a lot like a *Deployment* but uses a [volumeClaimTemplate](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#volume-claim-templates) to claim a volume for each pod.
+The stateful set looks a lot like a *Deployment* but uses a [volumeClaimTemplate](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#volume-claim-templates) to claim its own volume for each pod.
 
 In part 1 we jumped through a few hurdles to get ourselves storage, but now we use a K3s-provided *dynamically* provisioned storage by specifying `storageClassName: local-path`
 
@@ -99,6 +99,83 @@ Since the [local-path storage](https://docs.k3s.io/storage#setting-up-the-local-
 To learn more, see [Rancher documentation](https://rancher.com/docs/k3s/latest/en/storage/) and read more about [dynamic provisioning](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#dynamic). If you want, you can revisit the examples and exercises of part 1 and use dynamic provisioning instead of manual provisioning in your applications!
 
 You can now open two terminals and run `$ kubectl logs -f redis-stset-X redisfiller` where X is 0 or 1. To confirm it's working we can delete a pod and it will restart and continue right where you left off. In addition, we can delete the StatefulSet and the volume will stay and bind back when you apply the StatefulSet again.
+
+Let us once more stress the point, that a StatefulSet creates a separate volume for all the replicas. We can see, that there are indeed two PersistentVolumeClaims for our app:
+
+```bash
+$ kubectl get pvc
+NAME              STATUS   VOLUME                   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+data-redis-ss-0   Bound    pvc-f318ca82-d584-4e10   100Mi      RWO            local-path     53m
+data-redis-ss-1   Bound    pvc-d8e5b81a-05ec-420b   100Mi      RWO            local-path     53m
+```
+
+So the `volumeClaimTemplates` in the StatefulSet definition is used to create an individual PersistentVolumeClaim for each of the replicas in the set.
+
+Let us observe a bit more carefully how the headless Service works. As seen in the above definition, it was defined with `clusterIP: None`, so the service has now cluster IP and the access should be done directly to the pods.
+
+Let us try to _ping_ to the service from our busybox pod:
+
+```bash
+$ ping redis-svc
+PING redis-svc (10.42.2.25): 56 data bytes
+64 bytes from 10.42.2.25: seq=0 ttl=64 time=0.165 ms
+```
+
+So it seems that it is possible to reach the service by using just the service name _redis-svc_, it resolved to IP address _10.42.2.25_.
+
+With the command [nslookup](https://en.wikipedia.org/wiki/Nslookup) we can see that actually the domain name of the service _redis-svc_ resolves to two different IP addresses:
+
+```bash
+$ nslookup redis-svc
+Name:	redis-svc.default.svc.cluster.local
+Address: 10.42.2.25
+Name:	redis-svc.default.svc.cluster.local
+Address: 10.42.1.32
+```
+
+So, the ping just picked the first IP address. Both the replicas of the set have actually own domain names:
+
+```bash
+$ ping redis-stset-0.redis-svc
+PING redis-ss-0.redis-svc (10.42.2.25): 56 data bytes
+64 bytes from 10.42.2.25: seq=0 ttl=64 time=0.214 ms
+
+$ ping redis-stsets-1.redis-svc
+PING redis-ss-1.redis-svc (10.42.1.32): 56 data bytes
+64 bytes from 10.42.1.32: seq=0 ttl=62 time=0.140 ms
+```
+
+The identities of the pods are permanent, so if e.g. the pod _redis-stset-0_ dies, it is guaranteed to have the same name when it is scheduled again, and it is still attached to the same volume.
+
+Note that it is possible to define the StatefulSet and the corresponding headless Service in the same file by separating those with three - characters:
+
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-stset
+spec:
+  serviceName: redis-svc
+  replicas: 2
+  selector:
+    matchLabels:
+      app: redisapp
+  # more rows
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-svc
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: 6379
+    name: web
+  clusterIP: None
+  selector:
+    app: redisapp
+```
 
 <exercise name='Exercise 2.07: Stateful applications'>
 
