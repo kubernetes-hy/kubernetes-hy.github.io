@@ -133,7 +133,7 @@ Name:	redis-svc.default.svc.cluster.local
 Address: 10.42.1.32
 ```
 
-So, the ping just picked the first IP address. Both the replicas of the set have actually own domain names:
+So, the ping just picked the first of the  IP address. All the replicas of the set have actually own domain names:
 
 ```bash
 $ ping redis-stset-0.redis-svc
@@ -146,6 +146,7 @@ PING redis-ss-1.redis-svc (10.42.1.32): 56 data bytes
 ```
 
 The identities of the pods are permanent, so if e.g. the pod _redis-stset-0_ dies, it is guaranteed to have the same name when it is scheduled again, and it is still attached to the same volume.
+
 
 Note that it is possible to define the StatefulSet and the corresponding headless Service in the same file by separating those with three - characters:
 
@@ -184,7 +185,16 @@ spec:
   The Postgres database and Ping-pong application should **not be** in the same pod.
   A single Postgres database is enough and it may disappear with the cluster but it should survive even if all pods are taken down.
 
-  You should not write the database password in plain text.
+  **Hint:** it might be a good idea to ensure that the database is operational and available for connections before you try connecting it from the Ping-pong app. For that purpose, you might just start a stand-alone pod that runs a Postgres image:
+
+```bash
+  kubectl run -it --rm --restart=Never --image postgres psql-for-debugging sh
+  $ psql postgres://yourpostgresurlhere
+  psql (16.2 (Debian 16.2-1.pgdg120+2))
+  Type "help" for help.
+  postgres=# \d
+  Did not find any relations.
+```
 
 </exercise>
 
@@ -198,9 +208,9 @@ spec:
 
 ## Jobs and CronJobs ##
 
-_Job_ resource is used to run a container that has an end state once. The status of a job is saved so that they can be monitored after the execution has ended. Jobs can be configured so that it runs multiple instances of the same task in concurrently, sequentially and until a set number of successful completions have been achieved.
+[Job](https://kubernetes.io/docs/concepts/workloads/controllers/job/) resource is used to run workloads that are not continuous services, but are supposed to run from start to end. The status of a job is saved so that it can be monitored after the execution has ended. Jobs can be configured so that they run multiple instances of the same task concurrently, sequentially and until a set number of successful completions have been achieved.
 
-An example use case for jobs would be creating backups from a database. Our _Job_ will use environment value URL as the url from which the dump is created and pass it along to a storage server. Our database will be postgres and the tool for creating a backup is pg_dump. Now we just need to do the coding. A simple bash script should be enough.
+An example use case for jobs would be creating backups from a database. Our _Job_ will use the environment value URL as the url from which the dump is created and pass it along to a storage server. Our database will be Postgres and the tool for creating a backup is [pg_dump](https://www.postgresql.org/docs/current/app-pgdump.html). Now we just need to do the coding. A simple bash script should be enough.
 
 ```bash
 #!/usr/bin/env bash
@@ -215,7 +225,9 @@ then
 fi
 ```
 
-I have the above image ready in `jakousa/simple-backup-example`. Since we don't have any postgres available to us yet let's deploy one first:
+The above script has already been packed to an image [jakousa/simple-backup-example](https://hub.docker.com/r/jakousa/simple-backup-example).
+
+Since we don't have any Postgres available to us yet let's deploy one first:
 
 ```yaml
 apiVersion: v1
@@ -278,7 +290,7 @@ $ kubectl get po
   postgres-ss-0                       1/1     Running   0          65s
 ```
 
-Now if we apply the following job that uses the image
+Now we can apply the following job that uses the image:
 
 ```yaml
 apiVersion: batch/v1
@@ -313,15 +325,15 @@ $ kubectl logs backup-wj9r5
   Not sending the dump actually anywhere
 ```
 
-_CronJobs_ run a _Job_ on schedule. You may have used cron before, these are essentially the same.
+[CronJobs](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) are similar to Jobs but they run on schedule. You may have already used [cron](https://fi.wikipedia.org/wiki/Cron) schedule tasks on your server, CronJobs are essentially the same for the containers.
 
 <exercise name='Exercise 2.09: Daily todos'>
 
-  Create a CronJob that generates a new todo every day to remind you to do 'Read < URL >'.
+  Create a CronJob that generates a new todo every hour to remind you to do 'Read < URL >'.
 
-  Where < URL > is a wikipedia article that was decided by the job randomly. It does not have to be a hyperlink, the user can copy paste the url from the todo.
+  Where < URL > is a Wikipedia article that was decided by the job randomly. It does not have to be a hyperlink, the user can copy-paste the URL from the todo.
 
-  https://en.wikipedia.org/wiki/Special:Random responds with a redirect to a random wikipedia page so you can ask it to provide a random article for you to read. TIP: Check location header
+  https://en.wikipedia.org/wiki/Special:Random responds with a redirect to a random Wikipedia page so you can ask it to provide a random article for you to read. TIP: Check location header
 
 </exercise>
 
