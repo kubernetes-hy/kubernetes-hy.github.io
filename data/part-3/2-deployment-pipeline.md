@@ -144,7 +144,7 @@ Kustomize has a few additional tools you can test out if you want to install it 
 
 ### Github Actions
 
-Github Actions will be the CI/CD tool of choice for this course. The behavior is similar to CircleCI or even Travis which you may have used previously. Google also offers [Cloud Build](https://cloud.google.com/cloud-build), and a [step-by-step guide to deploying to GKE](https://cloud.google.com/cloud-build/docs/deploying-builds/deploy-gke) with it. You can return here to implement deployment with Cloud Build if you have credits left over after the course!
+[GitHub Actions](https://github.com/features/actions) will be the CI/CD tool of choice for this course. Google also offers [Cloud Build](https://cloud.google.com/cloud-build), and a [step-by-step guide to deploying to GKE](https://cloud.google.com/cloud-build/docs/deploying-builds/deploy-gke) with it. You can return here to implement deployment with Cloud Build if you have credits left over after the course!
 
 Create a file .github/workflows/main.yaml. We'll want the workflow to do 3 things:
 
@@ -182,31 +182,40 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 ```
 
 This sets the environment for the job and triggers the [checkout action](https://github.com/actions/checkout) as the first step.
 
-Next we'll use some additional actions, mainly from [google-github-actions](https://github.com/google-github-actions/setup-gcloud) that are designed to help on deployments to Google Cloud.
+Next we'll use some additional actions, mainly from [google-github-actions](https://github.com/google-github-actions) that are designed to help on deployments to Google Cloud. We'll start with [authenticaton](https://github.com/google-github-actions/auth), followed by [setup](https://github.com/google-github-actions/setup-gcloud):
 
 ```yaml
 # ...
-- name: Set up Cloud SDK
-  uses: google-github-actions/setup-gcloud@master
-  with:
-    project_id: ${{ secrets.GKE_PROJECT }}
-    service_account_key: ${{ secrets.GKE_SA_KEY }}
-    export_default_credentials: true
+  - uses: google-github-actions/auth@v2
+    with:
+      credentials_json: '${{ secrets.GKE_SA_KEY }}'
+
+  - name: 'Set up Cloud SDK'
+    uses: google-github-actions/setup-gcloud@v2
+
+  - name: 'Use gcloud CLI'
+    run: gcloud info
 ```
 
-The secrets here are not from the environment variables but are included into the project from Github. Read their guide [here](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets).
+The secrets used in authentication are **not** from the environment variables but are included as environment secrets in the project GitHub:
 
-The GKE\_SA\_KEY is a service account key that is required to access the Google Cloud services - read their guide for it [here](https://cloud.google.com/iam/docs/creating-managing-service-account-keys). You will need to create a new service account and fetch its key.
+<img src="../img/ghasecret.png">
 
-These roles are more than enough to do the deployment. Give them to the service account:
+Read their [here](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets) more on GitHub secrets.
+
+The GKE\_SA\_KEY is a <i>service account key</i> that is required to access the Google Cloud services - read the guide for it [here](https://cloud.google.com/iam/docs/creating-managing-service-account-keys). You will need to create a new service account and fetch its key.
+
+Give these roles to your service account:
 
 - Kubernetes Engine Service Agent
 - Storage Admin
+- Artifact Registry Administrator
+- Artifact Registry Create-on-Push Repository Administrator
 
 After creating a service account for GKE called "github-actions" I created the key using gcloud:
 
@@ -216,18 +225,26 @@ $ gcloud iam service-accounts keys create ./private-key.json --iam-account=githu
 
 The entire JSON generated needs to be added to GKE\_SA\_KEY.
 
-Next, use _gcloud_ commands to configure Docker. This will enable us to push to Google Container Registry, which we'll use instead of Docker Hub. We could use Docker Hub if we wanted to do so, but GCR is an excellent option now that we have access to it. GCR is a lot more performant and has a low network latency. Cutting down on the time we spend moving images around will ensure our deployments are quick. Read more about it here <https://cloud.google.com/container-registry/>. Note that the registry is [not free](https://cloud.google.com/container-registry/pricing) and you'll probably want to delete the images from there during and after this course.
+Next, use _gcloud_ commands to configure Docker.
 
 ```yaml
 # ...
-- run: gcloud --quiet auth configure-docker
+  - run: gcloud --quiet auth configure-docker
 ```
 
-And then we'll set the kubectl access to the right cluster, as defined in the environment variables.
+This will enable us to push images to Google Container Registry, which we'll use instead of Docker Hub. We could use Docker Hub if we wanted to do so, but GCR is an excellent option now that we have access to it. GCR is a lot more performant and has a low network latency. Cutting down on the time we spend moving images around will ensure our deployments are quick. Read more about it here <https://cloud.google.com/container-registry/>. Note that the registry is [not free](https://cloud.google.com/container-registry/pricing) and you'll probably want to delete the images from there during and after this course.
+
+One more step is needed until we are ready to go, we still need to use action
+[get-gke-credentials](https://github.com/google-github-actions/get-gke-credentials) to get credentials to our Google Kubernetes cluster:
 
 ```yaml
 # ...
-- run: gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+  - name: 'Get GKE credentials'
+    uses: 'google-github-actions/get-gke-credentials@v2'
+    with:
+      cluster_name: '${{ env.GKE_CLUSTER }}'
+      project_id: '${{ env.PROJECT_ID }}'
+      location: '${{ env.GKE_ZONE }}'
 ```
 
 And finally let's write out the desired image with a tag. The image will be `gcr.io/PROJECT_ID/IMAGE:GITHUB_BRANCH-GITHUB_SHA`. And building the image:
@@ -250,24 +267,23 @@ Publish similarily:
     docker push "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA"
 ```
 
-And finally deployment. We'll setup Kustomize first:
+Last step is the deployment. We'll setup Kustomize first:
 
 ```yaml
 # ...
 - name: Set up Kustomize
-  uses: imranismail/setup-kustomize@v1
+  uses: imranismail/setup-kustomize@v2.1
 ```
 
-Now we can use Kustomize to set the image we want the pipeline to publish. I decided to change the name for this one to `gcr.io/PROJECT_ID/IMAGE`.
-After this we can use kustomize to build it. Here I pipe the output of `kustomize build .` to `kubectl apply`, if you are unsure what is happening you can output the `kustomize build .` and check what was built in the middle of the pipeline!
+Now we can use Kustomize to set the image we want the pipeline to publish. Here I pipe the output of `kustomize build .` to `kubectl apply`, if you are unsure what is happening you can output the `kustomize build .` and check what was built in the middle of the pipeline!
 
-Finally we'll preview the _rollout_ and confirm that the release was a success. Rollout will wait until the deployment has rolled out. Here we use the same name of the image, dwk-environments, as the deployment name so we can use the \$IMAGE environment variable.
+Finally we'll preview the [rollout](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_rollout/) and confirm that the release was a success. Rollout will wait until the deployment has rolled out. Here we use the same name of the image, dwk-environments, as the deployment name so we can use the \$IMAGE environment variable.
 
 ```yaml
 # ...
 - name: Deploy
   run: |-
-    kustomize edit set image gcr.io/PROJECT_ID/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
+    kustomize edit set image PROJECT/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
     kustomize build . | kubectl apply -f -
     kubectl rollout status deployment $IMAGE
     kubectl get services -o wide
@@ -309,7 +325,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ secrets.GKE_PROJECT }}
           service_account_key: ${{ secrets.GKE_SA_KEY }}
