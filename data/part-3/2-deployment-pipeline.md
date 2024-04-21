@@ -168,11 +168,12 @@ env:
   GKE_ZONE: europe-north1-b
   IMAGE: dwk-environments
   SERVICE: dwk-environments
+  BRANCH: ${{ github.ref_name }}
 ```
 
 We set the workflow to run whenever changes are pushed to the repository and set the environment variables accordingly - we'll need them later on.
 
-Next is adding the jobs. For simplicity we'll add everything into a single job that'll build, publish and deploy.
+Next is adding the jobs. For simplicity, we'll add everything into a single job that'll build, publish and deploy.
 
 ```yaml
 # ...
@@ -253,19 +254,17 @@ And finally let's write out the desired image with a tag. The image will be `gcr
 ```yaml
 # ...
 - name: Build
-  run: |-
-    docker build \
-      --tag "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA" \
-      .
+  run: docker build --tag "gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA" .
 ```
+
+We use the project name (from the env _$IMAGE_) as the image name and the tag is formed by concatenating the branch name, that comes from the env that we defined and the GitHub commit sha that is taken from env *$GITHUB_SHA* that is automatically provided by the workflow.
 
 Publish similarily:
 
 ```yaml
 # ...
 - name: Publish
-  run: |-
-    docker push "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA"
+  run: docker push "gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA"
 ```
 
 Last step is the deployment. We'll setup Kustomize first:
@@ -284,7 +283,7 @@ Finally we'll preview the [rollout](https://kubernetes.io/docs/reference/kubectl
 # ...
 - name: Deploy
   run: |-
-    kustomize edit set image PROJECT/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
+    kustomize edit set image PROJECT/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA
     kustomize build . | kubectl apply -f -
     kubectl rollout status deployment $SERVICE
     kubectl get services -o wide
@@ -304,7 +303,7 @@ Hints:
 
 A quite popular choice when using a deployment pipeline is having a separate environment for every branch - especially when using feature branching.
 
-Let's implement our own version of this. Let's extend the previously defined pipeline. Previously this was our final state:
+Let's implement our own version of this. Let's extend the previously defined pipeline. The current state of the pipeline looks as follows:
 
 **main.yaml**
 
@@ -319,74 +318,77 @@ env:
   GKE_CLUSTER: dwk-cluster
   GKE_ZONE: europe-north1-b
   IMAGE: dwk-environments
+  DEPLOYMENT: dwk-environments
+  BRANCH: ${{ github.ref_name }}
 
 jobs:
-  setup-build-publish-deploy:
-    name: Setup, Build, Publish, and Deploy
+  build-publish-deploy:
+    name: Build, Publish and Deploy
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+      - uses: google-github-actions/auth@v2
         with:
-          project_id: ${{ secrets.GKE_PROJECT }}
-          service_account_key: ${{ secrets.GKE_SA_KEY }}
-          export_default_credentials: true
+          credentials_json: '${{ secrets.GKE_SA_KEY }}'
 
-      # Configure Docker to use the gcloud command-line tool as a credential
-      # helper for authentication
-      - run: |-
-          gcloud --quiet auth configure-docker
-      # Get the GKE credentials so we can deploy to the cluster
-      - run: |-
-          gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
-      # Build the Docker image
-      - name: Build
-        run: |-
-          docker build \
-            --tag "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA" \
-            .
-      # Push the Docker image to Google Container Registry
-      - name: Publish
-        run: |-
-          docker push "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA"
+      - name: 'Set up Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
 
-      # Set up kustomize
+      - name: 'Use gcloud CLI'
+        run: gcloud info
+
+      - run: gcloud --quiet auth configure-docker
+
+      - name: 'Get GKE credentials'
+        uses: 'google-github-actions/get-gke-credentials@v2'
+        with:
+          cluster_name: '${{ env.GKE_CLUSTER }}'
+          project_id: '${{ env.PROJECT_ID }}'
+          location: '${{ env.GKE_ZONE }}'
+
+      - name: Build and publish
+        run: |-
+          docker build --tag "gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA" .
+          docker push "gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA"
+
       - name: Set up Kustomize
-        uses: imranismail/setup-kustomize@v1
+        uses: imranismail/setup-kustomize@v2
 
-      # Deploy the Docker image to the GKE cluster
       - name: Deploy
         run: |-
-          kustomize edit set image gcr.io/PROJECT_ID/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
+          kustomize edit set image PROJECT/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA
           kustomize build . | kubectl apply -f -
-          kubectl rollout status deployment $IMAGE
+          kubectl rollout status deployment $DEPLOYMENT
           kubectl get services -o wide
 ```
 
 What we'll want to do is deploy each branch into a separate namespace so that each branch has its own separate environment.
-Kustomize has a method to set the namespace. _\${GITHUB_REF#refs/heads/}_ will be the branch name.
+
+The namespace can be changed with kustomize:
+
 
 ```console
 kustomize edit set namespace ${GITHUB_REF#refs/heads/}
 ```
 
-But this will error as there's no namespace defined. So we need to add a creation of a namespace
+With this command, the namespace name will be equal to the branch name.
+
+If the namespace is not defined, the command causes an error, so we need to create it:
 
 ```console
 kubectl create namespace ${GITHUB_REF#refs/heads/} || true
 ```
 
-But since now we're namespaced the rollout status will fail. So let's set the namespace to be used
+We also need to take the namespace to use with command:
 
 ```console
 kubectl config set-context --current --namespace=${GITHUB_REF#refs/heads/}
 ```
 
-So in the correct order and inside the Deploy:
+So the deploy step changes as follows:
 
 ```yaml
 - name: Deploy
@@ -394,9 +396,10 @@ So in the correct order and inside the Deploy:
     kubectl create namespace ${GITHUB_REF#refs/heads/} || true
     kubectl config set-context --current --namespace=${GITHUB_REF#refs/heads/}
     kustomize edit set namespace ${GITHUB_REF#refs/heads/}
-    kustomize edit set image gcr.io/PROJECT_ID/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
-    kubectl apply -k .
-    kubectl rollout status deployment $IMAGE
+    kustomize edit set image PROJECT/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
+    kustomize build . | kubectl apply -f -
+    kubectl rollout status deployment $DEPLOYMENT
+    kubectl get services -o wide
 ```
 
 To test this, edit the index.html and publish the changes to a new branch.
@@ -405,7 +408,7 @@ The next step would be to configure the domain names for each branch so that we'
 
 <exercise name='Exercise 3.04: Project v1.4.1'>
 
-Improve the deployment so that each branch creates its own environment.
+Improve the deployment so that each branch creates its a separate environment. The main branch should still be deployed in the _default_ namespace.
 
 </exercise>
 
