@@ -235,5 +235,7 @@ Now the address here will be the way to access the application. This will take a
 
   "Ping-pong" will have to respond from /pingpong path. This may require you to rewrite parts of the code.
 
+  Note that Ingress expects a service to give a successful response in the path / even if the service is mapped to some other path!
+
 </exercise>
 

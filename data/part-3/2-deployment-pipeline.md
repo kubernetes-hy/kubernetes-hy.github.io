@@ -167,6 +167,7 @@ env:
   GKE_CLUSTER: dwk-cluster
   GKE_ZONE: europe-north1-b
   IMAGE: dwk-environments
+  SERVICE: dwk-environments
 ```
 
 We set the workflow to run whenever changes are pushed to the repository and set the environment variables accordingly - we'll need them later on.
@@ -285,13 +286,17 @@ Finally we'll preview the [rollout](https://kubernetes.io/docs/reference/kubectl
   run: |-
     kustomize edit set image PROJECT/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
     kustomize build . | kubectl apply -f -
-    kubectl rollout status deployment $IMAGE
+    kubectl rollout status deployment $SERVICE
     kubectl get services -o wide
 ```
 
 <exercise name='Exercise 3.03: Project v1.4'>
 
 Setup automatic deployment for the project as well.
+
+Hints:
+- If your pod uses a Persistent Volume Claim of type the _ReadWriteOnce_ you may need to consider the deployment [strategy](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy) since the default (RollingUpdate) may cause problems. Read more from the [documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy)
+- If you are using Ingres, remember that it expects a service to give a successful response in the path / even if the service is mapped to some other path!
 
 </exercise>
 
