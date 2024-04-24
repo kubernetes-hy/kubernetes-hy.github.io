@@ -25,27 +25,35 @@ Both solutions are widely used.
 
 <exercise name='Exercise 3.06: DBaaS vs DIY'>
 
-  Do a pros/cons comparison of the solutions in terms of meaningful differences. This includes **at least** the required work and cost to initialize as well as maintain. Backup methods and their ease of usage should be considered as well.
+  Do a pros/cons comparison of the solutions in terms of meaningful differences. This includes **at least** the required work and costs to initialize as well as the maintenance. Backup methods and their ease of usage should be considered as well.
 
-  Set the list into the README of the project.
+  Write your answer in the README of the project.
 
 </exercise>
 
-<exercise name='Exercise 3.07: Commitment'>
+<exercise name='Exercise 3.07: Backup'>
 
-  Use Google Cloud SQL or Postgres with PersistentVolumeClaims in your project. Give a reasoning to which you chose in the README. There are no non-valid reasons, an excellent would be "because it sounded easier".
+In [part 2](/part-2/4-statefulsets-and-jobs#jobs-and-cronjobs) we did a Job that made a backup of our Database using the command *pg_dump*. Unfortunately, the backup was not saved anywhere. Create now a CronJob that makes a backup of your database (once per 24 hours) and saves it to [Google Object Storage](https://cloud.google.com/storage).
+
+In this exercise, you can create the secret for the cloud access from the command line, thus, there is no need to create it in the GitHub action.
+
+When the cron job is working, you can e.g. download the backups using the Google Cloud Console:
+
+<img src="../img/bucket.png">
 
 </exercise>
 
 ## Scaling ##
 
-Scaling can be either horizontal scaling or vertical scaling. Vertical scaling is the act of increasing resources available to a pod or a node. Horizontal scaling is what we most often mean when talking about scaling, increasing the number of pods or nodes. We'll focus on horizontal scaling.
+Scaling can be either horizontal scaling or vertical scaling. Vertical scaling is the act of increasing resources available to a pod or a node. Horizontal scaling is what we most often mean when talking about scaling: increasing the number of pods or nodes. We'll now focus on horizontal scaling.
 
 ### Scaling pods ###
 
-There are multiple reasons for wanting to scale an application. The most common reason is that the number of requests an application receives exceeds the number of requests that can be processed. Limitations are often either the amount of requests that a framework is intended to handle or the actual CPU or RAM.
+There are multiple reasons for scaling an application. The most common reason is that the number of requests an application receives exceeds the number of requests that can be processed. Limitations are often either the amount of requests that a framework is intended to handle or the actual CPU or RAM.
 
-I've prepared an application that uses up CPU resources here: `jakousa/dwk-app7:e11a700350aede132b62d3b5fd63c05d6b976394`. The application accepts a query parameter to increase the time until freeing CPU via "?fibos=25", you should use values between 15 and 30.
+I've prepared an [application](https://github.com/kubernetes-hy/material-example/tree/master/app7) that is rather CPU-intensive. There is a readily compiled Docker image `jakousa/dwk-app7:e11a700350aede132b62d3b5fd63c05d6b976394`. The application accepts a query parameter _?fibos=25_  that is used to control how long the computation is. You should use values between 15 and 30.
+
+Here are the configuration to get the app up and running:
 
 **deployment.yaml**
 
@@ -73,7 +81,7 @@ spec:
               memory: "100Mi"
 ```
 
-Note that finally we have set the resource limits for a Deployment as well. The suffix of the CPU limit "m" stands for "thousandth of a core". Thus `150m` equals 15% of a single CPU core (`150/1000=0,15`).
+Note that finally, we have set the [resource limits](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) for a Deployment as well. The suffix of the CPU limit "m" stands for "thousandth of a core". Thus `150m` equals 15% of a single CPU core (`150/1000=0,15`).
 
 The service looks completely familiar by now.
 
@@ -94,7 +102,7 @@ spec:
       targetPort: 3001
 ```
 
-Next we have _HorizontalPodAutoscaler_. This is an exciting new Resource for us to work with.
+Next we have [HorizontalPodAutoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/). This is an exciting new Resource for us to work with.
 
 **horizontalpodautoscaler.yaml**
 
@@ -114,6 +122,8 @@ spec:
 ```
 
 HorizontalPodAutoscaler automatically scales pods horizontally. The yaml here defines what is the target Deployment, how many minimum replicas and what is the maximum replica count. The target CPU Utilization is defined as well. If the CPU utilization exceeds the target then an additional replica is created until the max number of replicas.
+
+Let us now try what happens:
 
 ```console
 $ kubectl top pod -l app=cpushredder
@@ -168,7 +178,7 @@ Figuring out autoscaling with HorizontalPodAutoscalers can be one of the more ch
 
 <exercise name='Exercise 3.09: Resource limits'>
 
-  Set sensible resource limits for the "Ping-pong" and "Log output" applications. The exact values are not important. Test what works.
+  Set sensible resource limits for the Ping-pong and Log output applications. The exact values are not important. Test what works.
 
 </exercise>
 
