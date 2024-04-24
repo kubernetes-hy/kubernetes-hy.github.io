@@ -196,7 +196,7 @@ For a more robust cluster see examples on creation here: <https://cloud.google.c
 
 <img src="../img/gke_scaling.png">
 
-Cluster autoscaling may disrupt pods by moving them around as the number of nodes increases or decreases. To solve possible issues with this the resource [PodDisruptionBudget](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#how-disruption-budgets-work) with which the requirements for a pod can be defined via two of the fields: _minAvailable_ and _maxUnavailable_.
+Cluster autoscaling may disrupt pods by moving them around as the number of nodes increases or decreases. To solve possible issues with this, the resource [PodDisruptionBudget](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#how-disruption-budgets-work) can be used. With the resource, the requirements for a pod can be defined via two of the fields: _minAvailable_ and _maxUnavailable_.
 
 **poddisruptionbudget.yaml**
 
@@ -212,7 +212,7 @@ spec:
       app: example-app
 ```
 
-This would ensure that no more than half of the pods can be unavailable. The Kubernetes documentation states "The budget can only protect against voluntary evictions, not all causes of unavailability."
+This configuration would ensure that no more than half of the pods can be unavailable. The Kubernetes documentation states "The budget can only protect against voluntary evictions, not all causes of unavailability."
 
 In addition to scaling to multiple nodes (Horizontal scaling), you can also scale individual nodes with [VerticalPodAutoscaler](https://cloud.google.com/kubernetes-engine/docs/concepts/verticalpodautoscaler). These help ensure you are always using 100% of the resources you pay for.
 
