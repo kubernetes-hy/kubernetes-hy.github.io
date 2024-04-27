@@ -6,7 +6,7 @@ hidden: false
 
 <text-box variant='learningObjectives' name='Learning Objectives'>
 
-After this section you can
+After this section, you can
 
 - Compare update strategies
 
@@ -16,18 +16,18 @@ After this section you can
 
 </text-box>
 
-In the last part we did automated updates with a deployment pipeline. The update *just worked* but we have no idea how the update actually happened, other than that a pod was changed, and we can make the update process safer to help us reach a higher number of [nines](https://en.wikipedia.org/wiki/High_availability).
+In the last part, we did automated updates with a deployment pipeline. The update *just worked* but we have no idea how the update actually happened, other than that a pod was changed. Let us now look how we can make the update process safer to help us reach a higher number of [nines](https://en.wikipedia.org/wiki/High_availability) in the availability.
 
-There are multiple update/deployment/release strategies. We will focus on two of them and how to implement them.
+There are multiple update/deployment/release strategies. We will focus on two of them:
 
 - Rolling update
 - Canary release
 
-Both of these update strategies are designed to make sure that the application works during and after an update. Rather than updating every pod at the same time the idea is to update the pods one at a time and confirm that the application works.
+Both of these update strategies are designed to make sure that the application works during and after an update. Rather than updating every pod at the same time, the idea is to update the pods one at a time and confirm that the application works.
 
 ### Rolling update ###
 
-By default Kubernetes initiates a "rolling update" when we change the image. That means that every pod is updated sequentially. The rolling update is a great default since it enables the application to be available during the update. If we decide to push an image that does not work the update will automatically stop.
+By default, Kubernetes initiates a [rolling update](https://kubernetes.io/docs/concepts/workloads/management/#updating-your-application-without-an-outage) when we change the image. That means that every pod is updated sequentially. The rolling update is a great default since it enables the application to be available during the update. If we decide to push an image that does not work the update will automatically stop.
 
 I've prepared an application with 5 versions here. The one with tag v1 works always, v2 never works, v3 works 90% of the time, v4 will die after 20 seconds and v5 works always.
 
@@ -73,7 +73,7 @@ $ kubectl get po --watch
 ...
 ```
 
-You can see the rolling update performed but unfortunately the application no longer works. The application is running, it's just that there's a bug which prevents it from working correctly. How do we communicate this malfunction outside the application? This is where [*ReadinessProbes*](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) come in.
+You can see the rolling update performed but unfortunately, the application no longer works. The application is running, it's just that there's a bug that prevents it from working correctly. How do we communicate this malfunction outside the application? This is where [*ReadinessProbes*](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) come in.
 
 **Kubernetes Best Practices - Kubernetes Health Checks with Readiness and Liveness Probes**
 
@@ -128,11 +128,52 @@ $ kubectl get po
 
 Here three of the pods are completely functional, one of v1 was dropped to make way for the v2 ones but since they do not work they are never READY and the update can not continue.
 
+### GKE ingress and pod readiness
+
+If you are using Ingress in your app, you should note that the ReadinessProbe does not work quite like one would expect, requests get also routed to pods that are not _ready_. The documentation [recommends](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress#interpreted_hc) the following:
+
+_If serving Pods for your Service contain multiple containers, or if you're using the GKE Enterprise Ingress controller, you should use a BackendConfig CRD to define health check parameters._ So if you want to use the GKE default ingress, [BackendConfig](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress#direct_hc_instead) should be defined. Instead of using a provider-specific Ingress, the
+better option is to use e.g. [ingress-nginx](https://github.com/kubernetes/ingress-nginx/tree/main) that happens similarly no matter where it is run.
+
+Using _ingress-nginx_ is easy. First, it needs to be installed by running the following commands:
+
+```bash
+$ repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+$ helm repo update
+$ helm install nginx-ingress ingress-nginx/ingress-nginx
+```
+
+In the [ingress spec](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/#IngressSpec) the _ingressClassName_ specifies the Ingress controller that is used:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ping-pong-ingress
+spec:
+  ingressClassName: nginx # this is added
+  rules:
+  - http:
+      # tules are here
+```
+
+The available ingress controllers (besides the default) can be checked with _kubectl_ as follows:
+
+```bash
+$ kubectl get IngressClass
+NAME    CONTROLLER             PARAMETERS   AGE
+nginx   k8s.io/ingress-nginx   <none>       3h38m
+```
+
+There is a lesson to learn:
+
+<img src="../img/jami-ingress.png">
+
 <exercise name='Exercise 4.01: Readiness Probe'>
 
-  Create a ReadinessProbe for "Ping-pong" application. It should be ready when it has a connection to database.
+  Create a ReadinessProbe for the Ping-pong application. It should be ready when it has a connection to the database.
 
-  And another ReadinessProbe for "Log output" application. It should be ready when it can receive data from "Ping-pong" application.
+  And another ReadinessProbe for Log output application. It should be ready when it can receive data from the Ping-pong application.
 
   Test that it works by applying everything but the database statefulset. The output of `kubectl get po` should look like this before the database is available:
 
@@ -142,7 +183,7 @@ logoutput-dep-7f49547cf4-ttj4f   1/2     Running   0          21s
 pingpong-dep-9b698d6fb-jdgq9     0/1     Running   0          21s
   ```
 
-  Adding the database should automatically move the READY states to 2/2 and 1/1 for "Log output" and "Ping-pong" respectively.
+  Adding the database should automatically move the READY states to 2/2 and 1/1 for Log output and Ping-pong respectively.
 
 </exercise>
 
@@ -242,13 +283,13 @@ $ kubectl get po
 
 At least something is working!
 
-A *StartupProbe* can delay the liveness probe so that an application with a longer startup can take its time. You may require it in real life but is not discussed further on this course
+If your app is slow to start, a [StartupProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes) can be used to delay the liveness probe and prevent it from firing prematurely. You may require it in real life but is not discussed further in this course
 
 <exercise name='Exercise 4.02: Project v1.7'>
 
   Create the required Probes and endpoint for the project to ensure that it's working and connected to a database.
 
-  Test that it's indeed working with a version without database access, for example by supplying a wrong database url or credentials.
+  Test that the probe indeed works with a version without database access, for example by supplying a wrong database URL or credentials.
 
 </exercise>
 
