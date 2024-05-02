@@ -194,7 +194,7 @@ $ kubectl apply -f deployment.yaml
   deployment.apps/flaky-update-dep configured
 ```
 
-Now the ReadinessProbe may pass for the first 20 seconds but soon enough every pod will break. Unfortunately *ReadinessProbe* cannot do anything about it, the deploy was successful but the application is buggy.
+Now the ReadinessProbe may pass for the first 20 seconds but soon enough every pod will break. Unfortunately *ReadinessProbe* cannot do anything about it, the deployment was successful but the application is buggy.
 
 ```console
 $ kubectl get po
@@ -270,7 +270,7 @@ $ kubectl apply -f deployment.yaml
   deployment.apps/flaky-update-dep configured
 ```
 
-After a while it may look something like this (if you're lucky).
+After a while, it may look something like this (if you're lucky).
 
 ```console
 $ kubectl get po
@@ -287,7 +287,7 @@ If your app is slow to start, a [StartupProbe](https://kubernetes.io/docs/tasks/
 
 <exercise name='Exercise 4.02: Project v1.7'>
 
-  Create the required Probes and endpoint for the project to ensure that it's working and connected to a database.
+  Create the required probes and endpoint for The Project to ensure that it's working and connected to a database.
 
   Test that the probe indeed works with a version without database access, for example by supplying a wrong database URL or credentials.
 
@@ -295,16 +295,16 @@ If your app is slow to start, a [StartupProbe](https://kubernetes.io/docs/tasks/
 
 ### Canary release ###
 
-With rolling updates, when including the Probes, we could create releases with no downtime for users. Sometimes this is not enough and you need to be able to do a partial release for some users and get data for the new / upcoming release. Canary release is the term used to describe a release strategy in which we introduce a subset of the users to a new version of the application. Then increasing the number of users in the new version until the old version is no longer used.
+With rolling updates, when including the Probes, we could create releases with no downtime for users. Sometimes this is not enough and you need to be able to do a _partial release_ for some users and get data for the upcoming release. [Canary release](https://martinfowler.com/bliki/CanaryRelease.html) is the term used to describe a release strategy in which we introduce a subset of the users to a new version of the application. When the confidence in the new release grows, the number of users in the new version can be increased until the old version is no longer used.
 
-At the moment of writing this Canary is not a strategy for deployments. This may be due to the ambiguity of the methods for canary release. We will use [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) to test one type of canary release:
+At the moment of writing this Canary is not a strategy for deployments that Kubernetes would provide out of the box. This may be due to the ambiguity of the methods for canary release. We will use [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) to test one type of canary release:
 
 ```console
 $ kubectl create namespace argo-rollouts
 $ kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
 ```
 
-Now we have a new resource "Rollout" available to us. The Rollout will replace our previously created deployment and enable us to use a new field:
+Now we have a new resource [Rollout](https://argoproj.github.io/argo-rollouts/migrating/) available to us. The Rollout will replace our previously created deployment and enable us to use a new field:
 
 **rollout.yaml**
 
@@ -349,13 +349,13 @@ spec:
                port: 3541
 ```
 
-The above strategy will first move 25% ([*setWeight*](https://argoproj.github.io/argo-rollouts/features/canary/#overview)) of the pods to a new version (in our case 1 pod) after which it will wait for 30 seconds, move to 50% of pods and then wait for 30 seconds until every pod is updated. A kubectl plugin from Argo also offers us `promote` command to enable us to pause the rollout indefinitely and then use the promote to move forward.
+The above strategy will first move 25% ([*setWeight*](https://argoproj.github.io/argo-rollouts/features/canary/#overview)) of the pods to a new version (in our case 1 pod) after which it will wait for 30 seconds, move to 50% of pods and then wait for 30 seconds until every pod is updated. A kubectl plugin from Argo also offers us [promote](https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_promote/) command to enable us to pause the rollout indefinitely and then use the promote to move forward.
 
-There are other options such as the [*maxUnavailable*](https://argoproj.github.io/argo-rollouts/features/bluegreen/#maxunavailable) but the defaults will work for us. However, simply rolling slowly to production will not be enough for a canary deployment. Just like with rolling updates we need to know the status of the application.
+There are other options such as the [*maxUnavailable*](https://argoproj.github.io/argo-rollouts/features/bluegreen/#maxunavailable) but the defaults will work for us. However, simply rolling slowly to production will not be enough for a canary deployment. Just like with rolling updates _we need to know the status of the application_.
 
-With another custom resource we've already installed with Argo Rollouts called ["AnalysisTemplate"](https://argoproj.github.io/argo-rollouts/architecture/#analysistemplate-and-analysisrun) we will be able to define a test that doesn't let the broken versions through.
+With another custom resource we've already installed with Argo Rollouts called [AnalysisTemplate](https://argoproj.github.io/argo-rollouts/architecture/#analysistemplate-and-analysisrun) we will be able to define a test that doesn't let the broken versions through.
 
-If you don't have Prometheus available go back to part 2 for a reminder. We'll have the analysis done as the version is updating. If the analysis fails it will automatically cancel the rollout.
+Let us extend our rollout with an analysis:
 
 ```yaml
   ...
@@ -366,49 +366,46 @@ If you don't have Prometheus available go back to part 2 for a reminder. We'll h
       - analysis:
           templates:
           - templateName: restart-rate
-  template:
+    # ...
   ...
 ```
 
+The analysis will be using a template called _restart-rate_. Next, we have to define how the analysis will be done. For that, we shall need Prometheus which we briefly used in [part 2](/part-2/5-monitoring).
+
 <exercise name='Exercise 4.03: Prometheus'>
 
-  We've been using Prometheus since part 2, but basically we've only heard the name and seen some nice graphs on Grafana. Let's do a single hands-on query to learn more.
+  Ok, we started up Prometheus in part 2, but we have barely scratched the surface. Let's do a single hands-on query to learn more.
 
-  Start a Prometheus with helm (see part 2) and use port-forward to access the gui website. Port 9090 is the default for Prometheus:
+  Start now Prometheus with Helm and use port-forward to access the GUI website. Port 9090 is the default for Prometheus:
 
 ```console
 $ kubectl -n prometheus get pods
  NAME                                                              READY   STATUS    RESTARTS   AGE
- kube-prometheus-stack-1602-operator-557c9c4f5-wbsqc               2/2     Running   0          17h
- kube-prometheus-stack-1602180058-prometheus-node-exporter-tr7ns   1/1     Running   0          17h
- kube-prometheus-stack-1602180058-grafana-59cd48d794-4459m         2/2     Running   0          17h
- prometheus-kube-prometheus-stack-1602-prometheus-0                3/3     Running   1          17h
- kube-prometheus-stack-1602180058-prometheus-node-exporter-ft7dg   1/1     Running   0          17h
- kube-prometheus-stack-1602180058-prometheus-node-exporter-nt8cp   1/1     Running   0          17h
- kube-prometheus-stack-1602180058-kube-state-metrics-55dccdkkz6w   1/1     Running   0          17h
- alertmanager-kube-prometheus-stack-1602-alertmanager-0            2/2     Running   0          17h
+  alertmanager-kube-prometheus-stack-1714-alertmanager-0            2/2     Running   0          3h19m
+  kube-prometheus-stack-1714-operator-94c596dbd-n5pcl               1/1     Running   0          3h19m
+  kube-prometheus-stack-1714644114-grafana-54cbbc4c46-m26f6         3/3     Running   0          3h19m
+  kube-prometheus-stack-1714644114-kube-state-metrics-7cb796tpjbd   1/1     Running   0          3h19m
+  kube-prometheus-stack-1714644114-prometheus-node-exporter-kdpln   1/1     Running   0          3h19m
+  kube-prometheus-stack-1714644114-prometheus-node-exporter-sp9pg   1/1     Running   0          3h19m
+  kube-prometheus-stack-1714644114-prometheus-node-exporter-vbbjk   1/1     Running   0          3h19m
+  prometheus-kube-prometheus-stack-1714-prometheus-0                2/2     Running   0          3h19m
 
-$ kubectl -n prometheus port-forward prometheus-kube-prometheus-stack-1602-prometheus-0 9090:9090
+$ kubectl -n prometheus port-forward prometheus-kube-prometheus-stack-1714-prometheus-0 9090:9090
   Forwarding from 127.0.0.1:9090 -> 9090
   Forwarding from [::1]:9090 -> 9090
 ```
 
-  And now accessing [http://localhost:9090](http://localhost:9090) will allow us to write queries. **Write a query** that shows the number of pods created by StatefulSets in "prometheus" namespace. For the above setup the "Value" should be 2 different pods. Something similar:
+  And now accessing [http://localhost:9090](http://localhost:9090) will allow us to write queries.
 
-  <table>
-    <thead>
-      <tr><td>Element</td><td>Value</td></tr>
-    </thead>
-    <tbody>
-      <tr><td>Scalar</td><td>2</td></tr>
-    </tbody>
-  </table>
+  **Write a query** that shows the number of pods created by StatefulSets in _prometheus_ namespace. For the above setup the _Value_ should be 3 different pods:
+
+<img src="../img/prometheus-p4.png">
 
   Query for "kube\_pod\_info" should have the required fields to filter through. See [documentation](https://prometheus.io/docs/prometheus/latest/querying/basics/) for help with querying.
 
 </exercise>
 
-The CRD (Custom Resource Definition) AnalysisTemplate will, in our case, use Prometheus and send a query. The query result is then compared to a preset value. In this simplified case if the number of overall restarts over the last 2 minutes is higher than two it will fail the analysis. *initialDelay* will ensure that the test is not run until the data required is gathered. Note that this is not a robust test as the production version may crash and prevent the update even if the update itself is working correctly. The *AnalysisTemplate* is not dependant on Prometheus and could use a different source, such as a JSON endpoint, instead.
+The AnalysisTemplate will, in our case, use Prometheus to query the state of the deployment. The query result is then compared to a preset value. In this simplified case if the number of overall restarts over the last 2 minutes is higher than two, it will fail the analysis. *initialDelay* will ensure that the test is not run until the data required is gathered. The template looks as follows:
 
 **analysistemplate.yaml**
 
@@ -432,13 +429,15 @@ spec:
           )
 ```
 
-With the new Rollout and AnalysisTemplate we can safely try to deploy any version. Deploy for v2 is prevented with the Probes we set up. Deploy for v3 will automatically roll back when it notices that it has random crashes. And v4 will also fail. The short 2 minutes to test may still let a version pass. With more steps and pauses for analysis and more robust tests we could be more confident in our solution. Use `kubectl describe ar flaky-update-dep-6d5669dc9f-2-1` to get info for a specific AnalysisRun.
+With the new Rollout and AnalysisTemplate, we can safely try to deploy any version. Deploy for v2 is prevented with the Probes we set up. Deploy for v3 will automatically roll back when it notices that it has random crashes. The v4 will also eventually fail but the short 2 minutes to test may still let a version to get depolyed. With more steps and pauses for analysis and more robust tests, we could be more confident in our solution. Use `kubectl describe ar flaky-update-dep-6d5669dc9f-2-1` to get info for a specific AnalysisRun.
+
+In general, the *AnalysisTemplate* is not dependent on Prometheus and could use a different source, such as a JSON endpoint, instead.
 
 <exercise name='Exercise 4.04: Project v1.8'>
 
-  Create an AnalysisTemplate for the project that will follow the cpu usage of all containers in the namespace.
+  Create an AnalysisTemplate for The Project that will follow the VPU usage of all containers in the namespace.
 
-  If the CPU usage **rate** sum for the namespace increases above a set value (you may choose a good hardcoded value for your project, may vary) within 10 minutes revert the update.
+  If the CPU usage **rate** sum for the namespace increases above a set value (you may choose a good hardcoded value for your project) within 10 minutes revert the update.
 
   Make sure that the application doesn't get updated if the value is set too low.
 
@@ -446,7 +445,7 @@ With the new Rollout and AnalysisTemplate we can safely try to deploy any versio
 
 ### Other deployment strategies ###
 
-Kubernetes supports Recreate strategy which takes down the previous pods and replaces everything with the updated one. This creates a moment of downtime for the application but ensures that different versions are not running at the same time. Argo Rollouts supports BlueGreen strategy, in which a new version is run side by side to the new one but traffic is switched between the two at a certain point, such as after running update scripts or after your QA team has approved the new version.
+Kubernetes supports [Recreate](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#recreate-deployment) strategy which takes down the previous pods and replaces everything with the updated one. This creates a moment of downtime for the application but ensures that different versions are not running at the same time. Argo Rollouts supports [BlueGreen](https://argoproj.github.io/argo-rollouts/features/bluegreen/) strategy, in which a new version is run side by side to the new one but traffic is switched between the two at a certain point, such as after running update scripts or after your QA team has approved the new version.
 
 <exercise name='Exercise 4.05: Project v1.9'>
 
