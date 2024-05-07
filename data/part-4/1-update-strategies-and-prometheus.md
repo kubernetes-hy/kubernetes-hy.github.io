@@ -349,7 +349,7 @@ spec:
                port: 3541
 ```
 
-The above strategy will first move 25% ([*setWeight*](https://argoproj.github.io/argo-rollouts/features/canary/#overview)) of the pods to a new version (in our case 1 pod) after which it will wait for 30 seconds, move to 50% of pods and then wait for 30 seconds until every pod is updated. A kubectl plugin from Argo also offers us [promote](https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_promote/) command to enable us to pause the rollout indefinitely and then use the promote to move forward.
+The above strategy will first move 25% ([*setWeight*](https://argoproj.github.io/argo-rollouts/features/canary/#overview)) of the pods to a new version (in our case 1 pod) after which it will wait for 30 seconds, move to 50% of pods and then wait for 30 seconds until every pod is updated. The [kubectl plugin](https://argoproj.github.io/argo-rollouts/features/kubectl-plugin/) from Argo also offers us [promote](https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_promote/) command to enable us to pause the rollout indefinitely and then use the promote to move forward.
 
 There are other options such as the [*maxUnavailable*](https://argoproj.github.io/argo-rollouts/features/bluegreen/#maxunavailable) but the defaults will work for us. However, simply rolling slowly to production will not be enough for a canary deployment. Just like with rolling updates _we need to know the status of the application_.
 
@@ -405,7 +405,7 @@ $ kubectl -n prometheus port-forward prometheus-kube-prometheus-stack-1714-prome
 
 </exercise>
 
-The AnalysisTemplate will, in our case, use Prometheus to query the state of the deployment. The query result is then compared to a preset value. In this simplified case if the number of overall restarts over the last 2 minutes is higher than two, it will fail the analysis. *initialDelay* will ensure that the test is not run until the data required is gathered. The template looks as follows:
+The AnalysisTemplate will, in our case, use Prometheus to query the state of the deployment. The query result is then compared to a preset value. In this simplified case, if the number of overall restarts over the last 2 minutes is higher than two, it will fail the analysis. *initialDelay* will ensure that the test is not run until the data required is gathered. The template looks as follows:
 
 **analysistemplate.yaml**
 
@@ -429,13 +429,23 @@ spec:
           )
 ```
 
-With the new Rollout and AnalysisTemplate, we can safely try to deploy any version. Deploy for v2 is prevented with the Probes we set up. Deploy for v3 will automatically roll back when it notices that it has random crashes. The v4 will also eventually fail but the short 2 minutes to test may still let a version to get depolyed. With more steps and pauses for analysis and more robust tests, we could be more confident in our solution. Use `kubectl describe ar flaky-update-dep-6d5669dc9f-2-1` to get info for a specific AnalysisRun.
+With the new Rollout and AnalysisTemplate, we can safely try to deploy any version. Deploy for v2 is prevented with the Probes we set up. Deploy for v3 will automatically roll back when it notices that it has random crashes. The v4 will also eventually fail but the short 2 minutes to test may still let a version get deployed.
+
+The Argo Rollouts [kubectl plugin](https://argoproj.github.io/argo-rollouts/features/kubectl-plugin/) allows you to visualize the Rollout and its related resources. To watch the Rollout as it deploys, we can run it watch mode:
+
+```bash
+kubectl argo rollouts get rollout flaky-update-dep --watch
+```
+
+<img src="../img/rollout.png">
+
+Besides the pods, we see here also [AnalysisRun](https://argoproj.github.io/argo-rollouts/architecture/#analysistemplate-and-analysisrun) that is the instance of the test being run. You might also want to try Argo Rollouts [dashboard](https://argoproj.github.io/argo-rollouts/dashboard/) which gives even fancier visualization of the state of your rollouts.
 
 In general, the *AnalysisTemplate* is not dependent on Prometheus and could use a different source, such as a JSON endpoint, instead.
 
 <exercise name='Exercise 4.04: Project v1.8'>
 
-  Create an AnalysisTemplate for The Project that will follow the VPU usage of all containers in the namespace.
+  Create an AnalysisTemplate for The Project that will follow the CPU usage of all containers in the namespace.
 
   If the CPU usage **rate** sum for the namespace increases above a set value (you may choose a good hardcoded value for your project) within 10 minutes revert the update.
 
