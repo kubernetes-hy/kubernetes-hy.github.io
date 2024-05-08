@@ -6,23 +6,25 @@ hidden: false
 
 <text-box variant='learningObjectives' name='Learning Objectives'>
 
-After this section you can
+After this section, you can
 
 - Create a complex microservice architecture with NATS as the messaging system
 
 </text-box>
 
-Message Queues are a method for communication between services. They have a wide range of use cases and are helpful when you want to scale applications. A number of HTTP REST API services that want to communicate with each other require that the services know each other’s addresses. Whereas when using message queues, messages are sent to and received from the message queue, respectively.
+[Message queues](https://en.wikipedia.org/wiki/Message_queue) are a method for communication between services. They have a wide range of use cases and are helpful when you want to scale applications. A number of HTTP REST API services that want to communicate with each other require that the services know each other’s addresses. Whereas when using message queues, messages are sent to and received from the message queue, respectively.
 
-The section headline "Message Queues" can unfortunately be a little bit misleading. We will be using [NATS](https://docs.nats.io/), a "messaging system", to explore the benefits of messaging. Before we get started we will need to discuss the differences between NATS and a more conventional message queue.
+In this section we will be using a messaging system called [NATS](https://docs.nats.io/), to explore the benefits of messaging. Before we get started we will have a look at the basics of NATS.
 
-With NATS we can implement "at-most-once" messaging between our services. Conventionally message queues can persist the messages until another service consumes it. For example, in a case where none of the handlers for a message are available. "NATS Streaming", or STAN, is the opposite of NATS and would offer us "at-least-once" messaging with persistence.
+In NATS applications are communicating by sending and receiving messages. These messages are addressed and identified by [subjects](https://docs.nats.io/nats-concepts/subjects). The sender _publishes_ the message with a subject. The receivers _subscribe_ to subjects to get the published messages. In the default [publish-subscribe](https://docs.nats.io/nats-concepts/core-nats/pubsub) model of operation, all the subscribers of the subject receive the published message. It is also possible to use a [queue](https://docs.nats.io/nats-concepts/core-nats/queue) model, where each published message is given just to **one** subscriber.
 
-This in mind we can design our first application that uses messages for communication.
+NATS provides some different message delivery semantics or modes of operation. The basic functionality provided by [Core NATS](https://docs.nats.io/nats-concepts/core-nats) is _at most once_ messaging: if no subscribers are listening on the subject (no subject match), or are not active when the message is sent, the message is not received. By using the [Jetstream](https://docs.nats.io/nats-concepts/jetstream) functionality, it is also possible to achieve _at least once_ or _exactly once_ messaging with persistence.
 
-We have a data set of 100 000 JSON objects that we need to do some heavy processing on and then save the processed data. Unfortunately processing a single json object takes so long that processing all of the data would require hours of work. To solve this I've split the application into smaller services that we can scale individually.
+With these in mind, we can design our first application that uses messaging for communication.
 
-The application is in 3 parts, for simplification the saving to a database and fetching from external API are omitted:
+We have a data set of 100000 JSON objects that we need to do some heavy processing on and then save the processed data. Unfortunately processing a single JSON object takes so long that processing all of the data would require hours of work. To solve this I've split the application into smaller services that we can scale individually.
+
+The [application](https://github.com/kubernetes-hy/material-example/tree/master/app9) is divided in 3 parts:
 
 - Fetcher, which fetches unprocessed data and passes it to NATS.
 - Mapper, which processes the data from NATS and after processing sends it back to NATS.
@@ -30,7 +32,56 @@ The application is in 3 parts, for simplification the saving to a database and f
 
 <img src="../img/app9-plan.png">
 
-**deployment.yaml**
+As mentioned the messaging in NATS is centered around _subjects_. In general, there is one subject per purpose. The app uses four subjects:
+
+<img src="../img/nats2.png">
+
+Fetcher splits the data into chunks of 100 objects and keeps a record of which chunks have not been processed. The application is designed so that the Fetcher can not be scaled.
+
+The Fetcher subscribes to subject *mapper_status* and will wait for a Mapper to publish a message confirming that it's ready to process data. When the Fetcher receives this information, it publishes a chunk of data to subject *mapper_data* and starts again from the beginning.
+
+As mentioned, when a mapper is ready to process more data, it publishes the info of availability to subject *mapper_status*. It also subscribes to subject *mapper_data*. When the Mapper gets a message, it processes it and publishes the processed data to subject *saver_data* and starts all over again. The subject *mapper_data* operates in [queue](https://docs.nats.io/nats-concepts/core-nats/queue) mode so each published message is received by only one Mapper.
+
+The Saver subscribes to subject *saver_data*. Once receiving a message it saves it and publishes an acknowledgement message in the subject *processed_data*. The Fetcher subscribes to this subject and keeps track of what chunks of data have been saved. So even if any part of the application crashes all of the data will eventually be processed and saved. Also the subject *saver_data* is used in queue mode so each chunk of processed data is taken care of only one Saver.
+
+For simplicity, saving to a database and fetching from external API are omitted from our app.
+
+Before deploying the app, we follow [the documentation](https://docs.nats.io/running-a-nats-service/nats-kubernetes) and use Helm to install NATS into our cluster.
+
+```console
+$ helm repo add nats https://nats-io.github.io/k8s/helm/charts/
+  ...
+$ helm repo update
+...
+$ helm install my-nats nats/nats
+  NAME: my-nats
+  LAST DEPLOYED: Wed May  8 08:37:29 2024
+  NAMESPACE: default
+  STATUS: deployed
+  REVISION: 1
+```
+
+The HELM chart has also installed a *nats-box* pod that contains the NATS [cli](https://docs.nats.io/using-nats/nats-tools/nats_cli):
+
+```bash
+$ app9 kubectl get po
+NAME                                                     READY   STATUS    RESTARTS   AGE
+my-nats-0                                                2/2     Running   0          2m12s
+my-nats-box-7c8f57754-qrkd2                              1/1     Running   0          2m12s
+```
+
+We can play around with our messaging system with the pod:
+
+```bash
+kubectl exec -n default -it my-nats-box-7c8f57754-qrkd2 -- /bin/sh -l
+my-nats-box-7c8f57754-qrkd2:~# nats sub test
+05:46:14 Subscribing on test
+...
+```
+
+We are now ready to deploy our [app](https://github.com/kubernetes-hy/material-example/tree/master/app9) that uses [nats.js](https://github.com/nats-io/nats.js) as the client library.
+
+The **deployment.yaml** that passes the connect URL _nats://my-nats:4222_ to pods in env variable *NATS_URL* looks like the following:
 
 ```yaml
 apiVersion: apps/v1
@@ -50,6 +101,9 @@ spec:
       containers:
         - name: mapper
           image: jakousa/dwk-app9-mapper:0bcd6794804c367684a9a79bb142bb4455096974
+          env:
+            - name: NATS_URL
+              value: nats://my-nats:4222
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -68,6 +122,9 @@ spec:
       containers:
         - name: fetcher
           image: jakousa/dwk-app9-fetcher:0bcd6794804c367684a9a79bb142bb4455096974
+          env:
+            - name: NATS_URL
+              value: nats://my-nats:4222
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -86,69 +143,55 @@ spec:
       containers:
         - name: saver
           image: jakousa/dwk-app9-saver:0bcd6794804c367684a9a79bb142bb4455096974
+          env:
+            - name: NATS_URL
+              value: nats://my-nats:4222
 ```
 
-In this case the application is designed so that Fetcher can not be scaled. Fetcher splits the data into chunks of 100 objects and keeps a record of which chunks have not been processed. Fetcher will wait for a Mapper to send a message confirming that it's listening before sending data forward. Note how the available Mapper will be the one to receive the message so the fastest Mapper could process a large number of chunks while some of them might crash or be extremely slow. Saver will send a confirmation to Fetcher when a chunk has been saved and it will mark it as processed. So even if any part of the application crashes all of the data will be processed and saved.
+After applying the deployments we can confirm that everything works by reading the logs of the fetcher - `kubectl logs fetcher-dep-7d799bb6bf-zz8hr -f`:
 
-We're going to use Helm to install NATS into our cluster.
-
-```console
-$ helm repo add nats https://nats-io.github.io/k8s/helm/charts/
-  ...
-$ helm repo update
+```bash
+Ready to send #827
+Sent data #827, 831 remaining
+Ready to send #776
+Sent data #776, 830 remaining
+Ready to send #516
+Sent data #516, 829 remaining
+Ready to send #382
+Sent data #382, 828 remaining
+Ready to send #709
 ...
-$ helm install my-nats nats/nats
-  NAME: my-nats
-  LAST DEPLOYED: Thu Jul  2 15:04:56 2020
+```
+
+We'll want to monitor the state of NATS as well. NATS has a [web service](https://docs.nats.io/running-a-nats-service/nats_admin/monitoring) that provides many kinsd of data for monitoring. We can access the service from the browser with `kubectl port-forward my-nats-0 8222:8222` in <http://localhost:8222>.
+
+We are already committed to using Prometheus for monitoring and for that, we need [prometheus-nats-exporter](https://github.com/nats-io/prometheus-nats-exporter) and some [setup](https://github.com/nats-io/prometheus-nats-exporter/tree/main/walkthrough).
+
+We begin with the installation
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install my-prometheus-nats-exporter prometheus-community/prometheus-nats-exporter
+  LAST DEPLOYED: Wed May  8 09:37:43 2024
   NAMESPACE: default
   STATUS: deployed
   REVISION: 1
   TEST SUITE: None
   NOTES:
-  You can find more information about running NATS on Kubernetes
-  in the NATS documentation website:
-
-    https://docs.nats.io/nats-on-kubernetes/nats-kubernetes
-
-  NATS Box has been deployed into your cluster, you can
-  now use the NATS tools within the container as follows:
-
-    kubectl exec -n default -it my-nats-box -- /bin/sh -l
-
-    nats-box:~# nats-sub test &
-    nats-box:~# nats-pub test hi
-    nats-box:~# nc my-nats 4222
-
-  Thanks for using NATS!
+  1. Get the application URL by running these commands:
+    export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=prometheus-nats-exporter,app.kubernetes.io/instance=my-prometheus-nats-exporter" -o jsonpath="{.items[0].metadata.name}")
+    echo "Visit http://127.0.0.1:7777/metrics to use your application"
+    kubectl port-forward $POD_NAME 7777:7777
 ```
 
-This added NATS into the cluster. At this state however, the applications don't know where the NATS is so we'll add that to each of the deployments
+The output already gives us instructions on how we can connect to the exported with the browser. Let us do it to ensure that everything works:
 
-**deployment.yaml**
+<img src="../img/nats3.png">
 
-```yaml
-      ...
-      containers:
-        - name: mapper
-          image: jakousa/dwk-app9-mapper:0bcd6794804c367684a9a79bb142bb4455096974
-          env:
-            - name: NATS_URL
-              value: nats://my-nats:4222
-      ...
-          image: jakousa/dwk-app9-fetcher:0bcd6794804c367684a9a79bb142bb4455096974
-          env:
-            - name: NATS_URL
-              value: nats://my-nats:4222
-      ...
-          image: jakousa/dwk-app9-saver:0bcd6794804c367684a9a79bb142bb4455096974
-          env:
-            - name: NATS_URL
-              value: nats://my-nats:4222
-```
+Connecting Prometheus to the exporter will require a new resource [ServiceMonitor](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md), which is another [Custom Resource Definition](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) (CDR).
 
-After applying the modified deployments we can confirm that everything is working here by reading the logs of the fetcher - `kubectl logs fetcher-dep-7d799bb6bf-zz8hr -f`. We'll want to monitor the state of NATS as well. Fortunately it already has a Prometheus Exporter included in port 7777. We can access from browser with `kubectl port-forward my-nats-0 7777:7777` in [http://127.0.0.1:7777/metrics](http://127.0.0.1:7777/metrics) to confirm that it works. Connecting Prometheus to the exporter will require a new resource ServiceMonitor another new CRD (Custom Resource Definition).
-
-**servicemonitor.yaml**
+Let us start with the following incomplete **servicemonitor.yaml**
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
