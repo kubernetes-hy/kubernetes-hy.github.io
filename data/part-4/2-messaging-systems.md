@@ -292,21 +292,44 @@ Also the Prometheus API should return a result:
 
 ```console
 $ curl http://localhost:9090/api/v1/query\?query\=gnatsd_connz_in_msgs
-  {"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"gnatsd_connz_in_msgs","container":"metrics","endpoint":"tcp-metrics","instance":"10.40.0.138:7777","job":"my-nats-metrics","namespace":"default","pod":"my-nats-0","server_id":"http://localhost:8222","service":"my-nats-metrics"},"value":[1715203297.971,"1997"]}]}}
+  {
+    "status":"success",
+    "data":{
+        "resultType":"vector",
+        "result":[
+          {
+              "metric":{
+                "__name__":"gnatsd_connz_in_msgs",
+                "container":"metrics",
+                "endpoint":"tcp-metrics",
+                "instance":"10.40.0.138:7777",
+                "job":"my-nats-metrics",
+                "namespace":"default",
+                "pod":"my-nats-0",
+                "server_id":"http://localhost:8222",
+                "service":"my-nats-metrics"
+              },
+              "value":[
+                1715203297.971,
+                "1997"
+              ]
+          }
+        ]
+    }
+  }
 ```
 
 If the result here is empty then something is wrong, the result may be a success even if the query doesn't make sense.
 
-Now we just need to add a Grafana dashboard for the data. Let's import a dashboard from [here](https://raw.githubusercontent.com/nats-io/prometheus-nats-exporter/5084a32850823b59069f21f3a7dde7e488fef1c6/walkthrough/grafana-nats-dash.json) instead of configuring our own. Note that the dashboard resources are defined as "gnatsd_XXXX" whereas our resources as seen from the Prometheus Exporter `kubectl port-forward my-nats-0 7777:7777` in [http://127.0.0.1:7777/metrics](http://127.0.0.1:7777/metrics) are "nats_XXXX" - so we need to search and replace all "gnatsd_XXXX" with "nats_XXXX" in the dashboard for the data to pass correctly from Prometheus.
+Now we just need to add a Grafana dashboard for the data. Let's import a dashboard from [here](https://raw.githubusercontent.com/nats-io/prometheus-nats-exporter/5084a32850823b59069f21f3a7dde7e488fef1c6/walkthrough/grafana-nats-dash.json) instead of configuring our own.
 
 ```console
 $ kubectl -n prometheus port-forward kube-prometheus-stack-1602180058-grafana-59cd48d794-4459m 3000
 ```
 
-Here we can paste the JSON to "import via panel json" and then choose Prometheus as the source on the following page.
+Here we can paste the JSON using the "Import dashboard" and by choosing Prometheus as the source on the following page.
 
-
-<img src="../img/grafana-import.png">
+<img src="../img/grafana-import2.png">
 
 And now we have a simple dashboard with data:
 
