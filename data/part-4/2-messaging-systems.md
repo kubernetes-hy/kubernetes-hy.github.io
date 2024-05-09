@@ -344,16 +344,16 @@ This is now the final configuration:
   Create a new separate service for sending status messages of the todos to a popular chat application. Let's call the new service "broadcaster".
 
   Requirements:
-  1. The backend saving / updating todos should send a message to NATS
+  1. The backend saving or updating todos should send a message to NATS
   2. The broadcaster should subscribe to NATS messages
-  3. The broadcaster should send the message forward to an external service in a format they support
+  3. The broadcaster should send the message forward to **an external service** in a format they support
 
-  Choose either:
+  As the external service you can choose either:
+   - Discord (you can use the course Full stack Discord, see [here](https://fullstackopen.com/en/part11/expanding_further#exercise-11-18) for the details)
    - Telegram
    - Slack
-   - Discord
 
-  or if you don't want to use them use "Generic" where an URL is set as an Environment variable and the payload is e.g.
+  or if you don't want to use them, use "Generic" where a URL is set as an Environment variable and the payload is e.g.
 
 ```json
 {
