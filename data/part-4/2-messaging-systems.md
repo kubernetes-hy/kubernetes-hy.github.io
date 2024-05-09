@@ -84,7 +84,7 @@ $ helm install --set auth.enabled=false my-nats oci://registry-1.docker.io/bitna
 
 The installation prints many kinds of useful info for us.
 
-We are now ready to deploy our [app](https://github.com/kubernetes-hy/material-example/tree/master/app9) that uses [nats.js](https://github.com/nats-io/nats.js) as the client library.
+We are now ready to deploy our [app](https://github.com/kubernetes-hy/material-example/tree/master/app9) that uses [nats.js](https://github.com/nats-io/nats.js) as the client library. Note that the example app uses nats.js version 1.5. The current version of the library has
 
 The **deployment.yaml** that passes the connect URL _nats://my-nats:4222_ to pods in env variable *NATS_URL* looks like the following:
 
@@ -340,6 +340,8 @@ This is now the final configuration:
 <img src="../img/app9-nats-prometheus-grafana.png">
 
 <exercise name='Exercise 4.06: Project v2.0'>
+
+  _If you use JavaScript, notice that the [example app](https://github.com/kubernetes-hy/material-example/tree/master/app9) uses nats.js library version 1.5. The [current version](https://www.npmjs.com/package/nats) of the library has significant changes in the API, so copy-pasting the code from the example will not work._
 
   Create a new separate service for sending status messages of the todos to a popular chat application. Let's call the new service "broadcaster".
 
