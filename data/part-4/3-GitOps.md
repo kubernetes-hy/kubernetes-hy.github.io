@@ -34,179 +34,205 @@ If you completed DevOps with Docker you may have heard about [watchtower](https:
 
 GitOps is all about this reversal and promotes good practices for the operations side of things. This is achieved by having the state of the cluster be in a git repository. So besides handling the application deployment it will handle all changes to the cluster. This will require some additional configuration and rethinking past the tradition of server configuration. But when we get there GitOps will be the final nail in the coffin of imperative cluster management.
 
-[Flux](https://toolkit.fluxcd.io/) will be the tool of choice. At the end our workflow should look like this:
 
-1. Developer runs git push with modified code.
-2. CI/CD service starts running.
-3. CI/CD service builds and pushes new image *and* commits edit to "release" branch
-4. Flux will take the state described in the release branch and set it as the state of our cluster.
+[ArgoCD](https://argo-cd.readthedocs.io/en/stable/) is the tool of choice. At the end our workflow should look like this:
 
+1. Developer runs git push with modified code or configurations.
+2. CI/CD service (GitHub Actions in our case) starts running.
+3. CI/CD service builds and pushes new image *and* commits edit to the "release" branch (main in our case)
+4. ArgoCD will take the state described in the release branch and set it as the state of our cluster.
 
-To get started we'll need to get a GITHUB_TOKEN. You can follow the GitHub [guide](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) to click settings - developer settings - personal access tokens. And generate a token with all "repo" access rights. You may be able to avoid one or more of the access rights but we're okay with 100% access for a limited period. Save the variable for now.
+Let us start by installing ArgoCD by following the [Detting started](https://argo-cd.readthedocs.io/en/stable/getting_started/) of the docs:
 
-Next step isn't a surprise at this point. As with most tools this time we will need to install the Flux CLI.
-
-```console
-$ curl -s https://fluxcd.io/install.sh | sudo bash
+```bash
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
-or if that doesn't work read [installation guide](https://toolkit.fluxcd.io/guides/installation/).
+Now ArgoCD is up and running in our cluster. We still need to open access to it. There are several [optins](https://argo-cd.readthedocs.io/en/stable/getting_started/#3-access-the-argo-cd-api-server). We shall use the LoadBalancer. So we'll give the command
 
-`flux check` will tell us if something is wrong with the cluster itself.
-
-```console
-$ flux check --pre
-  ► checking prerequisites
-  ✔ Kubernetes 1.22.2+k3s2 >=1.19.0-0
-  ✔ prerequisites checks passed
+```bash
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 ```
 
-Everything looks green. Now we'll configure our cluster and our GitOps repository. We will need the token for the next step. CLI will read it from the environment so run `export GITHUB_TOKEN=3dcb4daba731d77158cbac4dabe7ad1f2` with you own token now.
+After a short wait, the cluster has provided us with an external IP:
 
-Now is a good time to make sure we are pointed at the right cluster. Bootstrapping flux to a cluster will install a lot of things. Read the following command instead of copy-pasting it. In this case, we use GitHub, the owner is your username and repository to be created is "kube-cluster-dwk". The cluster is personal (if omitted, we can set owner as organisation) and we don't need a private repo. There is a lot to configure and you can run `flux bootstrap github --help` if you're interested.
-
-```console
-$ flux bootstrap github \
-    --owner=<YOUR_USERNAME> \
-    --repository=kube-cluster-dwk \
-    --personal \
-    --private=false
-
-  ...
-
-  ✔ bootstrap finished
+```bash
+$ kubectl get svc -n argocd
+NAME               TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)                      AGE
+...
+argocd-server      LoadBalancer   10.7.5.82     34.88.152.2   80:32029/TCP,443:30574/TCP   17min
 ```
 
-That's it for flux CLI. That's it for `kubectl apply` as well. Do **not** use kubectl apply in this GitOps section. At least avoid using it since we should not need it.
+The initial password for the _admin_ account is auto-generated and stored as clear text in the field password in a secret named _argocd-initial-admin-secret_ in your Argo CD installation namespace. So we get it by base64 decoding the value that we get with the command
 
-Clone the new repository you just created and create two new files in it *example-source.yaml* and *example-gitops-app.yaml*. We will fill them now that we have a new CRDs *GitRepository* and *Kustomization* (not to be confused with kustomize) available to us.
-
-**example-source.yaml**
-```yaml
-apiVersion: source.toolkit.fluxcd.io/v1beta1
-kind: GitRepository
-metadata:
-  name: example-repo
-  namespace: flux-system
-spec:
-  interval: 10m
-  url: https://github.com/kubernetes-hy/material-example
-  ref:
-    branch: master
+```bash
+kubectl get -n argocd secrets argocd-initial-admin-secret -o yaml
 ```
 
-This one is simply the repository. We'll want to observe the master branch. The fields used here can mostly be deduced from the context but read the [documentation](https://toolkit.fluxcd.io/components/source/gitrepositories/) for other options and explanations.
+We can now login:
 
-**example-gitops-app.yaml**
-```yaml
-apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
-kind: Kustomization
-metadata:
-  name: example-gitops-app
-  namespace: flux-system
-spec:
-  sourceRef:
-    kind: GitRepository
-    name: example-repo
-  interval: 10m
-  path: ./4-gitops/manifests # Path tells where to find the files. Excellent for "monorepos" where you have multiple different applications in one repository, like the example repository.
-  prune: true # This will make sure that deleting the file will delete the resource
-  validation: client # Who validates the objects. Server or the client.
-```
+<img src="../img/argo2.png">
 
-And this is the application within that repository and takes care of the manifests. Kustomization will either look for kustomization.yaml within the path or if none found generate one that contains all Kubernetes manifests in it. Now simply `git add` both of them, `git commit` and `git push` them to the repository. After a short while, you will have hashgenerator pod running
+Let us now deploy the simple app in <https://github.com/mluukkai/dwk-app1> using ArgoCD. We start by clicking _New app_ and fill the form that opens:
 
-```console
-$ kubectl get pods
-  NAME                                 READY   STATUS    RESTARTS   AGE
-  hashgenerator-dep-558c84888d-qh4t9   1/1     Running   0          13m
-```
+<img src="../img/argo3.png">
 
-Now we've done our first deploy. We can delete it simply by deleting the files from the repository, no `kubectl delete` required. To get it to follow our updates to the application repository we will need to do configure the CI/CD of the application to update the manifest files.
+At the start, we decided to have a _manual sync policy_.
 
-Time to create a plan and then open GitHub actions. This will be a lot simpler than the one we had to deal with previously. But first, create a `kustomization.yaml` to have easier access to the image name and tag. I will be showing the example using one of the apps (4-gitops) in the [material-example repository](https://github.com/kubernetes-hy/material-example). The repository also contains the directory structure. You can copy the application or use your own as you follow the example.
+<img src="../img/argo4.png">
 
-**kustomization.yaml**
-```yaml
+Note that since the definition (in our case file _kustomization.yaml_) is in the repository root, we have defined the _path_ to having the value ., that is, the character _period_.
+
+The app is created but is is missing and not in sync, since we selected the manual sync policy:
+
+<img src="../img/argo5.png">
+
+Let us sync it and go to the app page:
+
+<img src="../img/argo6.png">
+
+Something seems to be wrong, the pod has a _broken heart_ symbol. We could now start our usual debugging process starging with `kubectl get po`. We see the same info from ArgoCD by clicking the pod:
+
+<img src="../img/argo7.png">
+
+Ok, we have specified a image that does not exist. Let us fix it in GitHub by changing _kustomization.yaml_ as follows:
+
+´´´yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - manifests/deployment.yaml
+- manifests/service.yaml
 images:
-- name: IMAGE_PLACEHOLDER
-  newName: jakousa/dwk-4-gitops-app
-  newTag: fdafd7088d04892815ed037cf30ca4f61c7af2f7
-```
+- name: PROJECT/IMAGE
+  newName: mluukkai/dwk1
+´´´
 
-After this and replacing the image in the `deployment.yaml` with IMAGE_PLACEHOLDER we're ready to automate updates with the following steps:
+When we sync the changes in ArgoCD, a new healthy pod is started and our app is up and running!
 
-1. Build the image and push it to registry
-2. Update the tag in the yaml to match the new version
-3. Commit and push it to the repository
+We can check the external IP either from command line with _kubectl_ or clicking the service:
+
+<img src="../img/argo8.png">
+
+Let us now change the sync mode to _automatic_ by clicking the _Details_ from the app page in ArgoCD.
+
+Now all the configuration changes that we make to GitHub should be automatically applied by ArgoCD. Let us scale up the deployment to have 5 pods:
+
+´´´yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dwk1-app-dep
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: dwk1-app
+  template:
+    ...
+´´´
+
+After a small wait (the default sync frequency of ArgoCD is 180 seconds), app gets synchronized and 5 pods are up and running:
+
+<img src="../img/argo9.png">
+
+Besides services, deployments and pods, the app configuration tree shows also some other objects. We see that there is a
+[ReplicaSet](https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/) (in figure _rs_) in between deployment and the pods. A ReplicaSet is a Kubernetes object that ensures there is always a stable set of running pods for a specific workload. The ReplicaSet configuration defines a number of identical pods required, and if a pod is evicted or fails, creates more pods to compensate for the loss. Users do not usually define ReplicaSets directly, instead Deployments are used. A Deployment then creates a ReplicaSet that takes care of running the pod replicas.
+
+The changes in app Kubernetes configurations that we make to GitHub are now nicely synched to the cluster. How about the changes in the app?
+
+In order to deploy a new app version, we should change the image that is used in the deployment. Currently the image is defined in the file _kustomization.yaml_:
+
+´´´yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- manifests/deployment.yaml
+- manifests/service.yaml
+images:
+- name: PROJECT/IMAGE
+  newName: mluukkai/dwk1
+´´´
+
+So to deploy a new the app, we should
+
+1. create a new image with possibly a new tag
+2. change the kustomization.yaml to use the new image
+3. push changes to GitHub
+
+Surely this could be done manually but that is not enough for us. Let us now define a GitHub Actions workflow that does all these steps.
+
+The first step is already familiar for us from [part 3](/part-3/2-deployment-pipeline)
+
+The step 2 can be done with the command _kustomize edit_:
+
+´´´yaml
+$ kustomize edit set image PROJECT/IMAGE=node:20
+$ cat kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- manifests/deployment.yaml
+- manifests/service.yaml
+images:
+- name: PROJECT/IMAGE
+  newName: node
+  newTag: "20"
+´´´
+
+As we see, the command _changes_ the file _kustomization.yaml_. So all that is left is to commit the file to the repository. Fortunately there is a ready made GitHub Action [add-and-commit](https://github.com/EndBug/add-and-commit) for that!
+
+The workflow looks the following:
 
 ```yaml
-name: Release 4-gitops-app
+name: Build and publish application
 
 on:
   push:
-    branches:
-      - master
-    paths:
-      - '4-gitops/app/**'
-      - '.github/workflows/gitops-app.yml'
 
 jobs:
-  build:
-    name: Build
+  build-publish:
+    name: Build, Push, Release
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Login to Docker Hub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build and Push
-      uses: docker/build-push-action@v2
-      with:
-        context: 4-gitops/app
-        push: true
-        tags: jakousa/dwk-4-gitops-app:${{ github.sha }}
-
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    needs: build
 
     steps:
-    - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    # Set up kustomize
-    - name: Set up Kustomize
-      uses: imranismail/setup-kustomize@v1
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    # Update yamls
-    - name: Update yamls
-      working-directory: 4-gitops/manifests
-      run: |-
-        kustomize edit set image IMAGE_PLACEHOLDER=jakousa/dwk-4-gitops-app:${{ github.sha }}
+      # tag image with the GitHub SHA to get a unique tag
+      - name: Build and publish backend
+        run: |-
+          docker build --tag "mluukkai/dwk1:$GITHUB_SHA" .
+          docker push "mluukkai/dwk1:$GITHUB_SHA"
 
-    # Commit and push
-    - uses: EndBug/add-and-commit@v7
-      with:
-        add: '4-gitops/manifests/kustomization.yaml'
-        message: New version release for gitops-app ${{ github.sha }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v2
+
+      - name: Use right image
+        run: kustomize edit set image PROJECT/IMAGE=mluukkai/dwk1:$GITHUB_SHA
+
+      - name: commit kustomization.yaml to GitHub
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: 'kustomization.yaml'
+          message: New version released ${{ github.sha }}
 ```
 
-That should take care of that. Now any updates to the source code will automatically be released.
+There is still one more to do, from the repository settings we must give the GitHub Actions permission to write to our repository:
 
-Anything you installed with Helm can also be moved to the infrastructure repository. Read through the [documentation](https://toolkit.fluxcd.io/guides/helmreleases/) to know more.
+<img src="../img/gha-perm.png">
 
-With GitOps we achieved
+We are now set, all changes to configurations and to the app code are now deployed automatically by ArcoCD with the help of our GitHub Action workflow, so nice!
+
+
+With GitOps we achieve the following:
 
 * Better security
   - Nobody needs access to the cluster, not even CI/CD services. No need to share access to the cluster with collaborators; they will commit changes like everyone else.
@@ -215,7 +241,7 @@ With GitOps we achieved
   - Everything is declared in the GitHub repository. When a new person joins the team they can check the repository; no need to pass ancient knowledge or hidden techniques as there are none.
 
 * Better traceability
-  - All changes to the cluster are version controlled. You will know exactly what was the state of the cluster and how it was changed and by whom.
+  - All changes to the cluster are version-controlled. You will know exactly what was the state of the cluster and how it was changed and by whom.
 
 * Risk reduction
   - If something breaks simply revert the cluster to a working commit. `git revert` and the whole cluster is in a previous state.
@@ -223,7 +249,14 @@ With GitOps we achieved
 * Portability
   - Want to change to a new provider? Spin up a cluster and point it to the same repository - done your cluster is now there.
 
-There are a few options for the GitOps setup. What we used here was having the configuration for the application in the same repository with the application itself. That required us to do some changes in the directory structure. Another option is to have the configuration separate from the source code. That approach also removes the risk of having a pipeline loop where your pipeline commits to the repository which then triggers the pipeline.
+There are a few options for the GitOps setup. What we used here was having the configuration for the application in the same repository as the application itself. That required us to make some changes in the directory structure. Another option is to have the configuration separate from the source code. That approach also removes the risk of having a pipeline loop where your pipeline commits to the repository which then triggers the pipeline.
+
+<exercise name='Exercise 4.08: Project v2.1'>
+
+  Move The Project to use GitOps so that you can develop to the repository and the application is automatically updated.
+
+</exercise>
+
 
 <exercise name='Exercise 4.07: GitOpsify Cluster'>
 
@@ -232,13 +265,5 @@ There are a few options for the GitOps setup. What we used here was having the c
   Validate that everything works by deleting the cluster `k3d cluster delete` and recreating it by bootstrapping with flux.
 
   Application deployments can still happen in the old fashioned way.
-
-</exercise>
-
-<exercise name='Exercise 4.08: Project v2.1'>
-
-  Move your project to use GitOps so that you can develop to the repository and the application is automatically updated even locally!
-
-  **Bonus: use SOPS for all secrets, see https://fluxcd.io/docs/guides/mozilla-sops/**
 
 </exercise>
