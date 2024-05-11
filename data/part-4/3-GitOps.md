@@ -251,19 +251,24 @@ With GitOps we achieve the following:
 
 There are a few options for the GitOps setup. What we used here was having the configuration for the application in the same repository as the application itself. That required us to make some changes in the directory structure. Another option is to have the configuration separate from the source code. That approach also removes the risk of having a pipeline loop where your pipeline commits to the repository which then triggers the pipeline.
 
-<exercise name='Exercise 4.08: Project v2.1'>
+<exercise name='Exercise 4.07: GitOps the Project'>
 
   Move The Project to use GitOps so that you can develop to the repository and the application is automatically updated.
 
 </exercise>
 
+The next one is still to be specified:
 
-<exercise name='Exercise 4.07: GitOpsify Cluster'>
+<exercise name='Exercise 4.08: Moar GitOps'>
+
+eg:
 
   Move your cluster configuration to GitOps.
 
-  Validate that everything works by deleting the cluster `k3d cluster delete` and recreating it by bootstrapping with flux.
+  Validate that everything works by deleting the cluster `k3d cluster delete` and recreating it by bootstrapping with ArcoCD.
 
-  Application deployments can still happen in the old fashioned way.
+or:
+
+  prod and staging with overlays
 
 </exercise>
