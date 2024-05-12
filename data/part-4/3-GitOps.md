@@ -98,7 +98,7 @@ Something seems to be wrong, the pod has a _broken heart_ symbol. We could now s
 
 Ok, we have specified a image that does not exist. Let us fix it in GitHub by changing _kustomization.yaml_ as follows:
 
-´´´yaml
+```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -107,7 +107,7 @@ resources:
 images:
 - name: PROJECT/IMAGE
   newName: mluukkai/dwk1
-´´´
+```
 
 When we sync the changes in ArgoCD, a new healthy pod is started and our app is up and running!
 
@@ -119,7 +119,7 @@ Let us now change the sync mode to _automatic_ by clicking the _Details_ from th
 
 Now all the configuration changes that we make to GitHub should be automatically applied by ArgoCD. Let us scale up the deployment to have 5 pods:
 
-´´´yaml
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -131,7 +131,7 @@ spec:
       app: dwk1-app
   template:
     ...
-´´´
+```
 
 After a small wait (the default sync frequency of ArgoCD is 180 seconds), app gets synchronized and 5 pods are up and running:
 
@@ -144,7 +144,7 @@ The changes in app Kubernetes configurations that we make to GitHub are now nice
 
 In order to deploy a new app version, we should change the image that is used in the deployment. Currently the image is defined in the file _kustomization.yaml_:
 
-´´´yaml
+```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -153,7 +153,7 @@ resources:
 images:
 - name: PROJECT/IMAGE
   newName: mluukkai/dwk1
-´´´
+```
 
 So to deploy a new the app, we should
 
@@ -163,11 +163,11 @@ So to deploy a new the app, we should
 
 Surely this could be done manually but that is not enough for us. Let us now define a GitHub Actions workflow that does all these steps.
 
-The first step is already familiar for us from [part 3](/part-3/2-deployment-pipeline)
+The first step is already familiar to us from [part 3](/part-3/2-deployment-pipeline)
 
 The step 2 can be done with the command _kustomize edit_:
 
-´´´yaml
+```yaml
 $ kustomize edit set image PROJECT/IMAGE=node:20
 $ cat kustomization.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -179,7 +179,7 @@ images:
 - name: PROJECT/IMAGE
   newName: node
   newTag: "20"
-´´´
+```
 
 As we see, the command _changes_ the file _kustomization.yaml_. So all that is left is to commit the file to the repository. Fortunately there is a ready made GitHub Action [add-and-commit](https://github.com/EndBug/add-and-commit) for that!
 
@@ -247,13 +247,13 @@ With GitOps we achieve the following:
   - If something breaks simply revert the cluster to a working commit. `git revert` and the whole cluster is in a previous state.
 
 * Portability
-  - Want to change to a new provider? Spin up a cluster and point it to the same repository - done your cluster is now there.
+  - Want to change to a new provider? Spin up a cluster and point it to the same repository - your cluster is now there.
 
-There are a few options for the GitOps setup. What we used here was having the configuration for the application in the same repository as the application itself. That required us to make some changes in the directory structure. Another option is to have the configuration separate from the source code. That approach also removes the risk of having a pipeline loop where your pipeline commits to the repository which then triggers the pipeline.
+There are a few options for the GitOps setup. What we used here was having the configuration for the application in the same repository as the application itself. Another option is to have the configuration separate from the source code. That approach also removes the risk of having a pipeline loop where your pipeline commits to the repository which then triggers the pipeline...
 
 <exercise name='Exercise 4.07: GitOps the Project'>
 
-  Move The Project to use GitOps so that you can develop to the repository and the application is automatically updated.
+  Move The Project to use GitOps so that when you commit to the repository, the application is automatically updated.
 
 </exercise>
 
