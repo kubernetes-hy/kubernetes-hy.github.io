@@ -257,18 +257,135 @@ There are a few options for the GitOps setup. What we used here was having the c
 
 </exercise>
 
-The next one is still to be specified:
+If an app has many environments such as production, staging and testing, a straightforward way of defining the environments contains lots of copy-paste. When Kustomize is used, the [recommended](https://kubectl.docs.kubernetes.io/guides/example/multi_base/) way is to define a common _base_ for all the environments and then environment specific overlays where the differing parts are defined.
+
+Let us look at simple example. We will create a directory structure that looks like the following:
+
+```
+.
+├── base
+│   ├── deployment.yaml
+│   └── kustomization.yaml
+└── overlays
+    ├── prod
+    │   ├── deployment.yaml
+    │   └── kustomization.yaml
+    └── staging
+        └── kustomization.yaml
+```
+
+The **base/deployment.yaml** is as follows
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: myapp
+          image: PROJECT/IMAGE
+```
+
+
+The **base/kustomize.yaml** is simple:
+
+```yaml
+resources:
+- deployment.yaml
+```
+
+The production environment refines the base by changing the replica count to 3. **overlays/prod/kustomize.yaml** looks like this:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep
+spec:
+  replicas: 3
+```
+
+So only parts that are different are defined.
+
+The **overlays/prod/kustomize.yaml** looks like following:
+
+```yaml
+resources:
+- ./../../base
+patches:
+  - path: deployment.yaml
+
+namePrefix: prod-
+
+images:
+  - name: PROJECT/IMAGE
+    newName: nginx:1.25-bookworm
+```
+
+So it refers to the base and [patches](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/patches/) that with the above deployment that sets the number of replicas to 3.
+
+The **overlays/staging/kustomize.yaml** just sets the image:
+
+```yaml
+resources:
+- ./../../base
+namePrefix: staging-
+
+images:
+  - name: PROJECT/IMAGE
+    newName: nginx:1.25.5-alpine
+```
+Now the production and staging can be deployed using ArgoCD by pointing to the corresponding overlay directories.
+
+We have so far used the ArgoCD UI for defining applications. There are also other options. One could [install](https://argo-cd.readthedocs.io/en/stable/getting_started/#2-download-argo-cd-cli) and use [Argo CLI](https://argo-cd.readthedocs.io/en/stable/getting_started/#creating-apps-via-cli)
+
+Yet another option is to use[declarative](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#declarative-setup) approach and do the definition with [Application](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#applications) Custom resource definition:
+
+For the production version of our app the definition looks like this:
+
+**application.yaml**
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: myapp-production
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mluukkai/gitopstest
+    path: overlays/prod
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+```
+
+The application is then set up to ArgoCD by applying the definition:
+
+```bash
+kubectl apply -n argocd -f application.yaml
+```
 
 <exercise name='Exercise 4.08: Moar GitOps'>
 
-eg:
-
-  Move your cluster configuration to GitOps.
-
-  Validate that everything works by deleting the cluster `k3d cluster delete` and recreating it by bootstrapping with ArcoCD.
-
-or:
-
   prod and staging with overlays
+
+  different repo for confs and code
 
 </exercise>
