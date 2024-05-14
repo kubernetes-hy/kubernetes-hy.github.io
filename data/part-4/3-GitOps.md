@@ -231,29 +231,9 @@ There is still one more to do, from the repository settings we must give the Git
 
 We are now set, all changes to configurations and to the app code are now deployed automatically by ArcoCD with the help of our GitHub Action workflow, so nice!
 
-
-With GitOps we achieve the following:
-
-* Better security
-  - Nobody needs access to the cluster, not even CI/CD services. No need to share access to the cluster with collaborators; they will commit changes like everyone else.
-
-* Better transparency
-  - Everything is declared in the GitHub repository. When a new person joins the team they can check the repository; no need to pass ancient knowledge or hidden techniques as there are none.
-
-* Better traceability
-  - All changes to the cluster are version-controlled. You will know exactly what was the state of the cluster and how it was changed and by whom.
-
-* Risk reduction
-  - If something breaks simply revert the cluster to a working commit. `git revert` and the whole cluster is in a previous state.
-
-* Portability
-  - Want to change to a new provider? Spin up a cluster and point it to the same repository - your cluster is now there.
-
-There are a few options for the GitOps setup. What we used here was having the configuration for the application in the same repository as the application itself. Another option is to have the configuration separate from the source code. That approach also removes the risk of having a pipeline loop where your pipeline commits to the repository which then triggers the pipeline...
-
 <exercise name='Exercise 4.07: GitOps the Project'>
 
-  Move The Project to use GitOps so that when you commit to the repository, the application is automatically updated.
+  Move the _Ping-pong application_ to use GitOps so that when you commit to the repository, the application is automatically updated.
 
 </exercise>
 
@@ -382,10 +362,33 @@ The application is then set up to ArgoCD by applying the definition:
 kubectl apply -n argocd -f application.yaml
 ```
 
-<exercise name='Exercise 4.08: Moar GitOps'>
+With GitOps we achieve the following:
 
-  prod and staging with overlays
+* Better security
+  - Nobody needs access to the cluster, not even CI/CD services. No need to share access to the cluster with collaborators; they will commit changes like everyone else.
 
-  different repo for confs and code
+* Better transparency
+  - Everything is declared in the GitHub repository. When a new person joins the team they can check the repository; no need to pass ancient knowledge or hidden techniques as there are none.
+
+* Better traceability
+  - All changes to the cluster are version-controlled. You will know exactly what was the state of the cluster and how it was changed and by whom.
+
+* Risk reduction
+  - If something breaks simply revert the cluster to a working commit. `git revert` and the whole cluster is in a previous state.
+
+* Portability
+  - Want to change to a new provider? Spin up a cluster and point it to the same repository - your cluster is now there.
+
+There are a few options for the GitOps setup. What we used here was having the configuration for the application in the same repository as the application itself. Another option is to have the configuration separate from the source code. ArgoCD lists many convincing arguments that the use of separate repos is a [best practice](https://argo-cd.readthedocs.io/en/stable/user-guide/best_practices/#separating-config-vs-source-code-repositories).
+
+<exercise name='Exercise 4.08: GitOps the Project'>
+
+  Move the Project to use GitOps.
+
+  - Create two separate environments, _production_ and _staging_ that are in their own namespaces
+  - In staging the resource limits are stricter compared to production and only one replica of each service is run
+  - Each commit to the main branch should result in deployment to the staging environment
+  - Each _tagged_ commit results to deployment to the production environment
+  - Bonus: use different repositories for the code and configurations
 
 </exercise>
