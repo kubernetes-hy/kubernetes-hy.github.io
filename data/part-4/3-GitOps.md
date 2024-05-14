@@ -388,7 +388,8 @@ There are a few options for the GitOps setup. What we used here was having the c
   - Create two separate environments, _production_ and _staging_ that are in their own namespaces
   - In staging the resource limits are stricter compared to production and only one replica of each service is run
   - Each commit to the main branch should result in deployment to the staging environment
-  - Each _tagged_ commit results to deployment to the production environment
+  - Each _tagged_ commit results in deployment to the production environment
+  - In staging the broadcaster just logs all the messages, it does not forward those to any external service
   - Bonus: use different repositories for the code and configurations
 
 </exercise>
