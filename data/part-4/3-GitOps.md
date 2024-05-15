@@ -390,6 +390,7 @@ There are a few options for the GitOps setup. What we used here was having the c
   - Each commit to the main branch should result in deployment to the staging environment
   - Each _tagged_ commit results in deployment to the production environment
   - In staging the broadcaster just logs all the messages, it does not forward those to any external service
+  - You may assume that _secrets_ are readily applied outside of the ArgoCD
   - Bonus: use different repositories for the code and configurations
 
 </exercise>
