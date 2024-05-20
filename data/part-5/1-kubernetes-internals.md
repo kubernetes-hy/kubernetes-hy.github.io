@@ -14,19 +14,22 @@ After this section you
 
 Instead of thinking about Kubernetes as something completely new I've found that comparing it to an operating system helps. I'm not an expert in operating systems but we've all used them.
 
-Kubernetes is a layer on top of which we run our applications. It takes the resources that are accessible from the layers below and manages our applications and resources. And it provides services, such as the DNS, for the applications. With this OS mindset we can also try to go the other way: You may have used a [cron](https://en.wikipedia.org/wiki/Cron) (or windows' [task scheduler](https://en.wikipedia.org/wiki/Windows_Task_Scheduler)) for saving long term backups of some applications. Here's the same thing in Kubernetes with [CronJobs](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/).
+Kubernetes is a layer on top of which we run our applications. It takes the resources that are accessible from the layers below and manages our applications and resources. It also provides services, such as the DNS, for the applications. With this OS mindset, we can also try to go the other way: You may have used a [cron](https://en.wikipedia.org/wiki/Cron) (or Windows' [task scheduler](https://en.wikipedia.org/wiki/Windows_Task_Scheduler)) for scheduling batch jobs such as saving backups of some applications. The same thing in Kubernetes can be done with [CronJobs](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/).
 
 Now that we'll start talking about the internals we'll learn new insight on Kubernetes and will be able to prevent and solve problems that may result from its nature.
 
-Due to this section being mostly a reiteration of Kubernetes documentation I will include various links the official version of the documentation - we will not setup our own Kubernetes cluster manually. If you want to go hands-on and learn how to setup your own cluster, you should read and complete [Kubernetes the Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way) by Kelsey Hightower. If you have any leftover credits from part 3 this is a great way to spend some of them.
+Since this section is mostly a reiteration of Kubernetes documentation I will include various links to the official version of the documentation. Despite talking about internals, we shall not discuss how to set up our own Kubernetes cluster manually. If you want to get your hands dirty with a setup, you should read and complete [Kubernetes the Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way) by Kelsey Hightower.
 
-### Controllers and Eventual Consistency ###
+### Controllers ###
 
-[Controllers](https://kubernetes.io/docs/concepts/architecture/controller/) watch the state of your cluster and then tries to move the current state of the cluster closer to the desired state. When you declare X replicas of a Pod in your deployment.yaml, a controller called Replication Controller makes sure that will be true. There are a number of controllers for different responsibilities.
+[Controllers](https://kubernetes.io/docs/concepts/architecture/controller/) watch the state of your cluster and then try to move the current state of the cluster closer to the desired state. When you declare X replicas of a Pod in your deployment.yaml, a controller called [Replication Controller](https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller/) makes sure that will be true. There are a number of controllers for different responsibilities.
 
 ### Kubernetes Control Plane ###
 
-[Kubernetes Control Plane](https://kubernetes.io/docs/concepts/overview/components/#control-plane-components) consists of
+[Kubernetes Control Plane](https://kubernetes.io/docs/concepts/overview/components/#control-plane-components)
+is responsible for managing the Kubernetes cluster. It is the primary orchestrating component that ensures the cluster's desired state matches its actual state. The control plane makes global decisions about the cluster (such as scheduling), as well as detecting and responding to cluster events (such as starting up a new pod when a deployment's replicas field is unsatisfied).
+
+The control plane consists of
 
 * etcd
   - A key-value storage that Kubernetes uses to save all cluster data.
@@ -52,11 +55,13 @@ Every node has a number [components](https://kubernetes.io/docs/concepts/overvie
 * kube-proxy
   - network proxy and maintains the network rules. Enables connections outside and inside of the cluster as well as Services to work as we've been using them.
 
-And also the Container Runtime. We've been using Docker for this course.
+Each node has also the [Container Runtime](https://kubernetes.io/docs/setup/production-environment/container-runtimes/). We have used using Docker as the runtime for this course.
+
+<img src="../img/kube-diag.svg">
 
 ### Addons ###
 
-In addition to all of the previously mentioned, Kubernetes has [Addons](https://kubernetes.io/docs/concepts/cluster-administration/addons/) which use the same Kubernetes resources we've been using and extend Kubernetes. You can view which resources the addons have created in the `kube-system` namespace.
+In addition to all of the previously mentioned, Kubernetes has [Addons](https://kubernetes.io/docs/concepts/cluster-administration/addons/) that use the same Kubernetes resources we've been using and extend Kubernetes. You can view which resources the addons have created in the `kube-system` namespace.
 
 ```console
 $ kubectl -n kube-system get all
@@ -116,11 +121,11 @@ $ kubectl -n kube-system get all
   replicaset.apps/stackdriver-metadata-agent-cluster-level-7bd5ddd849   0         0         0       5h42m
 ```
 
-To get a complete picture of how each part communicates with each other "[what happens when k8s](https://github.com/jamiehannaford/what-happens-when-k8s)" explores what happens when you do `kubectl run nginx --image=nginx --replicas=3` shedding some more light on the magic that happens behind the scenes.
+To get a complete picture of how each part communicates with each other, read the article [what happens when k8s](https://github.com/jamiehannaford/what-happens-when-k8s) which explores what happens when you do `kubectl run nginx --image=nginx --replicas=3` shedding some more light on the magic that happens behind the scenes.
 
 ## Self-healing ##
 
-Back in part 1 we talked a little about the "self-healing" nature of Kubernetes and how pods can be deleted and they're automatically recreated.
+Back in [part 1](/part-1), we talked a little about the "self-healing" nature of Kubernetes and how pods can be deleted and they're automatically recreated.
 
 Let's see what happens if we delete a node that has a pod in it. Let's first deploy the pod, a web application with ingress from part 1, confirm that it's running and then see which pod has it running.
 
