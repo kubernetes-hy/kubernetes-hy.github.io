@@ -329,7 +329,7 @@ Now the production and staging can be deployed using ArgoCD by pointing to the c
 
 We have so far used the ArgoCD UI for defining applications. There are also other options. One could [install](https://argo-cd.readthedocs.io/en/stable/getting_started/#2-download-argo-cd-cli) and use [Argo CLI](https://argo-cd.readthedocs.io/en/stable/getting_started/#creating-apps-via-cli)
 
-Yet another option is to use[declarative](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#declarative-setup) approach and do the definition with [Application](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#applications) Custom resource definition:
+Yet another option is to use [declarative](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#declarative-setup) approach and do the definition with [Application](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#applications) Custom resource definition:
 
 For the production version of our app the definition looks like this:
 

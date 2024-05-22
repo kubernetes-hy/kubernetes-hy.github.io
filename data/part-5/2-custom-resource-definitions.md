@@ -6,17 +6,17 @@ hidden: false
 
 <text-box variant='learningObjectives' name='Learning Objectives'>
 
-After this section you can
+After this section, you can
 
 - Create your own Custom Resource Definitions
 
 </text-box>
 
-We've used a number of CRDs, Custom Resource Definitions, previously. They are a way to extend Kubernetes with our own Resources. So let us do just that and extend Kubernetes!
+[Custom Resource Definitions](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) (CRDs) are a way to extend Kubernetes with our own Resources. We've used a large number of them already, e.g. in [part 4](/part-4/3-gitops) we used [Application](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#applications) with ArgoCD.
 
-Custom Resource Definitions are used to extend Kubernetes and we've used a large number of them already. They're so integral part of using Kubernetes that it's a good idea to learn how to make one ourselves.
+They're so integral part of using Kubernetes so it's a good idea to learn how to make one ourselves.
 
-Before we can get started we need to figure out what we want to create. So let's create a resource that can be used to create countdowns. The resource will be called "Countdown". It will have some *length* and some *delay* between executions. The execution - what happens each time the *delay* has elapsed - is left up to an image. So that someone using our CRD can create a countdown that posts a message to twitter each time it's ticking down.
+Before we can get started we need to figure out what we want to create. So let's create a resource that can be used to create countdowns. The resource will be called "Countdown". It will have some *length* and some *delay* between executions. The execution - what happens each time the *delay* has elapsed - is left up to an image. So that someone using our CRD can create a countdown that e.g. posts a message to Twitter each time has ticked down.
 
 As a template I'll use one provided by the [docs](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/).
 
@@ -87,7 +87,7 @@ spec:
   image: jakousa/dwk-app10:sha-84d581d
 ```
 
-And then..
+And then:
 
 ```console
 $ kubectl apply -f countdown.yaml
@@ -98,27 +98,30 @@ $ kubectl get cd
   doomsday    20       1200
 ```
 
-Now we have a new resource. Next let's create a new custom controller that'll start a pod that runs a container from the image and makes sure countdowns are destroyed. This will require some coding.
+Now we have a new resource. Next, let's create a new [custom controller](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/#custom-controllers) that'll start a pod that runs a container from the image and makes sure countdowns are destroyed. This will require some coding.
 
-For the implementation I decided to use a Kubernetes resource called [Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/). *Jobs* are a resource that creates a pod just like the Deployments we're now familiar with. Pods created by Jobs are intended to run once until completion, however they are not removed automatically and neither are the Pods created from a Job removed with the Job. The Pods are preserved so that the execution logs can be reviewed after job execution. Excellent use cases for Jobs are, for example, backup operations.
+For the implementation, I decided to use a [Job](https://kubernetes.io/docs/concepts/workloads/controllers/job/), a resource familiar to us from [part 2](part-2/4-statefulsets-and-jobs#jobs-and-cronjobs).
+Pods created by Jobs are intended to run once until completion. However, neither the completed Jobs nor the Pods are removed automatically. Those are preserved so that the execution logs can be reviewed after job execution.
 
-So our controller has to do 3 things:
+Our controller has to do 3 things:
 
-- Create Job from a Countdown
-- Reschedule Jobs until the number of executions defined in Countdown have been completed.
-- Clean all Jobs and Pods after execution
+- Create a Job from a Countdown
+- Reschedule Jobs until the number of executions defined in Countdown (the _length_) has been completed.
+- Clean all Jobs and Pods after the execution
 
-By listening to the Kubernetes API at `/apis/stable.dwk/v1/countdowns?watch=true` we will receive an ADDED for every Countdown object in the cluster. Then creating a job is just parsing the data from the message and POSTing a valid payload to `/apis/batch/v1/namespaces/<namespace>/jobs`.
+To implement the controller we need to do some low-level stuff and access the Kuberneter directly using the REST APIs.
 
-For jobs we'll listen to `/apis/batch/v1/jobs?watch=true` and wait for MODIFIED event where the success state is set to true and update the labels for the jobs to store the status. To delete a job and its pod we can send delete request to `/api/v1/namespaces/<namespace>/pods/<pod_name>` and `/apis/batch/v1/namespaces/<namespace>/jobs/<job_name>`
+By listening to the Kubernetes API at `/apis/stable.dwk/v1/countdowns?watch=true` we will receive an ADDED for every Countdown object in the cluster. Then creating a job can be done by parsing the data from the message and POSTing a valid payload to `/apis/batch/v1/namespaces/<namespace>/jobs`.
 
-And finally to delete the countdown a request to `/apis/stable.dwk/v1/namespaces/<namespace>/countdowns/<countdown_name>`.
+For jobs, we'll listen to `/apis/batch/v1/jobs?watch=true` and wait for MODIFIED event where the success state is set to true and update the labels for the jobs to store the status. To delete a Job and its Pod we can send a delete request to `/api/v1/namespaces/<namespace>/pods/<pod_name>` and `/apis/batch/v1/namespaces/<namespace>/jobs/<job_name>`
 
-A version of this controller has been implemented here: `jakousa/dwk-app10-controller:sha-4256579`. But we cannot simply deploy it as it won't have access to the APIs. For this we will need to define suitable access.
+And finally, we can remove the countdown with a delete request to `/apis/stable.dwk/v1/namespaces/<namespace>/countdowns/<countdown_name>`.
+
+A version of this controller can be found [here](https://github.com/kubernetes-hy/material-example/tree/master/app10). It has a readily built image `jakousa/dwk-app10-controller:sha-4256579`. We cannot just deploy it as it won't have access to the APIs. For this, we will need to define suitable access.
 
 ## RBAC ##
 
-RBAC (Role-based access control) is an authorization method that allows us to define access for individual users, service accounts or groups by giving them roles. For our use case we will define a ServiceAccount resource.
+RBAC (Role-based access control) is an authorization method that allows us to define access for individual users, service accounts or groups by giving them roles. For our use case, we will define a ServiceAccount resource.
 
 **serviceaccount.yaml**
 
@@ -154,9 +157,9 @@ spec:
           image: jakousa/dwk-app10-controller:sha-4256579
 ```
 
-Next is defining the role and its rules. There are two types of roles: [ClusterRole](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole) and [Role](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole). Roles are namespace specific whereas ClusterRoles can access all of the namespaces - in our case the controller will access all countdowns in all namespaces so a ClusterRole will be required.
+Next is defining the role and its rules. There are two types of roles: [ClusterRole](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole) and [Role](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole). Roles are namespace-specific whereas ClusterRoles can access all of the namespaces - in our case, the controller will access all countdowns in all namespaces so a ClusterRole will be required.
 
-The rules are defined with the apiGroup, resource and verbs. For example the jobs was `/apis/batch/v1/jobs?watch=true` so it's in the apiGroup "batch" and resource "jobs" and the verbs see [documentation](https://kubernetes.io/docs/reference/access-authn-authz/authorization/#determine-the-request-verb). Core api group is an empty string "" like in the case of pods.
+The rules are defined with the apiGroup, resource and verbs. For example, the jobs was `/apis/batch/v1/jobs?watch=true` so it's in the apiGroup "batch" and resource "jobs" and the verbs see [documentation](https://kubernetes.io/docs/reference/access-authn-authz/authorization/#determine-the-request-verb). Core API group is an empty string "" like in the case of pods.
 
 **clusterrole.yaml**
 
@@ -183,7 +186,7 @@ rules:
 
 And finally bind the ServiceAccount and the role. There are two types of bindings as well: [ClusterRoleBinding](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#default-roles-and-role-bindings) and [RoleBinding](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#default-roles-and-role-bindings). If we used a *RoleBinding* with a *ClusterRole* we would be able to restrict access to a single namespace. For example, if permission to access secrets is defined to a ClusterRole and we gave it via *RoleBinding* to a namespace called "test" they would only be able to access secrets in the namespace "test" - even though the role is a "ClusterRole".
 
-In our case *ClusterRoleBinding* is required since we want the controller to access all of the namespaces from the namespace it's deployed in, in this case namespace "default".
+In our case *ClusterRoleBinding* is required since we want the controller to access all of the namespaces from the namespace it's deployed in, in this case, namespace "default".
 
 **clusterrolebinding.yaml**
 
@@ -220,33 +223,38 @@ $ kubectl logs countdown-controller-dep-7ff598ffbf-q2rp5
 
   The countdown example controller is implemented in two ways: using [Go](https://github.com/kubernetes-hy/material-example/tree/master/app10-go) and [JavaScript](https://github.com/kubernetes-hy/material-example/tree/master/app10).
 
-  You should use [Go](https://go.dev/) but this may not be the best place to learn a new language so this will just be a recommendation. The app10-go README has info for what to do to get started with own CRD in Go!
-
-  "Should migrate to golang when dealing with kubernetes, all non-go k8s client libraries are abandonware/harmful" - Matti Paksula, in this courses channel
+  The best option is perhaps [Go](https://go.dev/) but this may not be the best place to learn a new language. The [app10-go](https://github.com/kubernetes-hy/material-example/tree/master/app10-go) README has info on what to do to get started with own CRD in Go!
 
 </text-box>
 
 <exercise name='Exercise 5.01: DIY CRD & Controller'>
 
-  This exercise doesn't rely on previous exercises. You may again choose which ever technologies you want for the implementation.
+  This exercise doesn't rely on previous exercises. You may again choose whichever technologies you want for the implementation.
 
   <p style="color:firebrick;">This exercise is difficult!</p>
 
-  We need a *DummySite* resource that can be used to create a html page from any url.
+  We need a *DummySite* resource that can be used to create an HTML page from any URL.
 
   1. Create a "DummySite" resource that has a string property called "website_url".
 
-  2. Create a controller that receives a new created "DummySite" object from the API
+  2. Create a controller that receives a created "DummySite" object from the API
 
   3. Have the controller create all of the resources that are required for the functionality.
 
-  Refer to [https://kubernetes.io/docs/reference/using-api/client-libraries/](https://kubernetes.io/docs/reference/using-api/client-libraries/) for information about client libraries.
+  Refer to <https://kubernetes.io/docs/reference/kubernetes-api/> and <https://kubernetes.io/docs/reference/using-api/api-concepts/> for more information on Kubernetes API, and
+  <https://kubernetes.io/docs/reference/using-api/client-libraries/> for information about client libraries.
 
-  The API docs are here for the apiGroups and example requests: [https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18)
+You may also take inspiration from the material example apps: [js](https://github.com/kubernetes-hy/material-example/tree/master/app10), [go](https://github.com/kubernetes-hy/material-example/tree/master/app10-go). Note that the JavaScript app does not quite utilize the features of [Kubernetes Client](https://github.com/kubernetes-client/javascript), but it calls the REST API directly.
 
-  Test that creating a DummySite resource with website_url "[https://example.com/](https://example.com/)" should create a copy of the website.
+Test that creating a DummySite resource with website_url "[https://example.com/](https://example.com/)"
+ creates a copy of the website. With a more complex website your "copy" does not need to be a complete one. Eg. in https://en.wikipedia.org/wiki/Kubernetes the CSS styles can be broken:
 
-  <p style="color:firebrick;">The controller doesn't have to work perfectly in all circumstances. The following workflow should succeed: 1. apply role, account and binding. 2. apply deployment. 3. apply DummySite</p>
+<img src="../img/wikipedia.png">
+
+ The controller doesn't have to work perfectly in all circumstances. The following workflow should succeed:
+  1. apply role, account and binding.
+  2. apply deployment.
+  3. apply DummySite
 
 </exercise>
 
