@@ -156,3 +156,27 @@ Service meshes can be powerful tools as they can help you connect and observe yo
 </exercise>
 
 Ok, we are done for now. Do you need a service mesh for your app? Most likely not... unless you are working with an enterprise-level setting.
+
+### One more thing... init containers and sidecars
+
+Under the hood, Linkerd relies heavily on Init containers and Sidecar containers to do its magic.
+Let us have now a closer look at these pretty important concepts.
+
+A pod can have any number of [init containers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) which are containers that run before the containers of the pod start. There are many uses for init containers. Those can eg.
+
+- generate or modify configuration files, fetch data or configuration settings from remote sources, or perform any necessary pre-processing before the main application starts
+- wait for other services, databases, or infrastructure components to be up and operational before the application starts. This ensures the main containers only start when all dependencies are ready
+- install or set up utilities, toolchains, or software that are required by the main application at runtime but not included in the main application image, keeping the main container image lean and optimized
+
+[Sidecar](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/) containers are the secondary containers that run along with the main application container within the same Pod. These containers are used to enhance or to extend the functionality of the primary app container by providing additional services, or functionality such as logging, monitoring, security, or data synchronization, without directly altering the primary application code.
+
+<exercise name='Exercise 5.04: Wikipedia with init and sidecar'>
+
+Write an app that serves Wikipedia pages. The app should contain
+- the main container based on _nginx_ image, that just serves whatever content it has in the public www location
+- init container that curls page <https://en.wikipedia.org/wiki/Kubernetes> and saves the page content to the public www directory for the main container
+- a sidecar container that waits for a random time between 1 and 10 minutes, curls for a random Wikipedia page in URL  <https://en.wikipedia.org/wiki/Special:Random> and saves the page content to the public www directory for the main container
+
+Hint: you might need to refresh your memory by reading [this](http://localhost:8000/part-1/4-introduction-to-storage#volumes) from part 2 of the course.
+
+</exercise>

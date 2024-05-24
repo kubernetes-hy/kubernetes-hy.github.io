@@ -35,220 +35,64 @@ Finally as Kubernetes is a platform we'll go over a few popular building blocks 
 
 [Serverless](https://en.wikipedia.org/wiki/Serverless_computing) has gained a lot of popularity and it's easy to see why. Be it Google Cloud Run, Knative, OpenFaaS, OpenWhisk, Fission or Kubeless they're running on top of Kubernetes, or atleast capable of doing so. The older the serverless platform the more likely it won't be running on Kubernetes. As such a statement like "Kubernetes is competing with serverless" doesn't make much sense.
 
-As this isn't a serverless course we won't go into depth about it but serverless sounds pretty dope. That's why next we will setup a serverless platform on top of our k3d. Just because that's something we can do. For this let's choose [Knative](https://knative.dev/) as it's the one [Google Cloud Run](https://cloud.google.com/blog/products/serverless/knative-based-cloud-run-services-are-ga) is based on and seems to be a competent option compared to other open source options we have available. It also keeps us in the theme of platforms for platforms as it could be used to create your own serverless platform.
+As this isn't a serverless course we won't go into depth about it but serverless sounds pretty dope. That's why next we will setup a serverless platform on top of our k3d. For this let's choose [Knative](https://knative.dev/) as it's the solution [Google Cloud Run](https://cloud.google.com/blog/products/serverless/knative-based-cloud-run-services-are-ga) is based on and seems to be a competent option compared to other open-source options we have available. It also keeps us in the theme of platforms for platforms as it could be used to create your own serverless platform.
 
 Knative has its own community-backed [runtime contract](https://github.com/knative/specs/blob/main/specs/serving/runtime-contract.md). It describes what kind of features an application must and should have to run correctly as a FaaS. An essential requirement is that the app itself must be stateless and configurable with environmental variables. This kind of open-source specification helps a project gain wider adoption. For instance, [Google Cloud Run implemented](https://ahmet.im/blog/cloud-run-is-a-knative/) the same contract.
 
-We will follow [this guide](https://knative.dev/docs/install/serving/install-serving-with-yaml/) to install "Serving" component of Knative. This will require us to choose a networking layer from the 4 offered. I will choose [Contour](https://projectcontour.io/), but you are free to experiment. Contour was one of the firsts in a stable state, while support for most others followed. Be wary that Istio has resource requirements that are quite large. For Contour and Knative to work locally in k3d we'll need to create our cluster without traefik.
+
+<exercise name='Exercise 5.05: Trying Serverless'>
+
+Install Knative Serving component to your kd3 cluster.
+
+For Knative to work locally in k3d you need to create it cluster without Traefik:
 
 ```console
 $ k3d cluster create --port 8082:30080@agent:0 -p 8081:80@loadbalancer --agents 2 --k3s-arg "--disable=traefik@server:0"
 ```
 
-Now installing Knative is pretty straight forward CRDs and core:
+Follow then [this](https://knative.dev/docs/install/yaml-install/serving/install-serving-with-yaml/) guide.
 
-```console
-$ kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.0.0/serving-crds.yaml
-  ...
+You might end up situation like this in the step _verify the installation_:
 
-$ kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.0.0/serving-core.yaml
-  ...
+```bash
+$ get pods -n knative-serving
+NAME                                      READY   STATUS             RESTARTS      AGE
+activator-67855958d-w2ws8                 0/1     Running            0             64s
+autoscaler-5ff4c5d679-54l28               0/1     Running            0             64s
+webhook-5446675b97-2ngh6                  0/1     CrashLoopBackOff   3 (12s ago)   64s
+net-kourier-controller-58b6bf4fbc-g7dlp   0/1     CrashLoopBackOff   3 (10s ago)   55s
+controller-6d8b579f9-p42dx                0/1     CrashLoopBackOff   3 (6s ago)    64s
 ```
 
-That's it. Well, if we wanted to run something that we would never access, that is it. Next we'll install Contour.
+See the logs of a crashing pod to see how to fix the problem.
 
-## Contour ##
+Next, try out the examples in [Deploying a Knative Service](https://knative.dev/docs/getting-started/first-service/), [Autoscaling](https://knative.dev/docs/getting-started/first-autoscale/) and [Traffic splitting](https://knative.dev/docs/getting-started/first-traffic-split/).
 
-Previously we used traefik for the job, but "[Traefik as Knative Ingress?](https://github.com/traefik/traefik/issues/5081)" is still an open issue.
+Note you can access the service from the host machine as follows:
 
-```console
-$ kubectl apply -f https://github.com/knative/net-contour/releases/download/knative-v1.0.0/contour.yaml \
-                -f https://github.com/knative/net-contour/releases/download/knative-v1.0.0/net-contour.yaml
+```bash
+curl -H "Host: hello.default.192.168.240.3.sslip.io" http://localhost:8081
 ```
 
-And configure Knative Serving to use Contour
+Where _Host_ is the URL you get with the following command:
 
-```console
-$ kubectl patch configmap/config-network \
-  --namespace knative-serving \
-  --type merge \
-  --patch '{"data":{"ingress-class":"contour.ingress.networking.knative.dev"}}'
+```bash
+kubectl get ksvc
 ```
 
-And that's it.
+</exercise>
 
-#### Hello Serverless World ####
+<exercise name='Exercise 5.06: Deploy to Serverless'>
 
-For testing purposes let's do a hello world from the Knative samples. In Knative there's another new resource called _Service_, not to be mixed up with the Kubernetes resource Service. These Services are used to manage the core Kubernetes resources
+  Make the Ping-pong application serverless.
 
-**knative-service.yaml**
-
-```yaml
-apiVersion: serving.knative.dev/v1
-kind: Service
-metadata:
-  name: helloworld-go
-spec:
-  template:
-    metadata:
-      name: helloworld-go-dwk-message-v1
-    spec:
-      containers:
-        - image: gcr.io/knative-samples/helloworld-go
-          env:
-            - name: TARGET
-              value: "DwK"
-```
-
-```console
-$ kubectl apply -f knative-service.yaml
-  service.serving.knative.dev/helloworld-go created
-```
-
-As previously mentioned we don't have DNS so accessing the application isn't as easy. We'll have to set the Host parameter for our requests. Find out the host from:
-
-```console
-$ kubectl get ksvc
-  NAME            URL                                        LATESTCREATED                  LATESTREADY                    READY   REASON
-  helloworld-go   http://helloworld-go.default.example.com   helloworld-go-dwk-message-v1   helloworld-go-dwk-message-v1   True
-```
-
-We'll need the URL field. Note also LATESTCREATED and LATESTREADY, they're revisions of the application. If we alter the knative-service.yaml it'll create new revisions where we could change between revisions.
-
-Now we can see that there are no pods running. There may be one as Knative spins one pod during the creation of the service, wait until no helloworld-go resources are found.
-
-```console
-$ kubectl get po
-  No resources found in default namespace.
-```
-
-and when we send a request to the application
-
-```console
-$ curl -H "Host: helloworld-go.default.example.com" http://localhost:8081
-  Hello DwK!
-
-$ kubectl get po
-  NAME                                                       READY   STATUS    RESTARTS   AGE
-  helloworld-go-dwk-message-v1-deployment-6664bc858f-jqlv6   1/2     Running   0          6s
-```
-
-it works and there are almost instantly pods ready.
-
-If we wanted another service to access helloworld-go we would use the address `helloworld-go.default.svc.cluster.local`. Let's test this quickly with busybox by send a request from a busybox pod to our serverless helloworld:
-
-```console
-$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/kubernetes/master/hack/testdata/recursive/pod/pod/busybox.yaml
-
-$ kubectl exec -it busybox1 -- wget -qO - helloworld-go.default.svc.cluster.local
-  Hello DwK!
-```
-
-Next let's test the revisions by changing the contents of the yaml and applying it.
-
-**knative-service.yaml**
-```yaml
-apiVersion: serving.knative.dev/v1
-kind: Service
-metadata:
-  name: helloworld-go
-spec:
-  template:
-    metadata:
-      name: helloworld-go-dwk-message-v2 # v2
-    spec:
-      containers:
-        - image: gcr.io/knative-samples/helloworld-go
-          env:
-            - name: TARGET
-              value: "DwK-but-better" # Changed content
-  traffic: # traffic enables us to split traffic between multiple revisions!
-  - revisionName: helloworld-go-dwk-message-v1
-    percent: 100
-  - revisionName: helloworld-go-dwk-message-v2
-    percent: 0
-```
-
-This created a new revision and edited the route. We can view the CRDs _Revision_ and _Route_.
-
-```console
-$ kubectl get revisions,routes
-  NAME                                                        CONFIG NAME     K8S SERVICE NAME               GENERATION   READY   REASON
-  revision.serving.knative.dev/helloworld-go-dwk-message-v1   helloworld-go   helloworld-go-dwk-message-v1   1            True
-  revision.serving.knative.dev/helloworld-go-dwk-message-v2   helloworld-go   helloworld-go-dwk-message-v2   2            True
-
-  NAME                                      URL                                        READY   REASON
-  route.serving.knative.dev/helloworld-go   http://helloworld-go.default.example.com   True
-```
-
-So now when we send a request it's still the old message!
-
-```console
-$ curl -H "Host: helloworld-go.default.example.com" http://localhost:8081
-  Hello DwK!
-```
-
-Let's set the messages between v1 and v2 at 50% each and create a new revision with the best version!
-
-**knative-service.yaml**
-```yaml
-apiVersion: serving.knative.dev/v1
-kind: Service
-metadata:
-  name: helloworld-go
-spec:
-  template:
-    metadata:
-      name: helloworld-go-dwk-message-v3 # v3
-    spec:
-      containers:
-        - image: gcr.io/knative-samples/helloworld-go
-          env:
-            - name: TARGET
-              value: "DwK-but-extreme" # Changed content
-  traffic: # traffic enables us to split traffic between multiple revisions!
-  - revisionName: helloworld-go-dwk-message-v1
-    percent: 50
-  - revisionName: helloworld-go-dwk-message-v2
-    percent: 50
-```
-
-Now curling will result in 50% - 50% chance between the v1 and v2 messages. But accessing v3 is currently disabled. Let's add routing to v3 by defining a Route ourselves.
-
-**route.yaml**
-```yaml
-apiVersion: serving.knative.dev/v1
-kind: Route
-metadata:
-  name: tester-route
-spec:
-  traffic:
-    - revisionName: helloworld-go-dwk-message-v3
-      percent: 100
-```
-
-```console
-$ kubectl apply -f route.yaml
-  route.serving.knative.dev/tester-route created
-
-$ kubectl get routes
-  NAME            URL                                        READY   REASON
-  helloworld-go   http://helloworld-go.default.example.com   True
-  tester-route    http://tester-route.default.example.com    True
-
-$ curl -H "Host: tester-route.default.example.com" http://localhost:8081
-  Hello DwK-but-extreme!
-```
-
-<exercise name='Exercise 5.05: Deploy to Serverless'>
-
-  Let's test serverless by making the Ping-pong application serverless.
+  Reading [this](https://knative.dev/docs/serving/convert-deployment-to-knative-service/) might be helpful.
 
   TIP: Your application should listen on port 8080 or better yet have a `PORT` environment variable to configure this.
 
 </exercise>
 
-<exercise name='Exercise 5.06: Landscape'>
+<exercise name='Exercise 5.07: Landscape'>
 
   Look at the CNCF Cloud Native Landscape [png](https://landscape.cncf.io/images/landscape.png) (also available as [interactive](https://landscape.cncf.io/))
 
