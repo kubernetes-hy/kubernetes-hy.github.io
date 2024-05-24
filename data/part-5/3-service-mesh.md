@@ -175,7 +175,7 @@ A pod can have any number of [init containers](https://kubernetes.io/docs/concep
 Write an app that serves Wikipedia pages. The app should contain
 - the main container based on _nginx_ image, that just serves whatever content it has in the public www location
 - init container that curls page <https://en.wikipedia.org/wiki/Kubernetes> and saves the page content to the public www directory for the main container
-- a sidecar container that waits for a random time between 1 and 10 minutes, curls for a random Wikipedia page in URL  <https://en.wikipedia.org/wiki/Special:Random> and saves the page content to the public www directory for the main container
+- a sidecar container that waits for a random time between 5 and 15 minutes, curls for a random Wikipedia page in URL  <https://en.wikipedia.org/wiki/Special:Random> and saves the page content to the public www directory for the main container
 
 Hint: you might need to refresh your memory by reading [this](http://localhost:8000/part-1/4-introduction-to-storage#volumes) from part 2 of the course.
 
