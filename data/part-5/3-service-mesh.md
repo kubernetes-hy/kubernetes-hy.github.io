@@ -149,10 +149,10 @@ Service meshes can be powerful tools as they can help you connect and observe yo
 
   To illustrate how canary releases work in Service Meshes follow through task here: https://linkerd.io/2/tasks/canary-release/
 
-  During the task note how the `kubectl -k` is used with GitHub repository.
+  It is enough to just follow one example [Flagger](https://linkerd.io/2.15/tasks/flagger/#flagger) of [Argo Rollouts](https://linkerd.io/2.15/tasks/flagger/#argo-rollouts), which is already familiar to us from [part 4](/part-4/1-update-strategies-and-prometheus#canary-release).
 
   Use <a href="https://man7.org/linux/man-pages/man1/script.1.html">script</a> command during the exercise to have something to submit. Or just take a screenshot at the end.
 
 </exercise>
 
-Ok, we are done for now. Do you need a server mesh for your app? Most likely not... unless you are working with a enterprise-level setting.
+Ok, we are done for now. Do you need a service mesh for your app? Most likely not... unless you are working with an enterprise-level setting.
