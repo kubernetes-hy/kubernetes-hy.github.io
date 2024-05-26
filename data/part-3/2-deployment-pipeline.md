@@ -142,6 +142,8 @@ $ kubectl kustomize .
 
 Kustomize has a few additional tools you can test out if you want to install it - but we'll see the usage in the next section.
 
+The documentation of Kustomize in propably not the best one around. You will find more or less usefull stuff by Google. One that you might want to checkou out is [Kustomize Cheat Sheet](https://itnext.io/kubernetes-kustomize-cheat-sheet-8e2d31b74d8f).
+
 ### Github Actions
 
 [GitHub Actions](https://github.com/features/actions) will be the CI/CD tool of choice for this course. Google also offers [Cloud Build](https://cloud.google.com/cloud-build), and a [step-by-step guide to deploying to GKE](https://cloud.google.com/cloud-build/docs/deploying-builds/deploy-gke) with it. You can return here to implement deployment with Cloud Build if you have credits left over after the course!
