@@ -46,6 +46,8 @@ metadata:
 
 If you're using a specific namespace constantly, you can set the namespace to be used by default with `kubectl config set-context --current --namespace=<name>`.
 
+Changing the default namespace with the above command is a pain. Fortunately, there is a community-created tool _kubens_, that makes listing existing namespaces and changing the default easy. Install now [kubectx + kubens](https://github.com/ahmetb/kubectx) that has besides _kubens_ the command _kubectx_ for changing the cluster you are using. The command _kubectx_ turns out to be extremely handy when we are creating another cluster in part 3 to Google Kubernetes Engine.
+
 **Kubernetes Best Practices - Organizing Kubernetes with Namespaces**
 
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/xpnZX3if9Tc" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

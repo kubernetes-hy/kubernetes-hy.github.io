@@ -31,8 +31,7 @@ Please identify the certificate if you wish to talk or ask about non-DwK certifi
 
 ### Links or sources?
 
-In writing this course I first and foremost used the Kubernetes documentation. They have excellent tutorials: <https://kubernetes.io/docs/tutorials/>.
-As the documentation can get only so far, if I had difficulties grasping a concept I used the [Kubernetes in Action](https://www.manning.com/books/kubernetes-in-action) book as well as various Google searches.
+In writing this course I first and foremost used the Kubernetes documentation. They have excellent tutorials: <https://kubernetes.io/docs/tutorials/>. As the documentation can get only so far, if I had difficulties grasping a concept I used the [Kubernetes in Action](https://www.manning.com/books/kubernetes-in-action) book as well as various Google searches.
 
 You can get Kubernetes Up and Running for free [from Microsoft](https://azure.microsoft.com/en-us/resources/kubernetes-up-and-running/) or [from VMWare](https://k8s.vmware.com/kubernetes-up-and-running/).
 
@@ -40,6 +39,6 @@ I personally had a hobby cluster in [Hetzner](https://www.hetzner.com/) that I s
 
 ### How to get the DwK certificate?
 
-Submission application will have the certificate for you when you have submitted all of the exercises.
+[Submission system](https://studies.cs.helsinki.fi/stats/courses/kubernetes2024/) will have the certificate for you when you have submitted all of the exercises.
 
 _The next course iteration will start in the 2nd half of the year 2024_ Certificate will only be available when the course starts.

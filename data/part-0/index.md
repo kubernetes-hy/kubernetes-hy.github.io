@@ -31,13 +31,20 @@ Most of the exercises will require you to write code or publish something to Doc
 
 A system for detecting plagiarism is used to check exercises submitted to GitHub. If multiple students hand in the same code, the issue is handled according to the [policy on plagiarism](https://studies.helsinki.fi/instructions/article/what-cheating-and-plagiarism) of the University of Helsinki.
 
-There are multiple exercises in each part. After you have completed **all** of the exercises for a part, use the [submission system](https://studies.cs.helsinki.fi/stats/courses/kubernetes2022). Note that you can **not** edit a submission, so mark all as completed.
-
-_Submitting exercises will be possible when the course starts in the 2nd part of 2024._
+There are multiple exercises in each part. After you have completed **all** of the exercises for a part, use the [submission system](https://studies.cs.helsinki.fi/stats/courses/kubernetes2024). Note that you can **not** edit a submission, so mark all as completed.
 
 ### Grading ###
 
-Course size is 5 ECTS credits. Pass/Fail.
+Course size is 5 ECTS credits. The course has a total of 48 exercises, grade will depend on the number of submitted exercises:
+
+| grade | exercises |
+|----------|----------|
+| 5    |  47 |
+| 4    |  42 |
+| 3    |  37 |
+| 2    |  32 |
+| 1    |  27 |
+
 
 ## Google Cloud Credits ##
 
@@ -45,7 +52,9 @@ In part 3, we will use Google Kubernetes Engine. It is not free, but everyone st
 
 Google has offered students with @helsinki.fi email addresses some Google Cloud Credits. Finnish/Open University students, you will be given a @helsinki.fi address when you register for the Open University course. Note that registration is only possible when the course starts officially!
 
-If you have used all $300 Google Cloud credits, there is nothing I can do. You can complete parts 1-2 and most likely 4-5, but part 3 is required for course completion and the certificate.
+If you have used all $300 Google Cloud credits, there is nothing we can do. You can complete parts 1-2 and most likely 4-5, but part 3 is required to complete the course with higher grades.
+
+You may also very well use another cloud provider but we do not have any instructions on how to get up and running on other providers.
 
 ## Getting started ##
 
