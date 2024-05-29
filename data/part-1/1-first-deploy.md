@@ -343,7 +343,7 @@ When updating anything in Kubernetes the usage of delete is actually an anti-pat
 
 <exercise name='Exercise 1.03: Declarative approach'>
 
-In your "Log output" application create the folder for manifests and move your deployment into a declarative file.
+In your "Log output" application create a folder for manifests and move your deployment into a declarative file.
 
 Make sure everything still works by restarting and following logs.
 
@@ -367,7 +367,7 @@ $ docker build -t <image>:<new_tag>
 $ docker push <image>:<new_tag>
 ```
 
-Then edit deployment.yaml so that the tag is updated to the \<new_tag\> and
+Then edit deployment.yaml so that the tag is updated to the \<new_tag\> and run the following command
 
 ```console
 $ kubectl apply -f manifests/deployment.yaml
