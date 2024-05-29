@@ -24,13 +24,13 @@ There are multiple types of volumes and we'll get started with two of them.
 
 A [volume](https://docs.docker.com/storage/volumes/) in Docker and Docker compose is the way to persist the data the containers are using. With Kubernetes [the simple volumes](https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/) that is not quite the case.
 
-The Kubernetes volumes, in technical terms *emptyDir* volumes, are shared filesystems _inside a pod_, this means that their lifecycle is tied to a pod. When the pod is destroyed the data is lost. In addition, simply moving the pod from another node will destroy the contents of the volume as the space is reserved from the node the pod is running on. So surely you should not use [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir)volumes e.g. for backing up a database. Even with the limitations it may be used as a cache as it persists between container restarts or it can be used to share files between two containers in a pod.
+The Kubernetes volumes, in technical terms *emptyDir* volumes, are shared filesystems _inside a pod_, this means that their lifecycle is tied to a pod. When the pod is destroyed the data is lost. In addition, simply moving the pod from another node will destroy the contents of the volume as the space is reserved from the node the pod is running on. So surely you should not use [emptyDir](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir) volumes e.g. for backing up a database. Even with the limitations it may be used as a cache as it persists between container restarts or it can be used to share files between two containers in a pod.
 
 Before we can get started with this, we need an application that shares data with another application. In this case, it will work as a method to share simple log files with each other. We'll need to develop:
 - App 1 that will check if /usr/src/app/files/image.jpg exists and if not, it downloads a random image and saves it as image.jpg. Any HTTP request will trigger a new image generation.
 - App 2 that will check for the file /usr/src/app/files/image.jpg and shows it, if it is available.
 
-Apps share a deployment so that both of them are **inside the same pod**. My version is available for you to use [here](https://github.com/kubernetes-hy/material-example/blob/b9ff709b4af7ca13643635e07df7367b54f5c575/app3/manifests/deployment.yaml). The example includes ingress and service to access the application.
+Apps share a deployment so that both of them are **inside the same pod**. My version is available for you to use [here](https://github.com/kubernetes-hy/material-example/blob/b9ff709b4af7ca13643635e07df7367b54f5c575/app3/manifests/deployment.yaml). The example includes an ingress and a service to access the application.
 
 **deployment.yaml**
 
@@ -85,7 +85,7 @@ Note that all data is lost when the pod goes down.
 
 ### Persistent Volumes ###
 
-In contrast to the emptyDir volumes, a [Persistent Voulme](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) is something you probably had in mind when we started talking about volumes.
+In contrast to the emptyDir volumes, a [Persistent Volume](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) is something you probably had in mind when we started talking about volumes.
 
 A Persistent Volume (PV) is a cluster-wide resource, that represents a piece of storage in the cluster that has been provisioned by the cluster administrator or is [dynamically](https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/) provisioned. Persistent Volumes can be backed by various types of storage such as local disk, NFS, cloud storage, etc.
 
@@ -207,7 +207,7 @@ If you are interested in learning more about running your own storage you can ch
 
 <exercise name='Exercise 1.11: Persisting data'>
 
-  Let's share data between "Ping-pong" and "Log output" applications using persistent volumes. Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment* to utilize it. As PersistentVolumes are often maintained by cluster administrators rather than developers and those are not application-specific you should keep the definition for those separated, perhaps in own folder.
+  Let's share data between "Ping-pong" and "Log output" applications using persistent volumes. Create both a *PersistentVolume* and *PersistentVolumeClaim* and alter the *Deployment* to utilize it. As PersistentVolumes are often maintained by cluster administrators rather than developers and those are not application specific you should keep the definition for those separated, perhaps in own folder.
 
   Save the number of requests to "Ping-pong" application into a file in the volume and output it with the timestamp and hash when sending a request to our "Log output" application. In the end, the two pods should share a persistent volume between the two applications. So the browser should display the following when accessing the "Log output" application:
 
