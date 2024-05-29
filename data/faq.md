@@ -41,4 +41,4 @@ I personally had a hobby cluster in [Hetzner](https://www.hetzner.com/) that I s
 
 [Submission system](https://studies.cs.helsinki.fi/stats/courses/kubernetes2024/) will have the certificate for you when you have submitted all of the exercises.
 
-_The course material has now been updated and the 2024 edition has started unofficially. The official start is 1st August, certificates will be then available_
+_The course material has now been updated and the 2024 edition has started unofficially. The official start is 1st of August, certificates will be then available._
