@@ -28,7 +28,7 @@ Let's focus on the Google Kubernetes Engine (GKE) costs for now. Note that the G
 
 The calculator here [https://cloud.google.com/products/calculator](https://cloud.google.com/products/calculator) offers us a picture of the pricing. I decided to try a cheap option: 5 nodes in 1 zonal cluster using 1 vCPU each. The datacenter location is in Finland and I don't need a persistent disk. If we wanted less than 5 nodes why would we even use Kubernetes? The total cost for this example was around 250 USD per month. Adding additional services such as a Load balancer increases the cost. If you find the billing for Google Cloud Platform confusing, you're not alone: Coursera has ~5 hour course for "[Understanding Your Google Cloud Platform Costs](https://www.coursera.org/learn/gcp-cost-management)".
 
-During part 3 we will be using GKE either by using the free credits offered by Google. You are responsible for making sure that the credits last for the whole part and if all of them are consumed I can not help you.
+During part 3 we will be using GKE either by using the free credits offered by Google. You are responsible for making sure that the credits last for the whole part and if all of them are consumed, I can not help you.
 
 After redeeming the credits we can create a project with the billing account. The Google Cloud UI can be confusing. On the [resources page](https://console.cloud.google.com/cloud-resource-manager) we can create a new project and let's name it "dwk-gke" for the purposes of this course.
 
@@ -50,7 +50,7 @@ $ gcloud config set project dwk-gke
   Updated property [core/project].
 ```
 
-We can now create a cluster, with the command [gcloud container clusters create](https://cloud.google.com/sdk/gcloud/reference/container/clusters/create). You can choose any zone you want from the list [here](https://cloud.google.com/about/locations/). I chose Finland. Notice that one region (e.g. europe-north1) may have multiple regions (e.g. -a). Let's add another flag: `--cluster-version=1.29`. This will ask GKE to use a version that will be the default in April 2024. GKE release schedulecan be seen [here](https://cloud.google.com/kubernetes-engine/docs/release-schedule).
+We can now create a cluster, with the command [gcloud container clusters create](https://cloud.google.com/sdk/gcloud/reference/container/clusters/create). You can choose any zone you want from the list [here](https://cloud.google.com/about/locations/). I chose Finland. Notice that one region (e.g. europe-north1) may have multiple regions (e.g. -a). Let's add another flag: `--cluster-version=1.29`. This will ask GKE to use a version that will be the default in April 2024. GKE release schedule can be seen [here](https://cloud.google.com/kubernetes-engine/docs/release-schedule).
 
 ```console
 $ gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.29
@@ -77,7 +77,7 @@ $ gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-
 
 If the command does not work, you need to install _gke-gcloud-auth-plugin_ by following [this](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_plugin).
 
-It set the kubeconfig to point in the right direction already. But if you need to do it again we can set the kubeconfig like this:
+It sets the kubeconfig to point in the right direction already. But if you need to do it again, we can set the kubeconfig like this:
 
 ```console
 $ gcloud container clusters get-credentials dwk-cluster --zone=europe-north1-b
