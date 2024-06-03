@@ -102,7 +102,7 @@ data:
   # base64 encoded value should look something like this, note that this won't work
 ```
 
-The base64 encoded key can be created eg with [this](https://www.base64encode.org/) online tool, or in console with the command `base64`:
+The base64 encoded key can be created eg. with [this](https://www.base64encode.org/) online tool, or in console with the command `base64`:
 
 ```bash
 $ echo -n 'my-string' | base64
@@ -164,9 +164,9 @@ sops:
   version: 3.7.1
 ```
 
-We can safely store the file to the version control since only the holders of the secret key pair of `age17mgq9ygh23q0cr00mjn0dfn8msak0apdy0ymjv5k50qzy75zmfkqzjdam4` will be able to decode it. Remember to use your own keys!
+We can safely store the file to the version control, since only the holders of the secret key pair of `age17mgq9ygh23q0cr00mjn0dfn8msak0apdy0ymjv5k50qzy75zmfkqzjdam4` will be able to decode it. Remember to use your own keys!
 
-If we want to encrypt a file for the whole team we will need to add a list of public keys while encrypting. Any of the private key owners can then decrypt the file. In fact, the best method is that (almost) no-one has the private key! Public key can be used to encrypt individual files and the private key can be stored separately and used to decrypt the file just in time.
+If we want to encrypt a file for the whole team, we will need to add a list of public keys while encrypting. Any of the private key owners can then decrypt the file. In fact, the best method is that (almost) no-one has the private key! Public key can be used to encrypt individual files and the private key can be stored separately and used to decrypt the file just in time.
 
 You can decrypt the encrypted file by exporting the key file in *SOPS\_AGE\_KEY\_FILE* environment variable and running sops with --decrypt flag.
 
@@ -176,7 +176,7 @@ $ export SOPS_AGE_KEY_FILE=$(pwd)/key.txt
 $ sops --decrypt secret.enc.yaml > secret.yaml
 ```
 
-You can also apply a secret yaml via piping directly, this helps avoid creaing a plain secret.yaml file:
+You can also apply a secret yaml via piping directly, this helps avoid creating a plain secret.yaml file:
 
 ```console
 $ sops --decrypt secret.enc.yaml | kubectl apply -f -
@@ -192,7 +192,7 @@ There's nothing specific to submit, all following submissions should follow the 
 
 ### ConfigMaps
 
-[ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/) are similar but the data doesn't have to be encoded and is not encrypted. Let's say you have a videogame server that takes a configuration gile _serverconfig.txt_ which looks like this:
+[ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/) are similar but the data doesn't have to be encoded and is not encrypted. Let's say you have a videogame server that takes a configuration file _serverconfig.txt_ which looks like this:
 
 ```ini
 maxplayers=12
