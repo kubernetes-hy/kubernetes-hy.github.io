@@ -18,7 +18,7 @@ As you can imagine, there may be a lot of resources inside a cluster. In fact, a
 
 ### Namespaces ###
 
-[Namespaces](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) are used to keep resources separated. A company that uses one cluster but has multiple projects can use namespaces to split the cluster into virtual clusters, one for each project. Most commonly they would be used to separate environments such as production, testing, staging. DNS entry for services includes the namespace so you can still have projects communicate with each other if needed through service.namespace address. e.g. if a service called _cat-pictures_ is in a namespace _ns-test_ it could be found from other namespaces via http://cat-pictures.ns-test.
+[Namespaces](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) are used to keep resources separated. A company that uses one cluster but has multiple projects can use namespaces to split the cluster into virtual clusters, one for each project. Most commonly they would be used to separate environments such as production, testing, staging. DNS entry for services includes the namespace so you can still have projects communicate with each other if needed through service.namespace address. e.g. if a service called _cat-pictures_ is in a namespace _ns-test_, it could be found from other namespaces via http://cat-pictures.ns-test.
 
 Accessing namespaces with kubectl is achieved by using the `-n` flag. For example, you can see what the namespace kube-system has with
 
@@ -32,7 +32,7 @@ To see everything you can use `--all-namespaces`.
 $ kubectl get all --all-namespaces
 ```
 
-Namespaces should be kept separate - you could e.g. run all of the examples and do the exercises of this course in a cluster that is shared with critical software, but that would not be a smart thing to do. An administrator should set a [ResourceQuota](https://kubernetes.io/docs/concepts/policy/resource-quotas/) for that namespace so that you can safely run anything there. We'll look into resource limits and requests later.
+Namespaces should be kept separate - you could e.g. run all of the examples and do the exercises of this course in a cluster that is shared with critical software, but that would not be a smart thing to do. An administrator should set a [ResourceQuota](https://kubernetes.io/docs/concepts/policy/resource-quotas/) for that namespace, so that you can safely run anything there. We'll look into resource limits and requests later.
 
 Creating a namespace is an oneliner (`kubectl create namespace example-namespace`). You can define the namespace to use by adding it to the metadata section of the yaml files.
 
