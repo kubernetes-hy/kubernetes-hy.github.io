@@ -26,7 +26,7 @@ Deployment creates pods using a Resource called "ReplicaSet". We're using Replic
 
 Let's run the key-value database [Redis](https://redis.io) and save some data there. We're going to need a PersistentVolume as well as an application that utilizes the Redis.
 
-StatefulSet requires a "Headless Service" to be responsible for the network identity. Let us start by defining a headless service" with `clusterIP: None`, this will instruct Kubernetes not to do proxying or load balancing and instead allow direct access to the Pods:
+StatefulSet requires a "Headless Service" to be responsible for the network identity. Let us start by defining a "headless service" with `clusterIP: None`, this will instruct Kubernetes not to do proxying or load balancing, but instead allow direct access to the Pods:
 
 **service.yaml**
 
@@ -200,7 +200,7 @@ spec:
 
 <exercise name='Exercise 2.08: Project v1.2'>
 
-  Create a database and save the todos there, again, the database should have its own pod.
+  Create a database and save the todos there. Again, the database should have its own pod.
 
   Use Secrets and/or ConfigMaps to have the backend access the database.
 
@@ -227,7 +227,7 @@ fi
 
 The above script has already been packed to an image [jakousa/simple-backup-example](https://hub.docker.com/r/jakousa/simple-backup-example).
 
-Since we don't have any Postgres available to us yet let's deploy one first:
+Since we don't have any Postgres available to us yet, let's deploy one first:
 
 ```yaml
 apiVersion: v1
