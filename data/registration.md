@@ -13,4 +13,4 @@ For the certificate, mark the course as finished in the submission software. The
 
 ### Completing the course for credits ###
 
-Enroll yourself to the course through the Open University. The link will be available when the course starts.
+Enroll yourself in the course through the Open University. The link will be available when the course starts.
