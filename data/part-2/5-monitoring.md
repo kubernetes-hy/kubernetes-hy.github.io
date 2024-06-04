@@ -104,7 +104,7 @@ $ kubectl get all -n loki-stack
   statefulset.apps/loki   1/1     18m
 ```
 
-Here we see that Loki is running in port 3100. As an additional bonus, because we installed the loki-stack we've got [Promtail](https://grafana.com/docs/loki/latest/clients/promtail/), which makes it trivial for us to send logs from our applications to Loki. So trivial in fact, that we don't have to do anything except configure Grafana to show Loki.
+Here we see that Loki is running in port 3100. As an additional bonus, because we installed the loki-stack, we've got [Promtail](https://grafana.com/docs/loki/latest/clients/promtail/), which makes it trivial for us to send logs from our applications to Loki. So trivial in fact, that we don't have to do anything except configure Grafana to show Loki.
 
 Open Grafana, go to settings, and choose _Connections_, _Data Sources_, and then _Add data source_. Choose Loki and then insert the correct URL. From the output above we can guess that the port should be 3100, the namespace is loki-stack and the name of the service is loki. So the answer would be http://loki.loki-stack:3100. No other fields need to be changed.
 
