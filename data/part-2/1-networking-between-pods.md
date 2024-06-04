@@ -41,7 +41,7 @@ Alternatively each Pod has an IP created by Kubernetes.
 
 ### A debugging pod
 
-Sometimes, the best way to debug is to manually test what is going on. You can just go inside a pod or send a request manually from another pod. You can use eg. [busybox](https://en.wikipedia.org/wiki/BusyBox), that is a light wight Linux distro for debugging.
+Sometimes, the best way to debug is to manually test what is going on. You can just go inside a pod or send a request manually from another pod. You can use eg. [busybox](https://en.wikipedia.org/wiki/BusyBox), that is a light weight Linux distro for debugging.
 
 Let us start a busybox pod by applying the following yaml:
 
@@ -71,7 +71,7 @@ Now we can just exec a command:
 $ kubectl exec -it my-busybox -- wget -qO - http://todo-backend-svc:2345
 ```
 
-We used the [wget](https://www.gnu.org/software/wget/) command since our usual tool for the purposes curl is not readily available in busybox.
+We used the [wget](https://www.gnu.org/software/wget/) command since our usual tool for the purposes, curl, is not readily available in busybox.
 
 We can also open a shell to the pod with command [kubectl exec](https://kubernetes.io/docs/tasks/debug/debug-application/get-shell-running-container/) to run several commands:
 
