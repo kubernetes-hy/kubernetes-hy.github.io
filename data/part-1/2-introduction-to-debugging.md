@@ -14,7 +14,7 @@ After this section you
 
 </text-box>
 
-Kubernetes is a "self-healing" system, and we'll get back to what Kubernetes consists of and how it actually works in part 5. But at this stage "self-healing" is an excellent concept: usually, you (the maintainer or te developer) don't have to do anything in case something goes wrong with a pod or a container.
+Kubernetes is a "self-healing" system, and we'll get back to what Kubernetes consists of and how it actually works in part 5. But at this stage "self-healing" is an excellent concept: usually, you (the maintainer or the developer) don't have to do anything in case something goes wrong with a pod or a container.
 
 Sometimes you need to interfere, or you might have problems with your own configuration. As you are trying to find bugs in your configuration start by eliminating all possibilities one by one. The key is to be systematic and **to question everything**. Here are the preliminary tools to solve problems.
 
@@ -24,9 +24,9 @@ The second is `kubectl logs` with which you can follow the logs of your possibly
 
 The third is `kubectl delete` which will simply delete the resource and in some cases, like with pods in deployment, a new one will be automatically released.
 
-Finally, we have the overarching tool [Lens "The Kubernetes IDE"](https://k8slens.dev/). Which you should start using right now to familiarize yourself with the usage.
+Finally, we have the overarching tool [Lens "The Kubernetes IDE"](https://k8slens.dev/), which you should start using right now to familiarize yourself with the usage.
 
-During exercises you also have our Discord channel available (which you joined in [part 0](/part-0)).
+During exercises you also have our Discord channel available (to which you joined in [part 0](/part-0)).
 
 Let's test these tools and experiment using Lens. You will likely face a real debugging challenge during the exercises and there is another preplanned one in part 5 when we have a larger set of moving parts available to us.
 
@@ -101,7 +101,7 @@ $ kubectl logs hashgenerator-dep-75bdcc94c-whwsm
 
 Everything seems to be in order. However, wouldn't it be great if there was a dashboard to see everything going on? Let's see what the Lens can do.
 
-First, you'll need to add the cluster to Lens. If the config is not available in the dropdown you can get the kubeconfig for custom with `kubectl config view --minify --raw`. After you've added the cluster open Workloads/Overview tab. A view similar to the following should open up
+First, you'll need to add the cluster to Lens. If the config is not available in the dropdown you can get the kubeconfig for custom with `kubectl config view --minify --raw`. After you've added the cluster, open Workloads/Overview tab. A view similar to the following should open up
 
 <img src="../img/lens_during_deploy.png">
 
@@ -111,7 +111,7 @@ Next, let's navigate to the tab Workloads/Pods and click our pod with the name "
 
 <img src="../img/lens_pod.png">
 
-The view shows us the same information as was in the description. But the GUI offers us actions as well. The three numbered in the top right corner are:
+The view shows us the same information as was in the description. But the GUI offers us actions as well. The three icons numbered in the top right corner are:
 
 1. Open terminal into a container in the pod
 2. Show logs
