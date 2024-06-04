@@ -69,7 +69,7 @@ $ docker ps
   a34e49184d37    rancher/k3s:latest         "/bin/k3s server --t…"   2 hours ago         Up 2 hours                                            k3d-k3s-default-server-0
 ```
 
-Be scrolling a bit right we see that K3d has helpfully prepared us the port 6443 to access the API. Also the port 80 is open. All requests to the load balancer here will be proxied to the same ports of all server nodes of the cluster. However, for testing purposes, we'll want _an individual port open for a single node_. Let's delete our old cluster and create a new one with some ports open.
+After scrolling a bit right we see that K3d has helpfully prepared us the port 6443 to access the API. Also the port 80 is open. All requests to the load balancer here will be proxied to the same ports of all server nodes of the cluster. However, for testing purposes, we'll want _an individual port open for a single node_. Let's delete our old cluster and create a new one with some ports open.
 
 K3d [documentation](https://k3d.io/v5.3.0/usage/commands/k3d_cluster_create/) tells us how the ports are opened, we'll open local 8081 to 80 in k3d-k3s-default-serverlb and local 8082 to 30080 in k3d-k3s-default-agent-0. The 30080 is chosen almost completely randomly, but needs to be a value between 30000-32767 for the next step:
 
