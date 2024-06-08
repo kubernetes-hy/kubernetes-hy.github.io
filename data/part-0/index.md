@@ -11,29 +11,15 @@ Attendees are expected to have completed [DevOps with Docker](https://devopswith
 
 ### Course material ###
 
-The course material is meant to be read part by part from start to finish. To get a passing grade, you have to do every exercise. The material contains exercises, which are placed so that the preceding material provides enough information for solving each exercise. Do the exercises as you go through the material. As you progress further, you will be increasingly searching for information on the internet. You should also supplement your knowledge with the [official documentation](https://kubernetes.io/docs/home/)!
+The course material is meant to be read part by part from start to finish. The material contains exercises, which are placed so that the preceding material provides enough information for solving each exercise. Do the exercises as you go through the material. As you progress further, you will be increasingly searching for information on the internet. You should also supplement your knowledge with the [official documentation](https://kubernetes.io/docs/home/)!
 
 The course material is written using Mac, so some instructions may lack platform-specific details. Please make a pull request to the course material in case you find any mistakes or wish to add something. You can also add an issue through GitHub if you find any problems with the course material.
 
-## Completing course ##
+## Completion and grading ##
 
-To complete the course, submit solutions for all of the exercises in parts 1-5. There is no exam.
+To complete the course, complete exercises in parts 1-5. To get lowest passing grade, 27 exercises is required.
 
 The total workload of the course is about 100 hours depending on your background.
-
-### Exercises ###
-
-Complete all of the exercises to receive a passing grade.
-
-Make a repository on GitHub and publish your solutions in clearly ordered files/folders. If you need help using Git, you should refer to their [guide](https://guides.github.com/activities/hello-world/). Make sure that the repository is available to me. We prefer public repositories, but if you want to keep your experience secret, you can create a private repository and add [Jakousa](https://github.com/Jakousa) as a collaborator.
-
-Most of the exercises will require you to write code or publish something to Docker Hub. If you are unsure what to submit, you can ask for help in the course chat.
-
-A system for detecting plagiarism is used to check exercises submitted to GitHub. If multiple students hand in the same code, the issue is handled according to the [policy on plagiarism](https://studies.helsinki.fi/instructions/article/what-cheating-and-plagiarism) of the University of Helsinki.
-
-There are multiple exercises in each part. After you have completed **all** of the exercises for a part, use the [submission system](https://studies.cs.helsinki.fi/stats/courses/kubernetes2024). Note that you can **not** edit a submission, so mark all as completed.
-
-### Grading ###
 
 Course size is 5 ECTS credits. The course has a total of 48 exercises, grade will depend on the number of submitted exercises:
 
@@ -45,6 +31,15 @@ Course size is 5 ECTS credits. The course has a total of 48 exercises, grade wil
 | 2    |  32 |
 | 1    |  27 |
 
+### Exercises ###
+
+Make a repository on GitHub and publish your solutions in clearly ordered files/folders. If you need help using Git, you should refer to their [guide](https://guides.github.com/activities/hello-world/). Make sure that the repository is available to me. We prefer public repositories, but if you want to keep your experience secret, you can create a private repository and add [Jakousa](https://github.com/Jakousa) as a collaborator.
+
+Most of the exercises will require you to write code or publish something to Docker Hub. If you are unsure what to submit, you can ask for help in the course chat.
+
+A system for detecting plagiarism is used to check exercises submitted to GitHub. If multiple students hand in the same code, the issue is handled according to the [policy on plagiarism](https://studies.helsinki.fi/instructions/article/what-cheating-and-plagiarism) of the University of Helsinki.
+
+There are multiple exercises in each part. After you have completed **all** of the exercises for a part, use the [submission system](https://studies.cs.helsinki.fi/stats/courses/kubernetes2024). Note that you can **not** edit a submission, so mark all as completed.
 
 ## Google Cloud Credits ##
 
