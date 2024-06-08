@@ -17,7 +17,7 @@ The course material is written using Mac, so some instructions may lack platform
 
 ## Completion and grading ##
 
-To complete the course, complete exercises in parts 1-5. To get lowest passing grade, 27 exercises is required.
+To complete the course, complete exercises in parts 1-5.
 
 The total workload of the course is about 100 hours depending on your background.
 
@@ -39,7 +39,7 @@ Most of the exercises will require you to write code or publish something to Doc
 
 A system for detecting plagiarism is used to check exercises submitted to GitHub. If multiple students hand in the same code, the issue is handled according to the [policy on plagiarism](https://studies.helsinki.fi/instructions/article/what-cheating-and-plagiarism) of the University of Helsinki.
 
-There are multiple exercises in each part. After you have completed **all** of the exercises for a part, use the [submission system](https://studies.cs.helsinki.fi/stats/courses/kubernetes2024). Note that you can **not** edit a submission, so mark all as completed.
+There are multiple exercises in each part. After completing a part, use the [submission system](https://studies.cs.helsinki.fi/stats/courses/kubernetes2024). Note that you can **not** edit a submission afterwards, so think ahead how many exercises you wish to complete for each part.
 
 ## Google Cloud Credits ##
 
