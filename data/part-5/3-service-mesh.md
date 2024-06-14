@@ -65,7 +65,7 @@ $ kubectl get all -n emojivoto
 
 Here we see the "vote-bot" deployment that automatically generates traffic. The README tells us that it votes Donut 🍩 15% of the time and the rest randomly.
 
-Since it already has a service we're only missing an ingress.
+Since it already has a service, we're only missing an ingress.
 
 **ingress.yaml**
 ```yaml
@@ -87,7 +87,7 @@ spec:
               number: 80
 ```
 
-And it becomes available for us in [http://localhost:8081](http://localhost:8081). However, there's something strange going on! You can figure it out by watching the leaderboards and knowing where the votes are going, or by clicking every single emoji by yourself.
+And it becomes available for us in [http://localhost:8081](http://localhost:8081). However, there's something strange going on! You can figure it out by watching the leaderboards and knowing where the votes are going, or by clicking every single emoji yourself.
 
 Let's see if there's a better way to detect the behavior and figure out what's wrong. Linkerd offers us a dashboard through an extension called `viz`.
 
@@ -98,7 +98,7 @@ $ linkerd viz install | kubectl apply -f -
 $ linkerd viz dashboard
 ```
 
-it should open your browser window. Click the "emojivoto" namespace (to reach /namespaces/emojivoto) we'll notice that the resources in emojivoto namespace are not in the service mesh yet. This is due to the fact that they do not have the `sidecar container` in the pods. [Sidecar containers](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/) are a commonly used pattern where a new container is added to the pod to add more functionality to the pod. Let's add Linkerd sidecars to emojivoto.
+It should open your browser window. Click the "emojivoto" namespace (to reach /namespaces/emojivoto) we'll notice that the resources in emojivoto namespace are not in the service mesh yet. This is due to the fact that they do not have the `sidecar container` in the pods. [Sidecar containers](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/) are a commonly used pattern where a new container is added to the pod to add more functionality to the pod. Let's add Linkerd sidecars to emojivoto.
 
 The state of the pods before:
 
