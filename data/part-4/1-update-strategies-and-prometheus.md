@@ -16,7 +16,7 @@ After this section, you can
 
 </text-box>
 
-In the last part, we did automated updates with a deployment pipeline. The update *just worked* but we have no idea how the update actually happened, other than that a pod was changed. Let us now look how we can make the update process safer to help us reach a higher number of [nines](https://en.wikipedia.org/wiki/High_availability) in the availability.
+In the previous part, we did automated updates with a deployment pipeline. The update *just worked*, but we have no idea how the update actually happened, other than that a pod was changed. Let us now look how we can make the update process safer to help us reach a higher number of [nines](https://en.wikipedia.org/wiki/High_availability) in the availability.
 
 There are multiple update/deployment/release strategies. We will focus on two of them:
 
@@ -27,7 +27,7 @@ Both of these update strategies are designed to make sure that the application w
 
 ### Rolling update ###
 
-By default, Kubernetes initiates a [rolling update](https://kubernetes.io/docs/concepts/workloads/management/#updating-your-application-without-an-outage) when we change the image. That means that every pod is updated sequentially. The rolling update is a great default since it enables the application to be available during the update. If we decide to push an image that does not work the update will automatically stop.
+By default, Kubernetes initiates a [rolling update](https://kubernetes.io/docs/concepts/workloads/management/#updating-your-application-without-an-outage) when we change the image. That means that every pod is updated sequentially. The rolling update is a great default since it enables the application to be available during the update. If we decide to push an image that does not work, the update will automatically stop.
 
 I've prepared an application with 5 versions here. The one with tag v1 works always, v2 never works, v3 works 90% of the time, v4 will die after 20 seconds and v5 works always.
 
@@ -81,7 +81,7 @@ You can see the rolling update performed but unfortunately, the application no l
 
 With a *ReadinessProbe* Kubernetes can check if a pod is ready to process requests. The application has an endpoint [/healthz](https://stackoverflow.com/questions/43380939/where-does-the-convention-of-using-healthz-for-application-health-checks-come-f) in port 3541, and we can use that to test for health. It will simply answer with status code 500 if it's not working and 200 if it is.
 
-Let's roll the version back to v1 as well so we can test the update to v2 again.
+Let's roll the version back to v1 as well, so we can test the update to v2 again.
 
 **deployment.yaml**
 
@@ -111,7 +111,7 @@ spec:
                port: 3541
 ```
 
-Here the *initialDelaySeconds* and *periodSeconds* will mean that the probe is sent 10 seconds after the container is up and every 5 seconds after that. Now if we change the tag to v2 and apply it the result will look like this:
+Here the *initialDelaySeconds* and *periodSeconds* will mean that the probe is sent 10 seconds after the container is up and every 5 seconds after that. Now if we change the tag to v2 and apply it, the result will look like this:
 
 ```console
 $ kubectl apply -f deployment.yaml
@@ -126,7 +126,7 @@ $ kubectl get po
   flaky-update-dep-54888b877b-dbw29   0/1     Running   0          24s
 ```
 
-Here three of the pods are completely functional, one of v1 was dropped to make way for the v2 ones but since they do not work they are never READY and the update can not continue.
+Here three of the pods are completely functional, one of v1 was dropped to make way for the v2 ones, but since they do not work, they are never READY and the update can not continue.
 
 ### GKE ingress and pod readiness
 
@@ -187,14 +187,14 @@ pingpong-dep-9b698d6fb-jdgq9     0/1     Running   0          21s
 
 </exercise>
 
-Even though v2 didn't work. At least the application is working. We can just push a new update on top of the v2. Let's try the v4 which should break after a short while:
+Even though v2 didn't work, at least the application is working. We can just push a new update on top of the v2. Let's try the v4 which should break after a short while:
 
 ```console
 $ kubectl apply -f deployment.yaml
   deployment.apps/flaky-update-dep configured
 ```
 
-Now the ReadinessProbe may pass for the first 20 seconds but soon enough every pod will break. Unfortunately *ReadinessProbe* cannot do anything about it, the deployment was successful but the application is buggy.
+Now the ReadinessProbe may pass for the first 20 seconds, but soon enough every pod will break. Unfortunately *ReadinessProbe* cannot do anything about it, the deployment was successful but the application is buggy.
 
 ```console
 $ kubectl get po
@@ -205,7 +205,7 @@ $ kubectl get po
   flaky-update-dep-dd78944f4-zczmw   0/1     Running   0          90s
 ```
 
-Let's roll back to the previous version. This may come in handy if you ever are in a panic mode and need to roll an update back:
+Let's roll back to the previous version. This may come in handy, if you ever are in a panic mode and need to roll an update back:
 
 ```console
 $ kubectl rollout undo deployment flaky-update-dep
@@ -283,7 +283,7 @@ $ kubectl get po
 
 At least something is working!
 
-If your app is slow to start, a [StartupProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes) can be used to delay the liveness probe and prevent it from firing prematurely. You may require it in real life but is not discussed further in this course
+If your app is slow to start, a [StartupProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes) can be used to delay the liveness probe and prevent it from firing prematurely. You may require it in real life but is not discussed further in this course.
 
 <exercise name='Exercise 4.02: Project v1.7'>
 
@@ -297,7 +297,7 @@ If your app is slow to start, a [StartupProbe](https://kubernetes.io/docs/tasks/
 
 With rolling updates, when including the Probes, we could create releases with no downtime for users. Sometimes this is not enough and you need to be able to do a _partial release_ for some users and get data for the upcoming release. [Canary release](https://martinfowler.com/bliki/CanaryRelease.html) is the term used to describe a release strategy in which we introduce a subset of the users to a new version of the application. When the confidence in the new release grows, the number of users in the new version can be increased until the old version is no longer used.
 
-At the moment of writing this Canary is not a strategy for deployments that Kubernetes would provide out of the box. This may be due to the ambiguity of the methods for canary release. We will use [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) to test one type of canary release:
+At the moment of writing this, Canary is not a strategy for deployments that Kubernetes would provide out of the box. This may be due to the ambiguity of the methods for canary release. We will use [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) to test one type of canary release:
 
 ```console
 $ kubectl create namespace argo-rollouts
@@ -429,9 +429,9 @@ spec:
           )
 ```
 
-With the new Rollout and AnalysisTemplate, we can safely try to deploy any version. Deploy for v2 is prevented with the Probes we set up. Deploy for v3 will automatically roll back when it notices that it has random crashes. The v4 will also eventually fail but the short 2 minutes to test may still let a version get deployed.
+With the new Rollout and AnalysisTemplate, we can safely try to deploy any version. Deploy for v2 is prevented with the Probes we set up. Deploy for v3 will automatically roll back when it notices that it has random crashes. The v4 will also eventually fail, but the short 2 minutes to test may still let a version get deployed.
 
-The Argo Rollouts [kubectl plugin](https://argoproj.github.io/argo-rollouts/features/kubectl-plugin/) allows you to visualize the Rollout and its related resources. To watch the Rollout as it deploys, we can run it watch mode:
+The Argo Rollouts [kubectl plugin](https://argoproj.github.io/argo-rollouts/features/kubectl-plugin/) allows you to visualize the Rollout and its related resources. To watch the Rollout as it deploys, we can run it in watch mode:
 
 ```bash
 kubectl argo rollouts get rollout flaky-update-dep --watch
@@ -439,7 +439,7 @@ kubectl argo rollouts get rollout flaky-update-dep --watch
 
 <img src="../img/rollout.png">
 
-Besides the pods, we see here also [AnalysisRun](https://argoproj.github.io/argo-rollouts/architecture/#analysistemplate-and-analysisrun) that is the instance of the test being run. You might also want to try Argo Rollouts [dashboard](https://argoproj.github.io/argo-rollouts/dashboard/) which gives even fancier visualization of the state of your rollouts.
+Besides the pods, we see here also [AnalysisRun](https://argoproj.github.io/argo-rollouts/architecture/#analysistemplate-and-analysisrun) that is the instance of the test being run. You might also want to try Argo Rollouts [dashboard](https://argoproj.github.io/argo-rollouts/dashboard/), which gives even fancier visualization of the state of your rollouts.
 
 In general, the *AnalysisTemplate* is not dependent on Prometheus and could use a different source, such as a JSON endpoint, instead.
 
@@ -447,15 +447,15 @@ In general, the *AnalysisTemplate* is not dependent on Prometheus and could use 
 
   Create an AnalysisTemplate for The Project that will follow the CPU usage of all containers in the namespace.
 
-  If the CPU usage **rate** sum for the namespace increases above a set value (you may choose a good hardcoded value for your project) within 10 minutes revert the update.
+  If the CPU usage **rate** sum for the namespace increases above a set value (you may choose a good hardcoded value for your project) within 10 minutes, revert the update.
 
-  Make sure that the application doesn't get updated if the value is set too low.
+  Make sure that the application doesn't get updated, if the value is set too low.
 
 </exercise>
 
 ### Other deployment strategies ###
 
-Kubernetes supports [Recreate](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#recreate-deployment) strategy which takes down the previous pods and replaces everything with the updated one. This creates a moment of downtime for the application but ensures that different versions are not running at the same time. Argo Rollouts supports [BlueGreen](https://argoproj.github.io/argo-rollouts/features/bluegreen/) strategy, in which a new version is run side by side to the new one but traffic is switched between the two at a certain point, such as after running update scripts or after your QA team has approved the new version.
+Kubernetes supports [Recreate](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#recreate-deployment) strategy which takes down the previous pods and replaces everything with the updated one. This creates a moment of downtime for the application but ensures that different versions are not running at the same time. Argo Rollouts supports [BlueGreen](https://argoproj.github.io/argo-rollouts/features/bluegreen/) strategy, in which a new version is run side by side to the new one, but traffic is switched between the two at a certain point, such as after running update scripts or after your QA team has approved the new version.
 
 <exercise name='Exercise 4.05: Project v1.9'>
 
