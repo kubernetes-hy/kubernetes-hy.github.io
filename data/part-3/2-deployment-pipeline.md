@@ -142,7 +142,7 @@ $ kubectl kustomize .
 
 Kustomize has a few additional tools you can test out if you want to install it - but we'll see the usage in the next section.
 
-The documentation of Kustomize in propably not the best one around. You will find more or less usefull stuff by Google. One that you might want to checkou out is [Kustomize Cheat Sheet](https://itnext.io/kubernetes-kustomize-cheat-sheet-8e2d31b74d8f).
+The documentation of Kustomize in propably not the best one around. You will find more or less usefull stuff by Google. One that you might want to check out is [Kustomize Cheat Sheet](https://itnext.io/kubernetes-kustomize-cheat-sheet-8e2d31b74d8f).
 
 ### Github Actions
 
@@ -210,7 +210,7 @@ The secrets used in authentication are **not** from the environment variables bu
 
 <img src="../img/ghasecret.png">
 
-Read their [here](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets) more on GitHub secrets.
+Read [here](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets) more on GitHub secrets.
 
 The GKE\_SA\_KEY is a <i>service account key</i> that is required to access the Google Cloud services - read the guide for it [here](https://cloud.google.com/iam/docs/creating-managing-service-account-keys). You will need to create a new service account and fetch its key.
 
@@ -239,7 +239,7 @@ Next, use _gcloud_ commands to configure Docker.
 This will enable us to push images to Google Container Registry, which we'll use instead of Docker Hub. We could use Docker Hub if we wanted to do so, but GCR is an excellent option now that we have access to it. GCR is a lot more performant and has a low network latency. Cutting down on the time we spend moving images around will ensure our deployments are quick. Read more about it here <https://cloud.google.com/container-registry/>. Note that the registry is [not free](https://cloud.google.com/container-registry/pricing) and you'll probably want to delete the images from there during and after this course.
 
 One more step is needed until we are ready to go, we still need to use action
-[get-gke-credentials](https://github.com/google-github-actions/get-gke-credentials) to get credentials to our Google Kubernetes cluster:
+[get-gke-credentials](https://github.com/google-github-actions/get-gke-credentials) to our Google Kubernetes cluster to get credentials :
 
 ```yaml
 # ...
@@ -259,7 +259,7 @@ And finally let's write out the desired image with a tag. The image will be `gcr
   run: docker build --tag "gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA" .
 ```
 
-We use the project name (from the env _$IMAGE_) as the image name and the tag is formed by concatenating the branch name, that comes from the env that we defined and the GitHub commit sha that is taken from env *$GITHUB_SHA* that is automatically provided by the workflow.
+We use the project name (from the env _$IMAGE_) as the image name and the tag is formed by concatenating the branch name, that comes from the env that we defined and the GitHub commit sha that is taken from env *$GITHUB_SHA*, that is automatically provided by the workflow.
 
 Publish similarily:
 
@@ -296,7 +296,7 @@ Finally we'll preview the [rollout](https://kubernetes.io/docs/reference/kubectl
 Setup automatic deployment for the project as well.
 
 Hints:
-- If your pod uses a Persistent Volume Claim access mode [ReadWriteOnce](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) you may need to consider the deployment [strategy](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy) since the default (RollingUpdate) may cause problems. Read more from the [documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy). The other option is to use an [access mode](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) that allows many pods to mount the volume.
+- If your pod uses a Persistent Volume Claim access mode [ReadWriteOnce](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes), you may need to consider the deployment [strategy](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy), since the default (RollingUpdate) may cause problems. Read more from the [documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy). The other option is to use an [access mode](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) that allows many pods to mount the volume.
 - If you are using Ingres, remember that it expects a service to give a successful response in the path / even if the service is mapped to some other path!
 
 </exercise>
