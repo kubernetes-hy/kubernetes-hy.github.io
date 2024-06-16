@@ -220,9 +220,9 @@ If you are interested in learning more about running your own storage you can ch
 
 <exercise name='Exercise 1.12: Project v0.6'>
 
-  Since the project looks really boring right now, let's add a picture!
+  Since the project looks a bit boring right now, let's add a picture!
 
-  The goal is to add a daily image to the project. And every day a new image is fetched on the first request.
+  The goal is to add an hourly image to the project.
 
   Get a random picture from Lorem Picsum like `https://picsum.photos/1200` and display it in the project. Find a way to store the image so it stays the same for 60 minutes.
 
