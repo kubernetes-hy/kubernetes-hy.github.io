@@ -14,7 +14,7 @@ After this section, you can
 
 [Custom Resource Definitions](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) (CRDs) are a way to extend Kubernetes with our own Resources. We've used a large number of them already, e.g. in [part 4](/part-4/3-gitops) we used [Application](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#applications) with ArgoCD.
 
-They're so integral part of using Kubernetes so it's a good idea to learn how to make one ourselves.
+They're so integral part of using Kubernetes that it's a good idea to learn how to make one ourselves.
 
 Before we can get started we need to figure out what we want to create. So let's create a resource that can be used to create countdowns. The resource will be called "Countdown". It will have some *length* and some *delay* between executions. The execution - what happens each time the *delay* has elapsed - is left up to an image. So that someone using our CRD can create a countdown that e.g. posts a message to Twitter each time has ticked down.
 
@@ -184,7 +184,7 @@ rules:
   verbs: ["get", "list", "watch", "create", "delete"]
 ```
 
-And finally bind the ServiceAccount and the role. There are two types of bindings as well: [ClusterRoleBinding](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#default-roles-and-role-bindings) and [RoleBinding](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#default-roles-and-role-bindings). If we used a *RoleBinding* with a *ClusterRole* we would be able to restrict access to a single namespace. For example, if permission to access secrets is defined to a ClusterRole and we gave it via *RoleBinding* to a namespace called "test" they would only be able to access secrets in the namespace "test" - even though the role is a "ClusterRole".
+And finally bind the ServiceAccount and the role. There are two types of bindings as well: [ClusterRoleBinding](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#default-roles-and-role-bindings) and [RoleBinding](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#default-roles-and-role-bindings). If we used a *RoleBinding* with a *ClusterRole* we would be able to restrict access to a single namespace. For example, if permission to access secrets is defined to a ClusterRole and we gave it via *RoleBinding* to a namespace called "test", they would only be able to access secrets in the namespace "test" - even though the role is a "ClusterRole".
 
 In our case *ClusterRoleBinding* is required since we want the controller to access all of the namespaces from the namespace it's deployed in, in this case, namespace "default".
 
