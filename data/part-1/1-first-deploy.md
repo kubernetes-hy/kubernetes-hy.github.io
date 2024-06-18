@@ -96,7 +96,7 @@ When scrolling a bit to the left we also see that port 6443 is opened to "k3d-k3
 
 K3d helpfully also set up a [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/), a file that is used to organize information about clusters, users, namespaces, and authentication mechanisms. The contents of the file can be seen with the command `k3d kubeconfig get k3s-default`.
 
-The other tool that we will be using in this course is [kubectl](https://kubernetes.io/docs/reference/kubectl/). Kubectl is the Kubernetes command-line tool and will allow us to interact with the cluster. Kubectl will read kubeconfig from the location in KUBECONFIG environment value or by default from `~/.kube/config` and use the information to connect to the cluster. The contents include certificates, passwords and the address in which the cluster API. You can set the context with `kubectl config use-context k3d-k3s-default`.
+The other tool that we will be using in this course is [kubectl](https://kubernetes.io/docs/reference/kubectl/). Kubectl is the Kubernetes command-line tool and will allow us to interact with the cluster. Kubectl will read kubeconfig from the location in KUBECONFIG environment value or by default from `~/.kube/config` and use the information to connect to the cluster. The contents include certificates, passwords and the address of the cluster API. You can set the context with `kubectl config use-context k3d-k3s-default`.
 
 Now kubectl will be able to access the cluster
 
@@ -310,7 +310,7 @@ spec:
 
 
 <text-box name="Text editor of choice" variant="hint">
-  I personally use Visual studio code to create these yaml files. It has helpful autofill, definitions, and syntax check for Kubernetes with the extension Kubernetes by Microsoft. Even now it helpfully warns us that we haven't defined resource limitations. I won't care about that warning yet, but you can figure it out if you want to.
+  I personally use Visual studio code to create these yaml files. It has helpful autofill, definitions, and syntax checks for Kubernetes with the extension Kubernetes by Microsoft. Even now it helpfully warns us that we haven't defined resource limitations. I won't care about that warning yet, but you can figure it out if you want to.
 </text-box>
 
 This looks a lot like the docker-compose.yaml files we have previously written. Let's ignore what we don't know for now, which is mainly labels, and focus on the things that we know:
