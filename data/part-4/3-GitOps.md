@@ -49,7 +49,7 @@ kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
-Now ArgoCD is up and running in our cluster. We still need to open access to it. There are several [optins](https://argo-cd.readthedocs.io/en/stable/getting_started/#3-access-the-argo-cd-api-server). We shall use the LoadBalancer. So we'll give the command
+Now ArgoCD is up and running in our cluster. We still need to open access to it. There are several [options](https://argo-cd.readthedocs.io/en/stable/getting_started/#3-access-the-argo-cd-api-server). We shall use the LoadBalancer. So we'll give the command
 
 ```bash
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
@@ -92,11 +92,11 @@ Let us sync it and go to the app page:
 
 <img src="../img/argo6.png">
 
-Something seems to be wrong, the pod has a _broken heart_ symbol. We could now start our usual debugging process starging with `kubectl get po`. We see the same info from ArgoCD by clicking the pod:
+Something seems to be wrong, the pod has a _broken heart_ symbol. We could now start our usual debugging process starting with `kubectl get po`. We see the same info from ArgoCD by clicking the pod:
 
 <img src="../img/argo7.png">
 
-Ok, we have specified a image that does not exist. Let us fix it in GitHub by changing _kustomization.yaml_ as follows:
+Ok, we have specified an image that does not exist. Let us fix it in GitHub by changing _kustomization.yaml_ as follows:
 
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -239,7 +239,7 @@ We are now set, all changes to configurations and to the app code are now deploy
 
 If an app has many environments such as production, staging and testing, a straightforward way of defining the environments contains lots of copy-paste. When Kustomize is used, the [recommended](https://kubectl.docs.kubernetes.io/guides/example/multi_base/) way is to define a common _base_ for all the environments and then environment specific overlays where the differing parts are defined.
 
-Let us look at simple example. We will create a directory structure that looks like the following:
+Let us look at a simple example. We will create a directory structure that looks like the following:
 
 ```
 .
@@ -368,10 +368,10 @@ With GitOps we achieve the following:
   - Nobody needs access to the cluster, not even CI/CD services. No need to share access to the cluster with collaborators; they will commit changes like everyone else.
 
 * Better transparency
-  - Everything is declared in the GitHub repository. When a new person joins the team they can check the repository; no need to pass ancient knowledge or hidden techniques as there are none.
+  - Everything is declared in the GitHub repository. When a new person joins the team, he/she can check the repository; no need to pass ancient knowledge or hidden techniques as there are none.
 
 * Better traceability
-  - All changes to the cluster are version-controlled. You will know exactly what was the state of the cluster and how it was changed and by whom.
+  - All changes to the cluster are version controlled. You will know exactly what was the state of the cluster and how it was changed and by whom.
 
 * Risk reduction
   - If something breaks simply revert the cluster to a working commit. `git revert` and the whole cluster is in a previous state.
