@@ -53,7 +53,7 @@ There are multiple reasons for scaling an application. The most common reason is
 
 I've prepared an [application](https://github.com/kubernetes-hy/material-example/tree/master/app7) that is rather CPU-intensive. There is a readily compiled Docker image `jakousa/dwk-app7:e11a700350aede132b62d3b5fd63c05d6b976394`. The application accepts a query parameter _?fibos=25_  that is used to control how long the computation is. You should use values between 15 and 30.
 
-Here are the configuration to get the app up and running:
+Here is the configuration to get the app up and running:
 
 **deployment.yaml**
 
@@ -168,7 +168,7 @@ behavior:
     stabilizationWindowSeconds: 30
 ```
 
-Figuring out autoscaling with HorizontalPodAutoscalers can be one of the more challening tasks. Choosing which resources to look at and when to scale is not easy. In our case, we only stress the CPU. But your applications may need to scale based on, and take into consideration, a number of resources e.g. network, disk or memory.
+Figuring out autoscaling with HorizontalPodAutoscalers can be one of the more challenging tasks. Choosing which resources to look at and when to scale is not easy. In our case, we only stress the CPU. But your applications may need to scale based on, and take into consideration, a number of resources e.g. network, disk or memory.
 
 <exercise name='Exercise 3.08: Project v1.5'>
 
