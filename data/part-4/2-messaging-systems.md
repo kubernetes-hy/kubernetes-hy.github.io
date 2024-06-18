@@ -14,7 +14,7 @@ After this section, you can
 
 [Message queues](https://en.wikipedia.org/wiki/Message_queue) are a method for communication between services. They have a wide range of use cases and are helpful when you want to scale applications. A number of HTTP REST API services that want to communicate with each other require that the services know each other’s addresses. Whereas when using message queues, messages are sent to and received from the message queue, respectively.
 
-In this section we will be using a messaging system called [NATS](https://docs.nats.io/), to explore the benefits of messaging. Before we get started we will have a look at the basics of NATS.
+In this section we will be using a messaging system called [NATS](https://docs.nats.io/) to explore the benefits of messaging. Before we get started we will have a look at the basics of NATS.
 
 In NATS applications are communicating by sending and receiving messages. These messages are addressed and identified by [subjects](https://docs.nats.io/nats-concepts/subjects). The sender _publishes_ the message with a subject. The receivers _subscribe_ to subjects to get the published messages. In the default [publish-subscribe](https://docs.nats.io/nats-concepts/core-nats/pubsub) model of operation, all the subscribers of the subject receive the published message. It is also possible to use a [queue](https://docs.nats.io/nats-concepts/core-nats/queue) model, where each published message is given just to **one** subscriber.
 
@@ -48,7 +48,7 @@ For simplicity, saving to a database and fetching from external API are omitted 
 
 Before deploying the app we shall use Helm to install NATS into our cluster. Instead of the Helm chart provided by the NATS team, we shall use the chart provided by [Bitnami](https://bitnami.com/).
 
-The chart is [documentation](https://artifacthub.io/packages/helm/bitnami/nats) describe a set of
+The chart is [documentation](https://artifacthub.io/packages/helm/bitnami/nats) describing a set of
 [parameters](https://artifacthub.io/packages/helm/bitnami/nats#parameters) that can be used to modify the NATS configuration. Let us now disable the authentication by setting _auth.enabled_ to value _false_.
 
 Parameters can be set in the installation as follows:
@@ -319,7 +319,7 @@ $ curl http://localhost:9090/api/v1/query\?query\=gnatsd_connz_in_msgs
   }
 ```
 
-If the result here is empty then something is wrong, the result may be a success even if the query doesn't make sense.
+If the result here is empty, then something is wrong. The result may be a success even if the query doesn't make sense.
 
 Now we just need to add a Grafana dashboard for the data. Let's import a dashboard from [here](https://raw.githubusercontent.com/nats-io/prometheus-nats-exporter/5084a32850823b59069f21f3a7dde7e488fef1c6/walkthrough/grafana-nats-dash.json) instead of configuring our own.
 
