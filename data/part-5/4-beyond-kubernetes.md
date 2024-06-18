@@ -33,7 +33,7 @@ Finally as Kubernetes is a platform we'll go over a few popular building blocks 
 
 ### Serverless ###
 
-[Serverless](https://en.wikipedia.org/wiki/Serverless_computing) has gained a lot of popularity and it's easy to see why. Be it Google Cloud Run, Knative, OpenFaaS, OpenWhisk, Fission or Kubeless they're running on top of Kubernetes, or atleast capable of doing so. The older the serverless platform the more likely it won't be running on Kubernetes. As such a statement like "Kubernetes is competing with serverless" doesn't make much sense.
+[Serverless](https://en.wikipedia.org/wiki/Serverless_computing) has gained a lot of popularity and it's easy to see why. Be it Google Cloud Run, Knative, OpenFaaS, OpenWhisk, Fission or Kubeless they're running on top of Kubernetes, or at least capable of doing so. The older the serverless platform the more likely it won't be running on Kubernetes. As such a statement like "Kubernetes is competing with serverless" doesn't make much sense.
 
 As this isn't a serverless course we won't go into depth about it but serverless sounds pretty dope. That's why next we will setup a serverless platform on top of our k3d. For this let's choose [Knative](https://knative.dev/) as it's the solution [Google Cloud Run](https://cloud.google.com/blog/products/serverless/knative-based-cloud-run-services-are-ga) is based on and seems to be a competent option compared to other open-source options we have available. It also keeps us in the theme of platforms for platforms as it could be used to create your own serverless platform.
 
@@ -44,7 +44,7 @@ Knative has its own community-backed [runtime contract](https://github.com/knati
 
 Install Knative Serving component to your kd3 cluster.
 
-For Knative to work locally in k3d you need to create it cluster without Traefik:
+For Knative to work locally in k3d you need to create it a cluster without Traefik:
 
 ```console
 $ k3d cluster create --port 8082:30080@agent:0 -p 8081:80@loadbalancer --agents 2 --k3s-arg "--disable=traefik@server:0"
@@ -52,7 +52,7 @@ $ k3d cluster create --port 8082:30080@agent:0 -p 8081:80@loadbalancer --agents 
 
 Follow then [this](https://knative.dev/docs/install/yaml-install/serving/install-serving-with-yaml/) guide.
 
-You might end up situation like this in the step _verify the installation_:
+You might end up in a situation like this in the step _verify the installation_:
 
 ```bash
 $ get pods -n knative-serving
@@ -96,7 +96,7 @@ kubectl get ksvc
 
   Look at the CNCF Cloud Native Landscape [png](https://landscape.cncf.io/images/landscape.png) (also available as [interactive](https://landscape.cncf.io/))
 
-  Circle the logo of every product / project you've used. It does not have to be in this course. "Used" is defined here as something that was you knew that you were using it. Next use different color to circle those that something we used was depending on, except those that were already circled. Then create a list with information where they were used. Anything outside of this course context can be labeled as "outside of the course"
+  Circle the logo of every product / project you've used. It does not have to be in this course. "Used" is defined here as something that you know you were using it. Next use different color to circle those that something we used was depending on, except those already circled. Then create a list with information where they were used. Anything outside of this course context can be labeled as "outside of the course"
 
   For example:
   1. I used **HELM** to install Prometheus in part 2.
