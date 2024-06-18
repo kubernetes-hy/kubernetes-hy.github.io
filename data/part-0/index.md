@@ -33,7 +33,7 @@ Course size is 5 ECTS credits. The course has a total of 48 exercises, grade wil
 
 ### Exercises ###
 
-Make a repository on GitHub and publish your solutions in clearly ordered files/folders. If you need help using Git, you should refer to their [guide](https://guides.github.com/activities/hello-world/). Make sure that the repository is available to me. We prefer public repositories, but if you want to keep your experience secret, you can create a private repository and add [Jakousa](https://github.com/Jakousa) as a collaborator.
+Make a repository on GitHub and publish your solutions in clearly ordered files/folders. If you need help using Git, you should refer to their [guide](https://guides.github.com/activities/hello-world/). Make sure that the repository is available to me. We prefer public repositories, but if you want to keep your experience secret, you can create a private repository and add [mluukkai](https://github.com/mluukkai) as a collaborator.
 
 Most of the exercises will require you to write code or publish something to Docker Hub. If you are unsure what to submit, you can ask for help in the course chat.
 
