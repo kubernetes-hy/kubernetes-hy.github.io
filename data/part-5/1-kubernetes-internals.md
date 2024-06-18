@@ -18,7 +18,7 @@ Kubernetes is a layer on top of which we run our applications. It takes the reso
 
 Now that we'll start talking about the internals we'll learn new insight on Kubernetes and will be able to prevent and solve problems that may result from its nature.
 
-Since this section is mostly a reiteration of Kubernetes documentation I will include various links to the official version of the documentation. Despite talking about internals, we shall not discuss how to set up our own Kubernetes cluster manually. If you want to get your hands dirty with a setup, you should read and complete [Kubernetes the Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way) by Kelsey Hightower.
+Since this section is mostly a reiteration of Kubernetes documentation, I will include various links to the official version of the documentation. Despite talking about internals, we shall not discuss how to set up our own Kubernetes cluster manually. If you want to get your hands dirty with a setup, you should read and complete [Kubernetes the Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way) by Kelsey Hightower.
 
 ### Controllers ###
 
@@ -27,7 +27,7 @@ Since this section is mostly a reiteration of Kubernetes documentation I will in
 ### Kubernetes Control Plane ###
 
 [Kubernetes Control Plane](https://kubernetes.io/docs/concepts/overview/components/#control-plane-components)
-is responsible for managing the Kubernetes cluster. It is the primary orchestrating component that ensures the cluster's desired state matches its actual state. The control plane makes global decisions about the cluster (such as scheduling), as well as detecting and responding to cluster events (such as starting up a new pod when a deployment's replicas field is unsatisfied).
+is responsible for managing the Kubernetes cluster. It is the primary orchestrating component that ensures the cluster's desired state matches its actual state. The control plane makes global decisions about the cluster (such as scheduling), as well as detecting and responding to cluster events (such as starting up a new pod when a replica's field of a deployment is unsatisfied).
 
 The control plane consists of
 
@@ -55,7 +55,7 @@ Every node has a number [components](https://kubernetes.io/docs/concepts/overvie
 * kube-proxy
   - network proxy and maintains the network rules. Enables connections outside and inside of the cluster as well as Services to work as we've been using them.
 
-Each node has also the [Container Runtime](https://kubernetes.io/docs/setup/production-environment/container-runtimes/). We have used using Docker as the runtime for this course.
+Each node has also the [Container Runtime](https://kubernetes.io/docs/setup/production-environment/container-runtimes/). We have been using Docker as the runtime for this course.
 
 <img src="../img/kube-diag.svg">
 
