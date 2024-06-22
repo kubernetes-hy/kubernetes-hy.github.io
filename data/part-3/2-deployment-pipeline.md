@@ -259,7 +259,7 @@ And finally let's write out the desired image with a tag. The image will be `gcr
   run: docker build --tag "gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA" .
 ```
 
-We use the project name (from the env _$IMAGE_) as the image name and the tag is formed by concatenating the branch name, that comes from the env that we defined and the GitHub commit sha that is taken from env *$GITHUB_SHA*, that is automatically provided by the workflow.
+We use the project name (from the env _$IMAGE_) as the image name and the tag is formed by concatenating the branch name, that comes from the env that we defined and the GitHub commit _sha_ that is taken from env *$GITHUB_SHA*, that is automatically provided by the workflow.
 
 Publish similarily:
 
@@ -410,7 +410,7 @@ The next step would be to configure the domain names for each branch so that we'
 
 <exercise name='Exercise 3.04: Project v1.4.1'>
 
-Improve the deployment so that each branch creates its a separate environment. The main branch should still be deployed in the _default_ namespace.
+Improve the deployment so that each branch creates a separate environment. The main branch should still be deployed in the _default_ namespace.
 
 </exercise>
 

@@ -84,7 +84,7 @@ $ helm install --set auth.enabled=false my-nats oci://registry-1.docker.io/bitna
 
 The installation prints many kinds of useful info for us.
 
-We are now ready to deploy our [app](https://github.com/kubernetes-hy/material-example/tree/master/app9) that uses [nats.js](https://github.com/nats-io/nats.js) as the client library. Note that the example app uses nats.js version 1.5. The current version of the library has
+We are now ready to deploy our [app](https://github.com/kubernetes-hy/material-example/tree/master/app9) that uses [nats.js](https://github.com/nats-io/nats.js) as the client library. Note that the example app uses nats.js version 1.5. The current version of the library has breaking changes in the api.
 
 The **deployment.yaml** that passes the connect URL _nats://my-nats:4222_ to pods in env variable *NATS_URL* looks like the following:
 

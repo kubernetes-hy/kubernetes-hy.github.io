@@ -84,7 +84,7 @@ At the start, we decided to have a _manual sync policy_.
 
 Note that since the definition (in our case file _kustomization.yaml_) is in the repository root, we have defined the _path_ to having the value ., that is, the character _period_.
 
-The app is created but is is missing and not in sync, since we selected the manual sync policy:
+The app is created but it is missing and not in sync, since we selected the manual sync policy:
 
 <img src="../img/argo5.png">
 
@@ -155,7 +155,7 @@ images:
   newName: mluukkai/dwk1
 ```
 
-So to deploy a new the app, we should
+So to deploy a new the app, we should:
 
 1. create a new image with possibly a new tag
 2. change the kustomization.yaml to use the new image
