@@ -111,9 +111,9 @@ bXktc3RyaW5n
 
 As the containers are already instructed to use the environment from the secret, using it happens automatically. We can now confirm that the app is working at http://localhost:8081.
 
-Since anyone can reverse the base64 version we can't save that to version control. Since we want to store the configuration we make into a long-term storage we'll need to encrypt the value.
+Since anyone can reverse the base64 version we can't save that to version control. Since we want to store our configuration into a long-term storage we'll need to encrypt the value.
 
-There are multiple solutions for secret management depending on the platform. Cloud service providers may have their solution, like Google Cloud [Secret Manager](https://cloud.google.com/secret-manager) or [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/). For a Kubernetes native solution, we could use [SealedSecrets](https://github.com/bitnami-labs/sealed-secrets). In fact, the SealedSecrets were used in a previous version of this course.
+There are multiple solutions for secret management depending on the platform. Cloud service providers may have their own solution, like Google Cloud [Secret Manager](https://cloud.google.com/secret-manager) or [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/). For a Kubernetes native solution, we could use [SealedSecrets](https://github.com/bitnami-labs/sealed-secrets). In fact, the SealedSecrets were used in a previous version of this course.
 
 We will use [SOPS](https://github.com/mozilla/sops) to encrypt the secret yaml. The tool has some additional flexibility, so I hope you get some use out of it, regardless of the environment you will be working in the future. For example, you could use it with Docker compose files. Please take a moment to read through the Readme, or at least the [Motivation](https://github.com/mozilla/sops#motivation). We will use [age](https://github.com/FiloSottile/age) for encryption because it's recommended over PGP in the Readme. So install both of the tools, SOPS and age.
 

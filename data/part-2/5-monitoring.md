@@ -74,7 +74,7 @@ Access [http://localhost:3000](http://localhost:3000) with browser and use the c
 
 The dashboards show already lots of interesting information about the cluster but we'd really like to know more about the apps we're running as well. Let's add [Loki](https://grafana.com/oss/loki/) so that we can see logs.
 
-To confirm that everything works we should have an application that'll output something to stdout. Let's run the Redis application from previously by applying [this](https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app5/manifests/statefulset.yaml). We can keep it running as it'll generate a good amount of log output for us.
+To confirm that everything works we should have an application that'll output something to stdout. Let's run the Redis application from previously by applying [this](https://raw.githubusercontent.com/kubernetes-hy/material-example/master/app5/manifests/statefulset.yaml) manifest. We can keep it running as it'll generate a good amount of log output for us.
 
 The [Loki-stack Chart](https://github.com/grafana/helm-charts/tree/main/charts/loki-stack) includes everything we need:
 
