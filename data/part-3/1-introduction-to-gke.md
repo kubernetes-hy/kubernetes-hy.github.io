@@ -136,7 +136,7 @@ $ gcloud container clusters delete dwk-cluster --zone=europe-north1-b
 
 And when resuming progress create the cluster back.
 ```console
-$ gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.22
+$ gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.29
 ```
 
 Closing the cluster will also remove everything you've deployed on the cluster. So if you decide to take a days long break during an exercise, you may have to redo it. Thankfully we are using a declarative approach so continuing progress will only require you to apply the yamls.
