@@ -200,16 +200,16 @@ Connecting Prometheus to the exporter requires a new resource [ServiceMonitor](h
 
 We could create the resource by ourselves but that is not needed since with a little more configuration, the Helm chart will do it for us. The following settings will create the ServiceMonitor:
 
-´´´
+```
 metrics.serviceMonitor.enabled=true
 metrics.serviceMonitor.namespace=prometheus
-´´´
+```
 
 Since we are already setting value to quite many parameters, let us define those in a file:
 
 **myvalues.yaml**
 
-´´´yaml
+```yaml
 auth:
   enabled: false
 
@@ -218,17 +218,17 @@ metrics:
   serviceMonitor:
     enabled: true
     namespace: prometheus
-´´´
+```
 
 Now we are ready to upgrade the chart:
 
-´´´bash
+```bash
 helm upgrade -f myvalyes.yaml my-nats oci://registry-1.docker.io/bitnamicharts/nats
-´´´
+```
 
 We can confirm that the ServiceMonitor _my-nats-metrics_ is indeed created:
 
-´´´bash
+```bash
 $ kubectl get servicemonitors.monitoring.coreos.com -n prometheus
 NAME                                                        AGE
 kube-prometheus-stack-1714-alertmanager                     6d10h
@@ -245,7 +245,7 @@ kube-prometheus-stack-1714644114-grafana                    6d10h
 kube-prometheus-stack-1714644114-kube-state-metrics         6d10h
 kube-prometheus-stack-1714644114-prometheus-node-exporter   6d10h
 my-nats-metrics                                             8m8s
-´´´
+```
 
 We still need a suitable label for our configuration so that Prometheus knows to listen to the NATS.
 
@@ -268,9 +268,9 @@ So the label needs to be _release: kube-prometheus-stack-1714644114_ unless we'd
 
 Label can be attached to the ServiceMonitor with [kubectl label](https://kubernetes.io/docs/reference/kubectl/generated/kubectl_label/) command:
 
-´´´bash
+```bash
 kubectl label servicemonitors.monitoring.coreos.com -n prometheus my-nats-metrics release=kube-prometheus-stack-1714644114
-´´´
+```
 
 Now Prometheus should have access to the new data. Let's check Prometheus:
 
