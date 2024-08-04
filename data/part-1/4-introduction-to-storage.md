@@ -145,9 +145,9 @@ Let us now create a claim for our app:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: image-claim # name of ther volume claim, this will be used in the deployment
+  name: image-claim # name of the volume claim, this will be used in the deployment
 spec:
-  storageClassName: my-example-pv # this is the name of the persisten volume we are claiming
+  storageClassName: my-example-pv # this is the name of the persistent volume we are claiming
   accessModes:
     - ReadWriteOnce
   resources:

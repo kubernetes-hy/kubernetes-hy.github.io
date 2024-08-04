@@ -17,7 +17,7 @@ As this course was written by a developer it offers an introduction into Kuberne
 
 Eeveryone starting with Google Cloud has \$300 worth of free credits.
 
-If ypu have used all \$300 credits there is nothing we can do. You can complete parts 1-2 and most likely 4-5, but part 3 is required to complete the course with higher grades
+If you have used all \$300 credits there is nothing we can do. You can complete parts 1-2 and most likely 4-5, but part 3 is required to complete the course with higher grades
 You may also use another cloud provider but we can not provide any help in that case.
 
 ### CKAD or CKA
