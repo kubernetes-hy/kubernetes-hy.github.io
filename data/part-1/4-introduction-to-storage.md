@@ -201,8 +201,6 @@ If you are interested in learning more about running your own storage you can ch
 
 * [OpenEBS](https://openebs.io/)
 
-* [StorageOS](https://storageos.com/)
-
 * [Longhorn](https://longhorn.io/)
 
 <exercise name='Exercise 1.11: Persisting data'>
