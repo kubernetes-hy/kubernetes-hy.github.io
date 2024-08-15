@@ -133,7 +133,7 @@ With labels, we can even move pods to labeled nodes. Let's say we have a few nod
 If you already have the pod running, it won't terminate the pod to avoid unwanted changes in the system, instead a new pod is scheduled:
 
 ```console
-$ kubectl get po
+$ kubectl get pods
   NAME                                 READY   STATUS    RESTARTS   AGE
   hashgenerator-dep-548d4d6c8d-mbblj   1/1     Running   0          107s
   hashgenerator-dep-7586cb6456-mktcl   0/1     Pending   0          23s
@@ -147,7 +147,7 @@ Next, label the _agent-1_ as being one with excellent network quality and Kubern
 $ kubectl label nodes k3d-k3s-default-agent-1 networkquality=excellent
   node/k3d-k3s-default-agent-1 labeled
 
-$ kubectl get po
+$ kubectl get pods
   NAME                                 READY   STATUS    RESTARTS   AGE
   hashgenerator-dep-7b9b88f8bf-mktcl   1/1     Running   0          5m30s
 ```

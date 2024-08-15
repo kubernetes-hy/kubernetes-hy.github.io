@@ -161,7 +161,7 @@ k3d-k3s-default-agent-1
 Now wait for a while and this should be the new state:
 
 ```console
-$ kubectl get po
+$ kubectl get pods
 NAME                                READY   STATUS        RESTARTS   AGE
 hashresponse-dep-57bcc888d7-5gkc9   1/1     Terminating   0          15m
 hashresponse-dep-57bcc888d7-4klvg   1/1     Running       0          30s

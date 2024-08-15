@@ -285,7 +285,7 @@ spec:
 Apply the above and check it's running:
 
 ```console
-$ kubectl get po
+$ kubectl get pods
   NAME                                READY   STATUS    RESTARTS   AGE
   postgres-ss-0                       1/1     Running   0          65s
 ```

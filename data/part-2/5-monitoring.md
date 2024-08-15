@@ -52,7 +52,7 @@ You can remove almost everything with `helm delete [name]` with the name found u
 Let us open a way into Grafana so we can see the data.
 
 ```console
-$ kubectl get po -n prometheus
+$ kubectl get pods -n prometheus
  NAME                                                              READY   STATUS    RESTARTS   AGE
  kube-prometheus-stack-1602180058-prometheus-node-exporter-nt8cp   1/1     Running   0          53s
  kube-prometheus-stack-1602180058-prometheus-node-exporter-ft7dg   1/1     Running   0          53s

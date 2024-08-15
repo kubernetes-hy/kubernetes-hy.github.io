@@ -57,7 +57,7 @@ spec:
 $ kubectl apply -f deployment.yaml
   deployment.apps/flaky-update-dep created
 
-$ kubectl get po
+$ kubectl get pods
   NAME                                READY   STATUS    RESTARTS   AGE
   flaky-update-dep-7b5fd9ffc7-27cxt   1/1     Running   0          87s
   flaky-update-dep-7b5fd9ffc7-mp8vd   1/1     Running   0          88s
@@ -69,7 +69,7 @@ Now change the tag to v2 and apply it.
 
 ```console
 $ kubectl apply -f deployment.yaml
-$ kubectl get po --watch
+$ kubectl get pods --watch
 ...
 ```
 
@@ -117,7 +117,7 @@ Here the *initialDelaySeconds* and *periodSeconds* will mean that the probe is s
 $ kubectl apply -f deployment.yaml
   deployment.apps/flaky-update-dep configured
 
-$ kubectl get po
+$ kubectl get pods
   NAME                                READY   STATUS    RESTARTS   AGE
   flaky-update-dep-f5c79dbc-8lnqm     1/1     Running   0          115s
   flaky-update-dep-f5c79dbc-86fmd     1/1     Running   0          116s
@@ -175,7 +175,7 @@ There is a lesson to learn:
 
   And another ReadinessProbe for Log output application. It should be ready when it can receive data from the Ping-pong application.
 
-  Test that it works by applying everything but the database statefulset. The output of `kubectl get po` should look like this before the database is available:
+  Test that it works by applying everything but the database statefulset. The output of `kubectl get pods` should look like this before the database is available:
 
   ```console
 NAME                             READY   STATUS    RESTARTS   AGE
@@ -197,7 +197,7 @@ $ kubectl apply -f deployment.yaml
 Now the ReadinessProbe may pass for the first 20 seconds, but soon enough every pod will break. Unfortunately *ReadinessProbe* cannot do anything about it, the deployment was successful but the application is buggy.
 
 ```console
-$ kubectl get po
+$ kubectl get pods
   NAME                               READY   STATUS    RESTARTS   AGE
   flaky-update-dep-dd78944f4-vv27w   0/1     Running   0          111s
   flaky-update-dep-dd78944f4-dnmcg   0/1     Running   0          110s
@@ -273,7 +273,7 @@ $ kubectl apply -f deployment.yaml
 After a while, it may look something like this (if you're lucky).
 
 ```console
-$ kubectl get po
+$ kubectl get pods
   NAME                                READY   STATUS    RESTARTS   AGE
   flaky-update-dep-fd65cd468-4vgwx   1/1     Running   3          2m30s
   flaky-update-dep-fd65cd468-9h877   0/1     Running   4          2m49s
