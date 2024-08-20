@@ -21,7 +21,7 @@ Finally as Kubernetes is a platform we'll go over a few popular building blocks 
 
 [OpenShift](https://www.openshift.com/) is an "enterprise" Kubernetes ([Red Hat OpenShift Overview](https://developers.redhat.com/products/openshift/overview)). Claiming that you don't have Kubernetes because you have OpenShift would be equal to claiming ["I don't have an engine. I have a car!"](https://www.openshift.com/blog/enterprise-kubernetes-with-openshift-part-one). For other options for production-ready Kubernetes see [Rancher](https://rancher.com/), which you might have seen before in this page [https://github.com/rancher/k3d](https://github.com/rancher/k3d), and [Anthos GKE](https://cloud.google.com/anthos/gke), which might also sound familiar. They are all options when you're making the crucial decision between which Kubernetes distribution you want or would you like to use a managed service.
 
-<exercise name='Exercise 5.04: Platform comparison'>
+<exercise name='Exercise 5.05: Platform comparison'>
 
   Choose one service provider such as Rancher and compare it to another such as OpenShift.
 
@@ -40,7 +40,7 @@ As this isn't a serverless course we won't go into depth about it but serverless
 Knative has its own community-backed [runtime contract](https://github.com/knative/specs/blob/main/specs/serving/runtime-contract.md). It describes what kind of features an application must and should have to run correctly as a FaaS. An essential requirement is that the app itself must be stateless and configurable with environmental variables. This kind of open-source specification helps a project gain wider adoption. For instance, [Google Cloud Run implemented](https://ahmet.im/blog/cloud-run-is-a-knative/) the same contract.
 
 
-<exercise name='Exercise 5.05: Trying Serverless'>
+<exercise name='Exercise 5.06: Trying Serverless'>
 
 Install Knative Serving component to your kd3 cluster.
 
@@ -82,7 +82,7 @@ kubectl get ksvc
 
 </exercise>
 
-<exercise name='Exercise 5.06: Deploy to Serverless'>
+<exercise name='Exercise 5.07: Deploy to Serverless'>
 
   Make the Ping-pong application serverless.
 
@@ -92,7 +92,7 @@ kubectl get ksvc
 
 </exercise>
 
-<exercise name='Exercise 5.07: Landscape'>
+<exercise name='Exercise 5.08: Landscape'>
 
   Look at the CNCF Cloud Native Landscape [png](https://landscape.cncf.io/images/landscape.png) (also available as [interactive](https://landscape.cncf.io/))
 

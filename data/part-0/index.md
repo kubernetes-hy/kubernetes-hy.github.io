@@ -21,7 +21,7 @@ To complete the course, complete exercises in parts 1-5.
 
 The total workload of the course is about 100 hours depending on your background.
 
-Course size is 5 ECTS credits. The course has a total of 48 exercises, grade will depend on the number of submitted exercises:
+Course size is 5 ECTS credits. The course has a total of 49 exercises, grade will depend on the number of submitted exercises:
 
 | grade | exercises |
 |----------|----------|
