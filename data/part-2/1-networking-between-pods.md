@@ -45,7 +45,7 @@ Sometimes, the best way to debug is to manually test what is going on. You can j
 
 Let us start a busybox pod by applying the following yaml:
 
-**pod_for_debugging.yaml**
+**podfordebugging.yaml**
 
 ```yaml
 apiVersion: v1
