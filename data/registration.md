@@ -5,6 +5,8 @@ hidden: false
 information_page: true
 ---
 
+Deadline for the exercises is 31st January 2025.
+
 ### Completing the course for credits ###
 
 Once you have completed the exercises and want to get the credits, enroll yourself in the course through the Open University [here](https://www.avoin.helsinki.fi/palvelut/esittely.aspx?s=otm-a3afed42-efa2-41af-9930-d607fc5e2808).

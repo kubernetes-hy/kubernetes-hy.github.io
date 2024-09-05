@@ -39,3 +39,7 @@ I personally had a hobby cluster in [Hetzner](https://www.hetzner.com/) that I s
 ### How to get the DwK certificate?
 
 [Submission system](https://studies.cs.helsinki.fi/stats/courses/kubernetes2024/) will have the certificate for you when you have submitted all of the exercises.
+
+### When is the deadline?
+
+Deadline for the exercises is 31st January 2025.
