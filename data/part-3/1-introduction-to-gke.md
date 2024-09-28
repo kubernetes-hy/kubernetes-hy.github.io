@@ -54,13 +54,11 @@ We can now create a cluster, with the command [gcloud container clusters create]
 
 ```console
 $ gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.29
-ERROR: (gcloud.container.clusters.create) ResponseError: code=403, message=Permission denied on resource project dwk-gke
 
-
-ERROR: (gcloud.container.clusters.create) ResponseError: code=400, message=Failed precondition when calling the ServiceConsumerManager: tenantmanager:: Consumer should enable service:container.googleapis.com before generating a service account.
+ERROR: (gcloud.container.clusters.create) ResponseError: code=403, message=Kubernetes Engine API has not been used in project dwk-gke-xxxxxx before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/container.googleapis.com/overview?project=dwk-gke-xxxxxx then retry.
 ```
 
-Let's enable the service in question, `container.googleapis.com`, before retrying.
+You can visit the link that was provided and enable the Kubernetes Engine API, just note that the url which is outputted is specific to your project name. Or, you can just execute the following command on the cli:
 
 ```console
 $ gcloud services enable container.googleapis.com
