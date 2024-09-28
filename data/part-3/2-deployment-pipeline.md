@@ -274,7 +274,7 @@ Last step is the deployment. We'll setup Kustomize first:
 ```yaml
 # ...
 - name: Set up Kustomize
-  uses: imranismail/setup-kustomize@v2.1
+  uses: imranismail/setup-kustomize@v2.1.0
 ```
 
 Now we can use Kustomize to set the image we want the pipeline to publish. Here I pipe the output of `kustomize build .` to `kubectl apply`, if you are unsure what is happening you can output the `kustomize build .` and check what was built in the middle of the pipeline!
