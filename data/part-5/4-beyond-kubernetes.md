@@ -42,7 +42,7 @@ Knative has its own community-backed [runtime contract](https://github.com/knati
 
 <exercise name='Exercise 5.05: Trying Serverless'>
 
-Install Knative Serving component to your kd3 cluster.
+Install Knative Serving component to your k3d cluster.
 
 For Knative to work locally in k3d you need to create it a cluster without Traefik:
 
