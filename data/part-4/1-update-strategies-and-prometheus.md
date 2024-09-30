@@ -138,7 +138,7 @@ better option is to use e.g. [ingress-nginx](https://github.com/kubernetes/ingre
 Using _ingress-nginx_ is easy. First, it needs to be installed by running the following commands:
 
 ```bash
-$ repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+$ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 $ helm repo update
 $ helm install nginx-ingress ingress-nginx/ingress-nginx
 ```
@@ -154,7 +154,7 @@ spec:
   ingressClassName: nginx # this is added
   rules:
   - http:
-      # tules are here
+      # rules are here
 ```
 
 The available ingress controllers (besides the default) can be checked with _kubectl_ as follows:
