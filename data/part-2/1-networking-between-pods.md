@@ -16,7 +16,7 @@ After this section
 
 In part 1 we managed to setup networking configuration to enable routing traffic from outside of the cluster to a container inside a pod. In Part 2 we'll focus on communication between pods.
 
-Kubernetes includes a DNS service so communication between pods and containers in Kubernetes is pretty simillar as it was with containers in Docker compose. Containers in a pod share the network. As such every other container inside a pod is accessible from `localhost`. For communication between Pods a _Service_ is used as they expose the Pods as a network service.
+Kubernetes includes a DNS service so communication between pods and containers in Kubernetes is pretty similar as it was with containers in Docker compose. Containers in a pod share the network. As such every other container inside a pod is accessible from `localhost`. For communication between Pods a _Service_ is used as they expose the Pods as a network service.
 
 The following service, taken from an exercise in last part, creates a cluster-internal IP which will enable other pods in the cluster to access the port 3000 of _todo-backend_ application in http://todo-backend-svc:2345.
 

@@ -142,7 +142,7 @@ $ kubectl kustomize .
 
 Kustomize has a few additional tools you can test out if you want to install it - but we'll see the usage in the next section.
 
-The documentation of Kustomize in propably not the best one around. You will find more or less usefull stuff by Google. One that you might want to check out is [Kustomize Cheat Sheet](https://itnext.io/kubernetes-kustomize-cheat-sheet-8e2d31b74d8f).
+The documentation of Kustomize in probably not the best one around. You will find more or less useful stuff by Google. One that you might want to check out is [Kustomize Cheat Sheet](https://itnext.io/kubernetes-kustomize-cheat-sheet-8e2d31b74d8f).
 
 ### Github Actions
 
@@ -191,7 +191,7 @@ jobs:
 
 This sets the environment for the job and triggers the [checkout action](https://github.com/actions/checkout) as the first step.
 
-Next we'll use some additional actions, mainly from [google-github-actions](https://github.com/google-github-actions) that are designed to help on deployments to Google Cloud. We'll start with [authenticaton](https://github.com/google-github-actions/auth), followed by [setup](https://github.com/google-github-actions/setup-gcloud):
+Next we'll use some additional actions, mainly from [google-github-actions](https://github.com/google-github-actions) that are designed to help on deployments to Google Cloud. We'll start with [authentication](https://github.com/google-github-actions/auth), followed by [setup](https://github.com/google-github-actions/setup-gcloud):
 
 ```yaml
 # ...
@@ -261,7 +261,7 @@ And finally let's write out the desired image with a tag. The image will be `gcr
 
 We use the project name (from the env _$IMAGE_) as the image name and the tag is formed by concatenating the branch name, that comes from the env that we defined and the GitHub commit _sha_ that is taken from env *$GITHUB_SHA*, that is automatically provided by the workflow.
 
-Publish similarily:
+Publish similarly:
 
 ```yaml
 # ...

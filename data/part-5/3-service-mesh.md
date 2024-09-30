@@ -32,7 +32,7 @@ Let's install a service mesh and test the features. Our choice will be [Linkerd]
 Linkerd has a CLI tool to help us, follow now the [getting started](https://linkerd.io/2/getting-started/) guide until Step 4.
 
 <text-box name="Alternate sources" variant="hint">
- We are actually simply following through the whole gettings started guide, so you can read through it if you wish.
+ We are actually simply following through the whole getting started guide, so you can read through it if you wish.
 </text-box>
 
 Let's look at our application, this time we'll use this microservice application for voting emojis: [https://github.com/BuoyantIO/emojivoto](https://github.com/BuoyantIO/emojivoto).
