@@ -92,7 +92,7 @@ Let us sync it and go to the app page:
 
 <img src="../img/argo6.png">
 
-Something seems to be wrong, the pod has a _broken heart_ symbol. We could now start our usual debugging process starting with `kubectl get pods`. We see the same info from ArgoCD by clicking the pod:
+Something seems to be wrong, the pod has a _broken heart_ symbol. We could now start our usual debugging process starting with `kubectl get po`. We see the same info from ArgoCD by clicking the pod:
 
 <img src="../img/argo7.png">
 

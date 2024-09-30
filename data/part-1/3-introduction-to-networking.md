@@ -32,7 +32,7 @@ $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-hy/material-exam
 We can confirm that the hashresponse-dep is working with the `port-forward` command. Let's see the name of the pod first and then port forward there:
 
 ```console
-$ kubectl get pods
+$ kubectl get po
   NAME                                READY   STATUS    RESTARTS   AGE
   hashgenerator-dep-5cbbf97d5-z2ct9   1/1     Running   0          20h
   hashresponse-dep-57bcc888d7-dj5vk   1/1     Running   0          19h

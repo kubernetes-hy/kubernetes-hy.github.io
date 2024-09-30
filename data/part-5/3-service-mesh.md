@@ -103,7 +103,7 @@ It should open your browser window. Click the "emojivoto" namespace (to reach /n
 The state of the pods before:
 
 ```
-$ kubectl get pods -n emojivoto
+$ kubectl get po -n emojivoto
   NAME                        READY   STATUS    RESTARTS   AGE
   voting-f999bd4d7-r4mct      1/1     Running   0          10m
   web-79469b946f-ksprv        1/1     Running   0          10m
@@ -122,7 +122,7 @@ $ kubectl get -n emojivoto deploy -o yaml \
 You can run the rows independently to see what they do. The first, `kubectl get -n emojivoto deploy -o yaml`, will output all deployments in the emojivoto namespace. The `linkerd inject -` will add an annotation to instruct Linkerd to add the sidecar proxy container. Finally, the _kubectl apply_ will apply modified deployments. Now the pods look like this:
 
 ```
-kubectl get pods -n emojivoto
+kubectl get po -n emojivoto
 NAME                        READY   STATUS    RESTARTS   AGE
 vote-bot-6d7677bb68-qxfx9   2/2     Running   0          3m17s
 web-5f86686c4d-qgxtv        2/2     Running   0          3m17s
