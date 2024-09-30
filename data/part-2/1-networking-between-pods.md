@@ -45,7 +45,7 @@ Sometimes, the best way to debug is to manually test what is going on. You can j
 
 Let us start a busybox pod by applying the following yaml:
 
-**pod_for_debugging.yaml**
+**podfordebugging.yaml**
 
 ```yaml
 apiVersion: v1
@@ -76,7 +76,7 @@ We used the [wget](https://www.gnu.org/software/wget/) command since our usual t
 We can also open a shell to the pod with command [kubectl exec](https://kubernetes.io/docs/tasks/debug/debug-application/get-shell-running-container/) to run several commands:
 
 ```yaml
-$ kubectl exec -it my-busybox sh
+$ kubectl exec -it my-busybox -- sh
 / # wget -qO - http://todo-backend-svc:2345
 <html>
    <body>

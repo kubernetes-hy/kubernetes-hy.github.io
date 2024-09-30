@@ -15,7 +15,7 @@ As this course was written by a developer it offers an introduction into Kuberne
 
 ### Google Cloud Credits?
 
-Eeveryone starting with Google Cloud has \$300 worth of free credits.
+Everyone starting with Google Cloud has \$300 worth of free credits.
 
 If you have used all \$300 credits there is nothing we can do. You can complete parts 1-2 and most likely 4-5, but part 3 is required to complete the course with higher grades
 You may also use another cloud provider but we can not provide any help in that case.
@@ -32,9 +32,7 @@ Please identify the certificate if you wish to talk or ask about non-DwK certifi
 
 In writing this course I first and foremost used the Kubernetes documentation. They have excellent tutorials: <https://kubernetes.io/docs/tutorials/>. As the documentation can get only so far, if I had difficulties grasping a concept I used the [Kubernetes in Action](https://www.manning.com/books/kubernetes-in-action) book as well as various Google searches.
 
-You can get Kubernetes Up and Running for free [from Microsoft](https://azure.microsoft.com/en-us/resources/kubernetes-up-and-running/) or [from VMWare](https://k8s.vmware.com/kubernetes-up-and-running/).
-
-I personally had a hobby cluster in [Hetzner](https://www.hetzner.com/) that I setup with [kubespray](https://github.com/kubernetes-sigs/kubespray) that was running multiple videogame servers. I was then running [k3s](https://github.com/rancher/k3s) there with knative and some applications there for fun. I highly recommend doing something similar on your free time.
+I personally had a hobby cluster in [Hetzner](https://www.hetzner.com/) that I setup with [Kubespray](https://github.com/kubernetes-sigs/kubespray) that was running multiple videogame servers. I was then running [k3s](https://github.com/rancher/k3s) there with [Knative](https://knative.dev/) and some applications there for fun. I highly recommend doing something similar on your free time.
 
 ### How to get the DwK certificate?
 

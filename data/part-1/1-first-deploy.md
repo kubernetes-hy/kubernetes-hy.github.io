@@ -217,7 +217,7 @@ $ kubectl get deployments
 To see the output we can run `kubectl logs -f hashgenerator-dep-6965c5c7-2pkxc`
 
 <text-box name="Automatic completion" variant="hint">
-You can use `source <(kubectl completion bash)` to save yourself from a lot of headaches. Add it to .bashrc for an automatic load. (Also available for zsh). If you've never used completion read this <a href="https://iridakos.com/programming/2018/03/01/bash-programmable-completion-tutorial"> tutorial </a>
+You can use `source <(kubectl completion bash)` to save yourself from a lot of headaches. Add it to .bashrc for an automatic load. (Also available for zsh with `source <(kubectl completion zsh)`). If you've never used completion read this <a href="https://iridakos.com/programming/2018/03/01/bash-programmable-completion-tutorial">tutorial</a>. More information about the kubectl completion command can be found <a href="https://kubernetes.io/docs/reference/kubectl/generated/kubectl_completion/">here</a>.
 </text-box>
 
 A helpful list for other commands from docker-cli translated to kubectl is available here [https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/](https://kubernetes.io/docs/reference/kubectl/docker-cli-to-kubectl/)
