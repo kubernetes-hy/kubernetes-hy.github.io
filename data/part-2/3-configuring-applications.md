@@ -16,7 +16,7 @@ After this section you
 
 </text-box>
 
-Kubernetis has two resources for configuration management. [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) are for sensitive information that are given to containers on runtime. [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/) are quite much like secrets but they may contain any kind of configurations. Use cases for ConfigMaps vary: you may have a ConfigMap mapped to a file with some values that the server reads during runtime. Changing the ConfigMap will instantly change the behavior of the application. Both can be used to introduce environment variables.
+Kubernetes has two resources for configuration management. [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) are for sensitive information that are given to containers on runtime. [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/) are quite much like secrets but they may contain any kind of configurations. Use cases for ConfigMaps vary: you may have a ConfigMap mapped to a file with some values that the server reads during runtime. Changing the ConfigMap will instantly change the behavior of the application. Both can be used to introduce environment variables.
 
 ### Secrets
 
