@@ -284,7 +284,7 @@ resources:
 - deployment.yaml
 ```
 
-The production environment refines the base by changing the replica count to 3. **overlays/prod/kustomize.yaml** looks like this:
+The production environment refines the base by changing the replica count to 3. The **overlays/prod/deployment.yaml** looks like this:
 
 ```yaml
 apiVersion: apps/v1
