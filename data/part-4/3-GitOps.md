@@ -277,14 +277,14 @@ spec:
 ```
 
 
-The **base/kustomize.yaml** is simple:
+The **base/kustomization.yaml** is simple:
 
 ```yaml
 resources:
 - deployment.yaml
 ```
 
-The production environment refines the base by changing the replica count to 3. **overlays/prod/kustomize.yaml** looks like this:
+The production environment refines the base by changing the replica count to 3. The **overlays/prod/deployment.yaml** looks like this:
 
 ```yaml
 apiVersion: apps/v1
@@ -297,7 +297,7 @@ spec:
 
 So only parts that are different are defined.
 
-The **overlays/prod/kustomize.yaml** looks like following:
+The **overlays/prod/kustomization.yaml** looks like following:
 
 ```yaml
 resources:
@@ -314,7 +314,7 @@ images:
 
 So it refers to the base and [patches](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/patches/) that with the above deployment that sets the number of replicas to 3.
 
-The **overlays/staging/kustomize.yaml** just sets the image:
+The **overlays/staging/kustomization.yaml** just sets the image:
 
 ```yaml
 resources:
