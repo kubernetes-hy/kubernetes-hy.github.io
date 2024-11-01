@@ -47,7 +47,7 @@ There's also cloud-controller-manager that lets you link your cluster into a clo
 
 ### Node Components ###
 
-Every node has a number [components](https://kubernetes.io/docs/concepts/overview/components/#node-components) that maintain the running pods.
+Every node has a number of [components](https://kubernetes.io/docs/concepts/overview/components/#node-components) that maintain the running pods.
 
 * kubelet
   - Makes sure containers are running in a Pod
