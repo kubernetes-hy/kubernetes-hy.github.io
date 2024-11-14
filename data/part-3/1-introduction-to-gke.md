@@ -53,7 +53,7 @@ $ gcloud config set project dwk-gke
 We can now create a cluster, with the command [gcloud container clusters create](https://cloud.google.com/sdk/gcloud/reference/container/clusters/create). You can choose any zone you want from the list [here](https://cloud.google.com/about/locations/). I chose Finland. Notice that one region (e.g. europe-north1) may have multiple regions (e.g. -a). Let's add another flag: `--cluster-version=1.29`. This will ask GKE to use a version that will be the default in April 2024. GKE release schedule can be seen [here](https://cloud.google.com/kubernetes-engine/docs/release-schedule).
 
 ```console
-$ gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.29
+$ gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.29 --disk-size=32 --num-nodes=3 --machine-type=e2-micro
 
 ERROR: (gcloud.container.clusters.create) ResponseError: code=403, message=Kubernetes Engine API has not been used in project dwk-gke-xxxxxx before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/container.googleapis.com/overview?project=dwk-gke-xxxxxx then retry.
 ```
