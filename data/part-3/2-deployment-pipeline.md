@@ -216,10 +216,10 @@ The GKE\_SA\_KEY is a <i>service account key</i> that is required to access the 
 
 Give these roles to your service account:
 
-- Kubernetes Engine Service Agent
-- Storage Admin
-- Artifact Registry Administrator
-- Artifact Registry Create-on-Push Repository Administrator
+- **Kubernetes Engine Service Agent** -  Gives Kubernetes Engine account access to manage cluster resources. Includes access to service accounts.
+- **Storage Admin** - Grants full control of buckets and objects.
+- **Artifact Registry Administrator** - Administrator access to create and manage repositories.
+- **Artifact Registry Create-on-Push Repository Administrator** - Access to manage artifacts in repositories, as well as create new repositories on push.
 
 After creating a service account for GKE called "github-actions" I created the key using gcloud:
 
