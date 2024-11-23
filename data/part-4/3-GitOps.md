@@ -42,7 +42,7 @@ GitOps is all about this reversal and promotes good practices for the operations
 3. CI/CD service builds and pushes new image *and* commits edit to the "release" branch (main in our case)
 4. ArgoCD will take the state described in the release branch and set it as the state of our cluster.
 
-Let us start by installing ArgoCD by following the [Detting started](https://argo-cd.readthedocs.io/en/stable/getting_started/) of the docs:
+Let us start by installing ArgoCD by following the [Getting started](https://argo-cd.readthedocs.io/en/stable/getting_started/) of the docs:
 
 ```bash
 kubectl create namespace argocd
