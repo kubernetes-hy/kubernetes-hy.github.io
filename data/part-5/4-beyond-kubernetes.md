@@ -7,7 +7,7 @@ hidden: false
 
 <text-box variant='learningObjectives' name='Learning Objectives'>
 
-After this section you can
+After this section, you can
 
 - List and compare platform options.
 
@@ -15,11 +15,15 @@ After this section you can
 
 </text-box>
 
-Finally as Kubernetes is a platform we'll go over a few popular building blocks that use Kubernetes.
+Finally, as Kubernetes is a platform we'll go over a few popular building blocks that use Kubernetes.
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Kubernetes is a platform for building platforms. It&#39;s a better place to start; not the endgame.</p>&mdash; Kelsey Hightower (@kelseyhightower) <a href="https://twitter.com/kelseyhightower/status/935252923721793536?ref_src=twsrc%5Etfw">November 27, 2017</a></blockquote>
 
-[OpenShift](https://www.openshift.com/) is an "enterprise" Kubernetes ([Red Hat OpenShift Overview](https://developers.redhat.com/products/openshift/overview)). Claiming that you don't have Kubernetes because you have OpenShift would be equal to claiming ["I don't have an engine. I have a car!"](https://www.openshift.com/blog/enterprise-kubernetes-with-openshift-part-one). For other options for production-ready Kubernetes see [Rancher](https://rancher.com/), which you might have seen before in this page [https://github.com/rancher/k3d](https://github.com/rancher/k3d), and [Anthos GKE](https://cloud.google.com/anthos/gke), which might also sound familiar. They are all options when you're making the crucial decision between which Kubernetes distribution you want or would you like to use a managed service.
+[OpenShift](https://www.openshift.com/) is an "enterprise" Kubernetes ([Red Hat OpenShift Overview](https://developers.redhat.com/products/openshift/overview)). Claiming that you don't have Kubernetes because you have OpenShift would be equal to claiming ["I don't have an engine. I have a car!"](https://www.openshift.com/blog/enterprise-kubernetes-with-openshift-part-one).
+
+Other options include [Rancher](https://rancher.com/) for production-ready open-source multi-cluster management which you might have seen before on this page [https://github.com/rancher/k3d](https://github.com/rancher/k3d). For more information, see the [intro](https://www.youtube.com/watch?v=5h1TCrh_hZ0&ab_channel=RancherbySUSE), or the [docs](https://rancher.com/docs).
+
+[Anthos GKE](https://cloud.google.com/anthos/gke) - a production-grade solution for the enterprise, might also sound familiar. They are all options when you're making the crucial decision between which Kubernetes distribution you want or whether would you like to use a managed service.
 
 <exercise name='Exercise 5.05: Platform comparison'>
 
@@ -27,7 +31,7 @@ Finally as Kubernetes is a platform we'll go over a few popular building blocks 
 
   Decide arbitrarily which service provider is "better" and argue for it against the other service provider.
 
-  For the submission a bullet point list is enough.
+  For the submission, a bullet point list is enough.
 
 </exercise>
 
