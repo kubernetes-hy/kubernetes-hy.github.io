@@ -223,7 +223,7 @@ metrics:
 Now we are ready to upgrade the chart:
 
 ```bash
-helm upgrade -f myvalyes.yaml my-nats oci://registry-1.docker.io/bitnamicharts/nats
+helm upgrade -f myvalues.yaml my-nats oci://registry-1.docker.io/bitnamicharts/nats
 ```
 
 We can confirm that the ServiceMonitor _my-nats-metrics_ is indeed created:
