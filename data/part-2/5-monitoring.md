@@ -47,7 +47,7 @@ kube-prometheus-stack has been installed. Check its status by running:
 
 This added a lot of stuff to our cluster. Among other things, it added a number of [custom resources](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/). They are a way to extend the Kubernetes APIs to offer new resources that Kubernetes doesn't support out of the box. We will be designing our own custom resources in [part 5](https://devopswithkubernetes.com/part5/).
 
-You can remove almost everything with `helm delete [name]` with the name found using the command `helm list -n prometheus`. Custom resource definitions are left and have to be manually removed if the need arises. The definitions don't do anything by themselves so leaving them does no harm.
+You can remove almost anything with `helm delete [name]` with the name found using the command `helm list -n prometheus`. Custom resource definitions are left and have to be manually removed if the need arises. The definitions don't do anything by themselves so leaving them does no harm.
 
 Let us open a way into Grafana so we can see the data.
 

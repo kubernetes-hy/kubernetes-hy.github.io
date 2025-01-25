@@ -16,7 +16,7 @@ After this section, you can
 
 They're so integral part of using Kubernetes that it's a good idea to learn how to make one ourselves.
 
-Before we can get started we need to figure out what we want to create. So let's create a resource that can be used to create countdowns. The resource will be called "Countdown". It will have some *length* and some *delay* between executions. The execution - what happens each time the *delay* has elapsed - is left up to an image. So that someone using our CRD can create a countdown that e.g. posts a message to Twitter each time has ticked down.
+Before we can get started we need to figure out what we want to create. So let's create a resource that can be used to create countdowns. The resource will be called "Countdown". It will have some *length* and some *delay* between executions. The execution - what happens each time the *delay* has elapsed - is left up to an image. So that someone using our CRD can create a countdown that e.g. posts a message to Twitter each time it has ticked down.
 
 As a template I'll use one provided by the [docs](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/).
 
@@ -109,7 +109,7 @@ Our controller has to do 3 things:
 - Reschedule Jobs until the number of executions defined in Countdown (the _length_) has been completed.
 - Clean all Jobs and Pods after the execution
 
-To implement the controller we need to do some low-level stuff and access the Kuberneter directly using the REST APIs.
+To implement the controller we need to do some low-level stuff and access the Kubernetes directly using the REST APIs.
 
 By listening to the Kubernetes API at `/apis/stable.dwk/v1/countdowns?watch=true` we will receive an ADDED for every Countdown object in the cluster. Then creating a job can be done by parsing the data from the message and POSTing a valid payload to `/apis/batch/v1/namespaces/<namespace>/jobs`.
 

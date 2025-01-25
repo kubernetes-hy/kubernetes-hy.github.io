@@ -146,7 +146,7 @@ In general, these kinds of "stand-alone" pods are good for debugging but all app
 
 <exercise name='Exercise 2.01: Connecting pods'>
 
-Connect the "Log output" application and "Ping-pong" application. Instead of sharing data via files use HTTP endpoints to respond with the number of pongs. Deprecate all the volume between the two applications for the time being.
+Connect the "Log output" application and "Ping-pong" application. Instead of sharing data via files use HTTP endpoints to respond with the number of pongs. Deprecate all of the volumes between the two applications for the time being.
 
 The output will stay the same:
 

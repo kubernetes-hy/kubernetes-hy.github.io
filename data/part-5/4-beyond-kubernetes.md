@@ -19,7 +19,7 @@ Finally as Kubernetes is a platform we'll go over a few popular building blocks 
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Kubernetes is a platform for building platforms. It&#39;s a better place to start; not the endgame.</p>&mdash; Kelsey Hightower (@kelseyhightower) <a href="https://twitter.com/kelseyhightower/status/935252923721793536?ref_src=twsrc%5Etfw">November 27, 2017</a></blockquote>
 
-[OpenShift](https://www.openshift.com/) is an "enterprise" Kubernetes ([Red Hat OpenShift Overview](https://developers.redhat.com/products/openshift/overview)). Claiming that you don't have Kubernetes because you have OpenShift would be equal to claiming ["I don't have an engine. I have a car!"](https://www.openshift.com/blog/enterprise-kubernetes-with-openshift-part-one). For other options for production-ready Kubernetes see [Rancher](https://rancher.com/), which you might have seen before in this page [https://github.com/rancher/k3d](https://github.com/rancher/k3d), and [Anthos GKE](https://cloud.google.com/anthos/gke), which might also sound familiar. They are all options when you're making the crucial decision between which Kubernetes distribution you want or would you like to use a managed service.
+[OpenShift](https://www.openshift.com/) is an "enterprise" Kubernetes ([Red Hat OpenShift Overview](https://developers.redhat.com/products/openshift/overview)). Claiming that you don't have Kubernetes because you have OpenShift would be equal to claiming ["I don't have an engine. I have a car!"](https://www.openshift.com/blog/enterprise-kubernetes-with-openshift-part-one). For other options for production-ready Kubernetes see [Rancher](https://rancher.com/), which you might have seen before on this page [https://github.com/rancher/k3d](https://github.com/rancher/k3d), and [Anthos GKE](https://cloud.google.com/anthos/gke), which might also sound familiar. They are all options when you're making the crucial decision between which Kubernetes distribution you want or would you like to use a managed service.
 
 <exercise name='Exercise 5.05: Platform comparison'>
 
@@ -50,12 +50,12 @@ For Knative to work locally in k3d you need to create it a cluster without Traef
 $ k3d cluster create --port 8082:30080@agent:0 -p 8081:80@loadbalancer --agents 2 --k3s-arg "--disable=traefik@server:0"
 ```
 
-Follow then [this](https://knative.dev/docs/install/yaml-install/serving/install-serving-with-yaml/) guide.
+Then follow [this](https://knative.dev/docs/install/yaml-install/serving/install-serving-with-yaml/) guide.
 
 You might end up in a situation like this in the step _verify the installation_:
 
 ```bash
-$ get pods -n knative-serving
+$ kubectl get pods -n knative-serving
 NAME                                      READY   STATUS             RESTARTS      AGE
 activator-67855958d-w2ws8                 0/1     Running            0             64s
 autoscaler-5ff4c5d679-54l28               0/1     Running            0             64s

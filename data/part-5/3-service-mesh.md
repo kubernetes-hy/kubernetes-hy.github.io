@@ -25,7 +25,7 @@ For incoming and outgoing traffic and for communication between services a servi
 - manage traffic
 - monitor traffic, sending logs and metrics to e.g. Prometheus
 
-So a service mesh is an **extremely** powerful tool. If we started using service mesh like [Istio](https://istio.io/) in part 1 we may have been able to skip using [Traefik](https://doc.traefik.io/traefik/providers/kubernetes-ingress/), skip some of our DIY monitoring solutions, and achieve canary releases without [Argo Rollouts](https://argoproj.github.io/rollouts/). On the other hand, we managed to do all that without a service meshes.
+So a service mesh is an **extremely** powerful tool. If we started using service mesh like [Istio](https://istio.io/) in part 1 we may have been able to skip using [Traefik](https://doc.traefik.io/traefik/providers/kubernetes-ingress/), skip some of our DIY monitoring solutions, and achieve canary releases without [Argo Rollouts](https://argoproj.github.io/rollouts/). On the other hand, we managed to do all that without a service mesh.
 
 Let's install a service mesh and test the features. Our choice will be [Linkerd](https://linkerd.io/), mainly because it's lightweight compared to [Istio](https://istio.io/).
 
