@@ -17,7 +17,7 @@ The course material is written using Mac, so some instructions may lack platform
 
 ## Completion and grading ##
 
-To complete the course, complete exercises in parts 1-5 before the deadline that is 31st January 2025.
+To complete the course, complete exercises in parts 1-5 and mark your completion in the portal, following the instructions provided below.
 
 The total workload of the course is about 100 hours depending on your background.
 
