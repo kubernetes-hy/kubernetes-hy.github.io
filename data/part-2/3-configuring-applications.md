@@ -16,7 +16,7 @@ After this section you
 
 </text-box>
 
-Kubernetis has two resources for configuration management. [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) are for sensitive information that are given to containers on runtime. [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/) are quite much like secrets but they may contain any kind of configurations. Use cases for ConfigMaps vary: you may have a ConfigMap mapped to a file with some values that the server reads during runtime. Changing the ConfigMap will instantly change the behavior of the application. Both can be used to introduce environment variables.
+Kubernetes has two resources for configuration management. [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) are for sensitive information that are given to containers on runtime. [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/) are quite much like secrets but they may contain any kind of configurations. Use cases for ConfigMaps vary: you may have a ConfigMap mapped to a file with some values that the server reads during runtime. Changing the ConfigMap will instantly change the behavior of the application. Both can be used to introduce environment variables.
 
 ### Secrets
 
@@ -109,7 +109,7 @@ $ echo -n 'my-string' | base64
 bXktc3RyaW5n
 ```
 
-As the containers are already instructed to use the environment from the secret, using it happens automatically. We can now confirm that the app is working at http://localhost:8081.
+As the containers are already instructed to use the environment variable from the secret, it is picked up automatically. We can now confirm that the app is working at http://localhost:8081.
 
 Since anyone can reverse the base64 version we can't save that to version control. Since we want to store our configuration into a long-term storage we'll need to encrypt the value.
 
@@ -226,7 +226,7 @@ should contain everything you need.
 
 Create a ConfigMap for the "Log output" application. The ConfigMap should define one file _information.txt_ and one env variable _MESSAGE_.
 
-The app should map the file as a volume, and set the environment variable and print the content of those besides the usual output:
+The app should map the file as a volume, set the environment variable and print the content of those in addition to the usual output:
 
 
 ```plaintext

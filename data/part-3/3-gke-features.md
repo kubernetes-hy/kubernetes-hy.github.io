@@ -33,7 +33,7 @@ Both solutions are widely used.
 
 <exercise name='Exercise 3.07: Backup'>
 
-In [part 2](/part-2/4-statefulsets-and-jobs#jobs-and-cronjobs) we did a Job that made a backup of our Database using the command *pg_dump*. Unfortunately, the backup was not saved anywhere. Create now a CronJob that makes a backup of your database (once per 24 hours) and saves it to [Google Object Storage](https://cloud.google.com/storage).
+In [part 2](/part-2/4-statefulsets-and-jobs#jobs-and-cronjobs) we created a Job that made a backup of our Database using the command *pg_dump*. Unfortunately, the backup was not saved anywhere. Create now a CronJob that makes a backup of your database (once per 24 hours) and saves it to [Google Object Storage](https://cloud.google.com/storage).
 
 In this exercise, you can create the secret for the cloud access from the command line, thus, there is no need to create it in the GitHub action.
 
@@ -49,7 +49,7 @@ Scaling can be either horizontal scaling or vertical scaling. Vertical scaling i
 
 ### Scaling pods ###
 
-There are multiple reasons for scaling an application. The most common reason is that the number of requests an application receives exceeds the number of requests that can be processed. Limitations are often either the amount of requests that a framework is intended to handle or the actual CPU or RAM.
+There are multiple reasons for scaling an application. The most common reason is that the number of requests an application receives exceeds the number of requests that can be processed. Limitations are often either the number of requests that a framework is intended to handle or the actual CPU or RAM.
 
 I've prepared an [application](https://github.com/kubernetes-hy/material-example/tree/master/app7) that is rather CPU-intensive. There is a readily compiled Docker image `jakousa/dwk-app7:e11a700350aede132b62d3b5fd63c05d6b976394`. The application accepts a query parameter _?fibos=25_  that is used to control how long the computation is. You should use values between 15 and 30.
 
@@ -184,7 +184,7 @@ Figuring out autoscaling with HorizontalPodAutoscalers can be one of the more ch
 
 ### Scaling nodes ###
 
-Scaling nodes is a supported feature in GKE. Via the cluster autoscaling feature we can use the right amount of nodes needed.
+Scaling nodes is a supported feature in GKE. Via the cluster autoscaling feature we can use the right number of nodes needed.
 
 ```console
 $ gcloud container clusters update dwk-cluster --zone=europe-north1-b --enable-autoscaling --min-nodes=1 --max-nodes=5

@@ -111,7 +111,7 @@ images:
 
 When we sync the changes in ArgoCD, a new healthy pod is started and our app is up and running!
 
-We can check the external IP either from command line with _kubectl_ or clicking the service:
+We can check the external IP either from command line with _kubectl_ or by clicking the service:
 
 <img src="../img/argo8.png">
 
