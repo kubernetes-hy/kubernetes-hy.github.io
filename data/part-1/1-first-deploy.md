@@ -18,7 +18,9 @@ After this section you
 
 In this course, we'll talk about microservices and create microservices. Before we get started with anything else we'll need to define what a microservice is. Currently, there are many different definitions for microservices.
 
-For this course, we'll choose the definition set by Sam Newman in [Building Microservices](https://www.oreilly.com/library/view/building-microservices/9781491950340/): "**Microservices are small, autonomous services that work together**". The opposite of a microservice is a service that is self-contained and independent called a [Monolith](https://en.wikipedia.org/wiki/Monolithic_application).
+For this course, we'll choose the definition set by Sam Newman in [Building Microservices](https://www.oreilly.com/library/view/building-microservices/9781491950340/): "**Microservices are small, autonomous services that work together**". For more information see "Microservices • Martin Fowler" [2014](https://www.youtube.com/watch?v=wgdBVIX9ifA&ab_channel=GOTOConferences) & [2016](https://www.youtube.com/watch?v=z8qhToMtYRc&ab_channel=GOTOConferences).
+
+The opposite of a microservice is a service that is self-contained and independent called a [Monolith](https://en.wikipedia.org/wiki/Monolithic_application).
 
 When to use microservices? In the following video where Sam Newman and Martin Fowler discuss microservices, the answer is: "When you've got a really good reason".
 
@@ -48,7 +50,7 @@ Or more officially:
 
 “Kubernetes (K8s) is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery.” - [kubernetes.io](https://kubernetes.io/)
 
-A container orchestration system such as Kubernetes is often required when maintaining containerized applications. The main responsibility of an orchestration system is the starting and stopping of containers. In addition, they offer networking between containers and health monitoring. Rather than manually doing `docker run critical-bank-application` every time the application crashes, or restarting it if it becomes unresponsive, we want the system to keep the application automatically healthy.
+[A cloud-native container orchestration system such as Kubernetes](https://www.youtube.com/watch?v=mPhjFYXoAD0&ab_channel=O%27Reilly) is often required when maintaining containerized applications. The main responsibility of an orchestration system is the starting and stopping of containers. In addition, they offer networking between containers and health monitoring. Rather than manually doing `docker run critical-bank-application` every time the application crashes, or restarting it if it becomes unresponsive, we want the system to keep the application automatically healthy.
 
 You should already know an orchestration system, _docker compose_, which also takes care of the same tasks; starting and stopping, networking and health monitoring. What makes Kubernetes special is the robust feature set for automating all of it.
 
