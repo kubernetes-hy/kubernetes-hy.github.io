@@ -11,6 +11,14 @@ sidebar_priority: 5000
   <img src="./img/kubernetes-cncf.png" alt="kubernetes logo" />
 </div>
 
+## The new material
+
+Note that the course material is now in here <https://courses.mooc.fi/org/uh-cs/courses/devops-with-kubernetes>
+
+## The old material
+
+This course is an introductory course to Kubernetes with K3s and GKE. In this course, you will develop software with a microservice architecture that utilizes Kubernetes to serve software that scales and deploys automatically. And learn how to manage it all.
+
 This course is an introductory course to Kubernetes with K3s and GKE. In this course, you will develop software with a microservice architecture that utilizes Kubernetes to serve software that scales and deploys automatically. And learn how to manage it all.
 
 **This course can not be completed with the faculty computers.** Attendees need to provide their own computers with admin / superuser privileges.
